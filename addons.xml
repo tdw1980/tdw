@@ -36,6 +36,63 @@
   </extension>
 </addon>
 
+<addon id="plugin.video.KinoPoisk.ru"
+       name="KinoPoisk"
+       version="1.3.6"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.torrent.ts"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>KinoPoisk.ru</summary>
+    <description>Poisk torrentov</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.LostFilm"
+       name="LostFilm"
+       version="0.5.2"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.torrent.ts"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>LostFilm</summary>
+    <description>LostFilm for AceStreem and Libtorrent</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.RuTor"
+       name="RuTor"
+       version="2.4.2"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.torrent.ts"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>RuTor</summary>
+    <description>RuTor for TorrentStreem</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="repository.tdw1980"
        name="TDW1980 Add-ons"
 	   version="1.0.2"
@@ -54,5 +111,20 @@
 		<disclaimer>There are git my add-ons for XBMC</disclaimer>
 		<platform>all</platform>
 	</extension>
+</addon>
+
+<addon id='script.module.torrent.ts' version='0.6.0.28a' name='AceStream Client' provider-name='NuisMons'>
+  <requires>
+    <import addon='xbmc.python' version='2.1.0'/>
+  </requires>
+  <extension point="xbmc.python.script" library="tsserv.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point='xbmc.addon.metadata'>
+    <platform>all</platform>
+    <summary>AceStream Engine support</summary>
+  </extension>
+  <extension library="default.py" point="xbmc.service" />
+  <extension point='xbmc.python.module'/>
 </addon>
 </addons>
