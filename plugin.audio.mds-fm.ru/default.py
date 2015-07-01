@@ -7,7 +7,7 @@ import time
 addon = xbmcaddon.Addon(id='plugin.audio.mds-fm.ru')
 pluginhandle = int(sys.argv[1])
 thumb = os.path.join( addon.getAddonInfo('path'), 'icon.png')
-#xbmcplugin.setContent(int(sys.argv[1]), 'albums')
+xbmcplugin.setContent(int(sys.argv[1]), 'artists')
 __settings__ = xbmcaddon.Addon(id='plugin.audio.mds-fm.ru')
 
 def inputbox():
@@ -69,6 +69,22 @@ def mfindal(http, ss, es):
 	return L
 
 
+def Format(t):
+	try:
+		author, title = eval("('"+t.replace(". ","','")+"')")
+		title = "[COLOR F050F050]"+t.replace(". ","[/COLOR]  ")
+	except:
+		print t
+		try: 
+			t=t.replace("-","— ")
+			t=t.replace("«","— «")
+			author, title = eval("('"+t.replace("— ","','")+"')")
+			title = "[COLOR F050F050]"+t.replace("— ","[/COLOR]  ")
+		except: 
+			title =t
+
+	#nt= "[COLOR F050F050]"+"[--------------  «Fileek.com»  "+qury+" --------------]"+"[/COLOR]"
+	return title
 
 def Root():
 				title="Поиск"
@@ -149,10 +165,13 @@ def Title():
 		http=getURL(url)
 		ss='<li class="search-result">'
 		es='</ol>'
-		c1=mfindal(http, ss, es)[0]
-		ss='<a href="'
-		es='</a>'
-		L=mfindal(c1, ss, es)
+		try:
+			c1=mfindal(http, ss, es)[0]
+			ss='<a href="'
+			es='</a>'
+			L=mfindal(c1, ss, es)
+		except:
+			L=[]
 		for i in L:
 				url, title = eval(i.replace('<a href="','("').replace('">','", "')+'")')
 				img=thumb
@@ -160,7 +179,7 @@ def Title():
 				uri += '&url='  + urllib.quote_plus(url)
 				uri += '&name='  + urllib.quote_plus(title)
 				uri += '&img='  + urllib.quote_plus(img)
-				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+				item = xbmcgui.ListItem(Format(title), iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				if url not in Lt:
 					xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
@@ -272,16 +291,16 @@ def Serch(url, title=""):
 					k+=1
 					url=j+".mp3"
 					img=thumb
-					title2=title+" ч. "+str(k)
+					title2=Format(title)+" ч. "+str(k)
 					item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
-					item.setInfo(type="music", infoLabels={"Title": title, "album":plot})
+					item.setInfo(type="music", infoLabels={"Title": title.replace(".","\n"), "Comment":plot, "album":plot})
 					item.setProperty('IsPlayable', 'true')
 					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False)
 			else:
 					url=L2[0]+".mp3"
 					img=thumb
-					item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
-					item.setInfo(type="music", infoLabels={"Title": title, "album":plot})
+					item = xbmcgui.ListItem(Format(title), iconImage = img, thumbnailImage = img)
+					item.setInfo(type="music", infoLabels={"Title": title.replace(".","\n"), "album":plot, "Comment":plot})
 					item.setProperty('IsPlayable', 'true')
 					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False)
 					
