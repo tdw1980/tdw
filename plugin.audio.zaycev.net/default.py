@@ -10,6 +10,9 @@ thumb = os.path.join( addon.getAddonInfo('path'), 'icon.png')
 xbmcplugin.setContent(int(sys.argv[1]), 'songs')
 __settings__ = xbmcaddon.Addon(id='plugin.audio.zaycev.net')
 
+def ru(x):return unicode(x,'utf8', 'ignore')
+def xt(x):return xbmc.translatePath(x)
+
 def inputbox():
 	skbd = xbmc.Keyboard()
 	skbd.setHeading('Поиск:')
@@ -95,8 +98,6 @@ def Root():
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
-
-
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def Title():
@@ -135,6 +136,7 @@ def Title():
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title, 'artist':artist})
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.zaycev.net/?mode=save&url='+url+'&name='+title2+'")'),])
 				if url not in Lt:
 					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False)
 					Lt.append(url)
@@ -255,9 +257,35 @@ def Serch(url):
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title, 'artist':artist})
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.zaycev.net/?mode=save&url='+url+'&name='+title2+'")'),])
 				if url not in Lt:
 					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False)
 					Lt.append(url)
+
+def Save(target, name):
+	LstDir = __settings__.getSetting("DownloadDirectory")
+	if LstDir == "":LstDir = os.path.join( addon.getAddonInfo('path'), "mp3" )
+	referer=None
+	post=None
+	lfimg=os.listdir(ru(LstDir))
+	nmi = ru(name)#os.path.basename(target)
+
+	if nmi in lfimg and os.path.getsize(os.path.join(ru(LstDir),nmi))>0:
+		return os.path.join( ru(LstDir),nmi)
+	else:
+		try:
+			req = urllib2.Request(url = target, data = post)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			fl = open(os.path.join( ru(LstDir),nmi+".mp3"), "wb")
+			fl.write(resp.read())
+		#resp.close()
+			fl.close()
+			return os.path.join( ru(LstDir),nmi)
+		except Exception, e:
+			#xbmc.log( '[%s]: GET EXCEPT [%s]' % (addon_id, e), 4 )
+			return target
+			print 'HTTP ERROR ' + str(e)
 
 
 params = get_params()
@@ -285,6 +313,6 @@ elif mode == 'scene':	Scene()
 elif mode == 'time':	Time()
 elif mode == 'serch':	Serch(url)
 elif mode == 'serchgenres':	SerchGenres(url)
-
+elif mode == 'save':	Save(url, name)
 elif mode == 'play':	Play(url)
 
