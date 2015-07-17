@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
+<addon id="plugin.audio.kibergrad.com"
+       name="Kibergrad.com"
+       version="0.3.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>kibergrad.com</summary>
+    <description>kibergrad.com</description>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.mds-fm.ru"
        name="MDS-FM.ru"
        version="0.2.0"
