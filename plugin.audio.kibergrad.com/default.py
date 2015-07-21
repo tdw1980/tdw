@@ -344,7 +344,7 @@ def Root():
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
-				
+
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -406,7 +406,7 @@ def Artist():
 		xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchArtists(url):
-				title="[COLOR F050F050] [ Альбомы ] [/COLOR]"
+				title="[COLOR F06060F0][B][ Альбомы ] [/B][/COLOR]"
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchalbums'
 				uri += '&url='  + urllib.quote_plus(url+'?p=albums')
@@ -466,14 +466,16 @@ def Serch(url, Lt=[]):
 				dict=eval(i)
 				#print i
 				
-				artist	=dict["artist"]
-				title	=dict["title"]
+				album	=dict["album"].replace("? ","х ")
+				artist	=dict["artist"].replace("? ","х ")
+				title	=dict["title"].replace("? ","х ")
 				img		=dict["cover"]
 				url		=dict["url"]
 				
+				trk='[COLOR F050F050][T] [/COLOR]'
 				title2 = artist+" - "+title
-				item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
-				item.setInfo(type="Music", infoLabels=dict)
+				item = xbmcgui.ListItem(trk+title2, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})
 				
 				uri = sys.argv[0] + '?mode=save'
 				uri += '&info='  + urllib.quote_plus(i)
@@ -517,14 +519,15 @@ def Album(url, Lt=[]):
 				es='</a>'
 				
 				artist=mfindal(it, ss, es)[0][len(ss):]
-				dict["artist"] = artist
+				dict["artist"] = artist.replace("? ","х ")
 				#artist	=dict["artist"]
-				title2	=dict["title"]
+				title2	=dict["title"].replace("? ","х ")
 				img		=dict["cover"]
 				url		=dict["url"]
 				
+				alb='[COLOR F07070F0][А] [/COLOR]'
 				title=title2.replace(" - ", '').replace(artist, '')
-				item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
+				item = xbmcgui.ListItem(alb+title2, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels=dict)
 				
 				uri = sys.argv[0] + '?mode=save'
@@ -573,17 +576,17 @@ def Save2(dict, name):
 
 def Save(dict, name):
 	target	=dict["dlurl"]
-	artist	=dict["artist"]
-	title	=dict["title"]
+	artist	=dict["artist"].replace("? ","х ")
+	title	=dict["title"].replace("? ","х ")
 	img		=dict["cover"]
-	album	=dict["album"]
+	album	=dict["album"].replace("? ","х ")
 
 	Dldir = __settings__.getSetting("DownloadDirectory")
 	if Dldir == "":Dldir = os.path.join( addon.getAddonInfo('path'), "mp3" )
 	
 	fp = os.path.join(ru(Dldir), ru(artist))
 	fp = os.path.join(fp, ru(album))
-	print os.makedirs(fp)
+	if os.path.exists(fp)== False: os.makedirs(fp)
 	cp=os.path.join(fp, "cover.jpg")
 	fp = os.path.join(fp, ru(title+".mp3"))
 	
