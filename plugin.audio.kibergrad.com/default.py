@@ -246,7 +246,55 @@ ArtistList=[
 ("http://kibergrad.com/13308/yarmak", "Ярмак")
 ]
 
+from tagger import *
+def retag(pt, info={}):
+	#print "-=-=-= retag -=-=-=-=-"
+	import mutagen
+	from mutagen.mp3 import MP3
+	from mutagen.id3 import ID3
+	from mutagen.easyid3 import EasyID3
 
+	try: ID3(pt).delete(delete_v1=True, delete_v2=False)
+	except: pass
+
+	mp3_tag = ID3v2(pt)
+	#for frame in mp3_tag.frames:
+		#print frame.fid
+	title_frame = mp3_tag.new_frame('TIT2')
+	title_frame.set_text(ru(info["title"].replace("? ","х ")))
+	try:
+		old_title_frame = [frame for frame in mp3_tag.frames if frame.fid == 'TIT2'][0]
+		mp3_tag.frames.remove(old_title_frame)
+	except: pass
+	mp3_tag.frames.append(title_frame)
+	
+	a_frame = mp3_tag.new_frame('TPE1')
+	a_frame.set_text(ru(info["artist"].replace("? ","х ")))
+	try:
+		old_a_frame = [frame for frame in mp3_tag.frames if frame.fid == 'TPE1'][0]
+		mp3_tag.frames.remove(old_a_frame)
+	except: pass
+	mp3_tag.frames.append(a_frame)
+
+	al_frame = mp3_tag.new_frame('TALB')
+	al_frame.set_text(ru(info["album"].replace("? ","х ")))
+	try:
+		old_al_frame = [frame for frame in mp3_tag.frames if frame.fid == 'TALB'][0]
+		mp3_tag.frames.remove(old_al_frame)
+	except: pass
+	mp3_tag.frames.append(al_frame)
+
+	mp3_tag.commit()
+
+	#audio = EasyID3(pt, ID3=EasyID3)
+	#audio["title"]      = ru(info["title"].replace("? ","х "))
+	#audio["artist"]     = ru(info["artist"].replace("? ","х "))
+	#audio["performer"]  = info["artist"].replace("? ","х ")
+	#audio["album"]      = ru(info["album"].replace("? ","х "))
+	#audio["date"]       = "1980"
+	#audio["tracknumber"]= "1/10"
+	#print audio.pprint()
+	#audio.save()
 
 def inputbox():
 	skbd = xbmc.Keyboard()
@@ -312,7 +360,7 @@ def Format(t):
 	return title
 
 def Root():
-				title="Поиск"
+				title="[B][ Поиск ][/B]"
 				url=""
 				img=thumb
 				uri = sys.argv[0] + '?mode=title'
@@ -367,6 +415,23 @@ def SerchTitle():
 		xbmcplugin.endOfDirectory(pluginhandle)
 
 
+def SrcArtist():
+		q=inputbox().replace(" ","+")
+		Lt=[]
+		url='http://kibergrad.com/search?q='+q+"&p=artists"
+		http=getURL(url)
+		try:
+			ss='<h3>'
+			es='</h3>'
+			L=mfindal(http, ss, es)
+		except:
+			L=[]
+		for i in L:
+			n=eval(i.replace("<a href=","(").replace("</a>",'")').replace('">','", "').replace('<h3>','').replace(chr(10), "").strip())
+			Lt.append(n)
+		Artist(Lt)
+
+
 def Genres():
 		for i in GenreList:
 			#for n in range (1,10):
@@ -392,8 +457,23 @@ def SerchGenres(url):
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def Artist():
-		for i in ArtistList:
+def Artist(L=[]):
+		if L==[]:
+				title="[COLOR F06060F0][B][ Поиск ][/B][/COLOR]"
+				url=""
+				img=thumb
+				uri = sys.argv[0] + '?mode=srcartist'
+				uri += '&url='  + urllib.quote_plus(url)
+				uri += '&name='  + urllib.quote_plus(title)
+				uri += '&img='  + urllib.quote_plus(img)
+				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"Title": title})
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		if L==[]:AL=ArtistList
+		else: AL=L
+			
+		for i in AL:
 				url, title=i
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchartists'
@@ -432,12 +512,8 @@ def SerchAlbums(url):
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchTracs(url):
-				print '-=-=-=-=-=-= SerchTracs =-=-=-=-=-'
 				Lt=Serch(url)
-				print Lt
 				xbmcplugin.endOfDirectory(pluginhandle)
-
-
 
 
 def Serch(url, Lt=[]):
@@ -473,7 +549,7 @@ def Serch(url, Lt=[]):
 				url		=dict["url"]
 				
 				trk='[COLOR F050F050][T] [/COLOR]'
-				title2 = artist+" - "+title
+				title2 = artist+" - [B]"+title+"[/B]"
 				item = xbmcgui.ListItem(trk+title2, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})
 				
@@ -518,23 +594,23 @@ def Album(url, Lt=[]):
 				ss='">'
 				es='</a>'
 				
-				artist=mfindal(it, ss, es)[0][len(ss):]
-				dict["artist"] = artist.replace("? ","х ")
-				#artist	=dict["artist"]
+				artist=mfindal(it, ss, es)[0][len(ss):].replace("? ","х ")
+				dict["artist"] = artist
 				title2	=dict["title"].replace("? ","х ")
 				img		=dict["cover"]
 				url		=dict["url"]
-				
+				title=title2.replace(" - ", '').replace(artist, '').replace("? ","х ")
+				title2=title2.replace(" - ", ' - [B]')+"[/B]"
+				album	=title
 				alb='[COLOR F07070F0][А] [/COLOR]'
-				title=title2.replace(" - ", '').replace(artist, '')
 				item = xbmcgui.ListItem(alb+title2, iconImage = img, thumbnailImage = img)
-				item.setInfo(type="Music", infoLabels=dict)
+				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})
 				
-				uri = sys.argv[0] + '?mode=save'
-				uri += '&info='  + urllib.quote_plus(i)
+				uri = sys.argv[0] + '?mode=save_all'
+				uri += '&url='  + urllib.quote_plus(url)
 				uri += '&name='  + urllib.quote_plus(title2)
 				uri += '&img='  + urllib.quote_plus(img)
-				#item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),])
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),])
 				
 				uri = sys.argv[0] + '?mode=serchtracs'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -545,6 +621,49 @@ def Album(url, Lt=[]):
 					xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True,50)
 					Lt.append(title2)
 		return Lt
+
+
+def SaveAll(url):
+		http=getURL(url)
+		try:
+			ss='<li class="view clearit">'
+			es='<a class="icon icon-list-download download-btn'
+			L=mfindal(http, ss, es)
+		except:
+			L=[]
+		for i in L:
+				k=i.find("data-play-src=")
+				i=i[k:]
+				i=i.replace('  ','')
+				i=i.replace(chr(10),'').replace(chr(13),'')
+				i=i.replace('" data-','", "')
+				i=i.replace('="','": "')
+				i=i.replace('></a>','')
+				i=i.replace('-name','')
+				#i=i.replace('album-name','album')
+				#i=i.replace('artist-name','artist')
+				i=i.replace('name','title')
+				i=i.replace('data-play-src','url')
+				i=i.replace('download-src','dlurl')
+				i='{"'+i+"}"
+				dict=eval(i)
+				#print i
+				
+				album	=dict["album"].replace("? ","х ")
+				artist	=dict["artist"].replace("? ","х ")
+				title	=dict["title"].replace("? ","х ")
+				img		=dict["cover"]
+				url		=dict["url"]
+				
+				trk='[COLOR F050F050][T] [/COLOR]'
+				title2 = artist+" - [B]"+title+"[/B]"
+				item = xbmcgui.ListItem(trk+title2, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})
+				
+				Save(dict, title2, update=0)
+				xbmcplugin.addDirectoryItem(pluginhandle, url, item, False,len(L))
+		xbmc.executebuiltin('UpdateLibrary("music")')
+		xbmcplugin.endOfDirectory(pluginhandle)
 
 
 
@@ -574,7 +693,7 @@ def Save2(dict, name):
 			return target
 			print 'HTTP ERROR ' + str(e)
 
-def Save(dict, name):
+def Save(dict, name, update=1):
 	target	=dict["dlurl"]
 	artist	=dict["artist"].replace("? ","х ")
 	title	=dict["title"].replace("? ","х ")
@@ -604,7 +723,11 @@ def Save(dict, name):
 				fl = open(cp, "wb")
 				fl.write(resp.read())
 				fl.close()
-
+			
+			retag(fp, dict)
+			#print "Update"
+			if update==1: xbmc.executebuiltin('UpdateLibrary("music")')
+			
 			return os.path.join( ru(LstDir),nmi)
 	except Exception, e:
 			#xbmc.log( '[%s]: GET EXCEPT [%s]' % (addon_id, e), 4 )
@@ -643,5 +766,6 @@ elif mode == 'serchartists':	SerchArtists(url)
 elif mode == 'serchalbums':	SerchAlbums(url)
 elif mode == 'serchtracs':	SerchTracs(url)
 elif mode == 'save':	Save(info, name)
-elif mode == 'play':	Play(url)
+elif mode == 'save_all':	SaveAll(url)
+elif mode == 'srcartist':	SrcArtist()
 
