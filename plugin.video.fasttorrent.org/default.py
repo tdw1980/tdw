@@ -67,6 +67,77 @@ def stft(text):
 					+ '&info=' + urllib.quote_plus(repr(dict))
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 
+def s2kp(id, info):
+	#try:
+		
+		import tokp
+		skp=tokp.Tracker()
+		RL = skp.Search(id)
+		if len(RL)>0:
+			Title = "[COLOR F050F050]"+"[--------------  «Tracker.ru»  "+id+" --------------]"+"[/COLOR]"
+			row_url = Title
+			listitem = xbmcgui.ListItem(Title)
+			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+			purl = sys.argv[0] + '?mode=Search'\
+				+ '&url=' + urllib.quote_plus(row_url)\
+				+ '&title=' + urllib.quote_plus(Title)\
+				+ '&text=' + urllib.quote_plus('0')
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			
+			for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenCat'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+		return len(RL)
+	#except:
+		#return 0
+
+
+def fileek(qury, info):
+	#try:
+		
+		import fileek
+		skp=fileek.Tracker()
+		RL = skp.Search(qury)
+		if len(RL)>0:
+			Title = "[COLOR F050F050]"+"[--------------  «Fileek.com»  "+qury+" --------------]"+"[/COLOR]"
+			row_url = Title
+			listitem = xbmcgui.ListItem(Title)
+			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+			purl = sys.argv[0] + '?mode=Search'\
+				+ '&url=' + urllib.quote_plus(row_url)\
+				+ '&title=' + urllib.quote_plus(Title)\
+				+ '&text=' + urllib.quote_plus('0')
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			
+			for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenCat'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+		return len(RL)
+
 
 
 
@@ -252,7 +323,7 @@ sort_name='0'
 from ASCore import TSengine,_TSPlayer
 
 def start_torr(torr_link,img):
-    #print torr_link
+    print torr_link
     TSplayer=TSengine()
     out=TSplayer.load_torrent(torr_link,'TORRENT')
     if out=='Ok':
@@ -640,7 +711,7 @@ def formtext_n(http):
 		#------------------- ищем рейтинг ----------------
 		#for i in L:
 			ss='class="inline-rating" title="'
-			es='из 5, голосов'
+			es='из 10, голосов'
 			#if i.find(ss)<0:ss='</h2><div class="genre_list'
 			L2=mfindal(i, ss, es)
 			try:
@@ -2690,8 +2761,16 @@ def OpenList(url, name, dict,title):
 			+ '&info=' + urllib.quote_plus(repr(dict))
 		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 	kfsnm=title[9:title.find("(")]#.replace("(","")
-	if __settings__.getSetting("Krasfs")=="0" and name!=title: stft(kfsnm)
-	if __settings__.getSetting("Krasfs")=="1" and name!=title and len(L)<1:stft(kfsnm)
+	print kfsnm
+	if __settings__.getSetting("Krasfs")=="0" and name!=title: 
+		s2kp(kfsnm.strip(), {})
+		stft(kfsnm)
+		fileek(kfsnm, {})
+	if __settings__.getSetting("Krasfs")=="1" and name!=title and len(L)<1:
+		s2kp(kfsnm.strip(), {})
+		stft(kfsnm)
+		fileek(kfsnm, {})
+
 
 def OpenCat(url, name, dict):
 	nnn=url.rfind("/")
