@@ -2562,7 +2562,7 @@ def normlen(st, max):
 		
 		
 def OpenList(url, name, dict,title):
-	hp = GET('http://www.fast-torrent.ru'+url, httpSiteUrl, None)
+	hp = GET('http://www.fast-torrent.ru'+url.replace(".html", "/torrents.html"), httpSiteUrl, None)
 	#print url
 	L=gettorlist(hp)
 	#L=[["","","","","","","","",""],["","","","","","","","",""]]
