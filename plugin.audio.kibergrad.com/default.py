@@ -15,179 +15,196 @@ def xt(x):return xbmc.translatePath(x)
 
 
 GenreList=[
+("Jazz", "[COLOR F0E0E067]Джаз[/COLOR]"),
+("Metal", "[COLOR F0E0E067]Метал[/COLOR]"),
+("Pop", "[COLOR F0E0E067]Поп-музыка[/COLOR]"),
+("Rap", "[COLOR F0E0E067]Рэп[/COLOR]"),
+("Reggae", "[COLOR F0E0E067]Регги[/COLOR]"),
+("Rock", "[COLOR F0E0E067]Рок[/COLOR]"),
+("Soundtrack", "[COLOR F0E0E067]Саундтреки (OST)[/COLOR]"),
+("Classical", "[COLOR F0E0E067]Классическая[/COLOR]"),
+("Instrumental", "[COLOR F0E0E067]Инструментальная музыка[/COLOR]"),
+("Electronic", "[COLOR F0E0E067]Электронная[/COLOR]"),
+("Chanson", "[COLOR F0E0E067]Шансон[/COLOR]"),
+("Club", "[COLOR F0E0E067]Танцевальная/Клубная[/COLOR]"),
+("Punk-Rock", "[COLOR F0E0E067]Панк-рок[/COLOR]"),
+("Emo", "[COLOR F0E0E067]Эмо[/COLOR]"),
+("Thematic", "[COLOR F0E0E067]Тематическая музыка[/COLOR]"),
+("Hits", "[COLOR F0E0E067]Хиты[/COLOR]"),
+("Hits", " "),
 ("Jazz", "[COLOR F050F050]Джаз[/COLOR]"),
-("Acid-Jazz", "Эйсид-джаз"),
-("Contemporary-Jazz", "Современный Джаз"),
-("Free-Jazz", "Фри Джаз"),
-("Jazz-Metal", "Джаз Метал"),
-("Jazz-Pop", "Джаз Поп"),
-("Jazz-Rock", "Джаз Рок"),
-("Lounge", "Гостиная"),
-("Smooth-Jazz", "Smooth Jazz"),
-("Swing", "Свинг"),
-("Vocal-Jazz", "Вокал Джаз"),
+("Acid-Jazz", "  |- Эйсид-джаз"),
+("Contemporary-Jazz", "  |- Современный Джаз"),
+("Free-Jazz", "  |- Фри Джаз"),
+("Jazz-Metal", "  |- Джаз Метал"),
+("Jazz-Pop", "  |- Джаз Поп"),
+("Jazz-Rock", "  |- Джаз Рок"),
+("Lounge", "  |- Гостиная"),
+("Smooth-Jazz", "  |- Smooth Jazz"),
+("Swing", "  |- Свинг"),
+("Vocal-Jazz", "  |- Вокал Джаз"),
 ("Metal", "[COLOR F050F050]Метал[/COLOR]"),
-("Heavy-Metal", "Хэви-метал"),
-("Death-Metal", "Дэт-метал"),
-("Thrash-Metal", "Трэш-метал"),
-("Nu-Metal", "Нюметал"),
-("Doom-Metal", "Дум Метал"),
-("Power-Metal", "Паувер Метал"),
-("Alternative", "Альтернатива"),
-("Black-Metal", "Блэк-метал"),
-("Gothic", "Готика"),
-("Post-Metal", "Пост Метал"),
-("Melodic-Metalcore", "Мелодик Металкор"),
-("Industrial", "Промышленные"),
-("Melodic-Death", "Мелодик Дет"),
-("Folk-Metal", "Фолк Метал"),
-("Atmospheric-Black", "Атмосферик Блэк"),
-("Avantgarde", "Авангард"),
-("Avant-Metal", "Авант Метал"),
-("Black-Doom", "Блэк Дум"),
-("Blackened-Death", "Блэкенед Дет"),
-("Brutal-Death", "Брутал Дэт"),
-("Dark-Metal", "Дарк Метал"),
-("Deathcore", "Дэткор"),
-("Deathgrind", "Дэтграйнд"),
-("Death-N-Roll", "Дэт Эн Ролл"),
-("Depressive-Black", "Дипрессив Блэк"),
-("Drone-Doom", "Дрон Дум"),
-("Epic-Metal", "Эпик Метал"),
-("Experimental-Metal", "Экспериментал Метал"),
-("Funeral-Doom", "Фьюнерал Дум"),
-("Groove-Metal", "Грув Метал"),
-("Mathcore", "Маткор"),
-("Melodic-Black", "Мелодик Блэк"),
-("Modern-Metal", "Модерн Метал"),
-("NS-Black-Metal", "НС Блэк Метал"),
-("NWOBHM", "NWOBHM"),
-("Pagan-Metal", "Паган Метал"),
-("Post-Black-Metal", "Пост Блэк Метал"),
-("Progressive-Death-Metal", "Прогрессив Дэт Метал"),
-("Progressive-Metal", "Прогрессив Метал"),
-("Raw-Black-Metal", "Рав Блэк Метал"),
-("Sludge-Metal", "Сладж-метал"),
-("Speed-Metal", "Спид Метал"),
-("Stoner-Doom", "Стоунер Дум"),
-("Stoner-Metal", "Стоунер Метал"),
-("Symphonic-Metal", "Симфонический Метал"),
-("TBM", "TBM"),
-("Technical-Death", "Техничный Дэт"),
-("Technical-Trash", "Техничный Трэш"),
-("Thrash-n-Roll", "Thrash'n'Roll"),
-("Viking-Metal", "Викинг Метал"),
+("Heavy-Metal", "  |- Хэви-метал"),
+("Death-Metal", "  |- Дэт-метал"),
+("Thrash-Metal", "  |- Трэш-метал"),
+("Nu-Metal", "  |- Нюметал"),
+("Doom-Metal", "  |- Дум Метал"),
+("Power-Metal", "  |- Паувер Метал"),
+("Alternative", "  |- Альтернатива"),
+("Black-Metal", "  |- Блэк-метал"),
+("Gothic", "  |- Готика"),
+("Post-Metal", "  |- Пост Метал"),
+("Melodic-Metalcore", "  |- Мелодик Металкор"),
+("Industrial", "  |- Промышленные"),
+("Melodic-Death", "  |- Мелодик Дет"),
+("Folk-Metal", "  |- Фолк Метал"),
+("Atmospheric-Black", "  |- Атмосферик Блэк"),
+("Avantgarde", "  |- Авангард"),
+("Avant-Metal", "  |- Авант Метал"),
+("Black-Doom", "  |- Блэк Дум"),
+("Blackened-Death", "  |- Блэкенед Дет"),
+("Brutal-Death", "  |- Брутал Дэт"),
+("Dark-Metal", "  |- Дарк Метал"),
+("Deathcore", "  |- Дэткор"),
+("Deathgrind", "  |- Дэтграйнд"),
+("Death-N-Roll", "  |- Дэт Эн Ролл"),
+("Depressive-Black", "  |- Дипрессив Блэк"),
+("Drone-Doom", "  |- Дрон Дум"),
+("Epic-Metal", "  |- Эпик Метал"),
+("Experimental-Metal", "  |- Экспериментал Метал"),
+("Funeral-Doom", "  |- Фьюнерал Дум"),
+("Groove-Metal", "  |- Грув Метал"),
+("Mathcore", "  |- Маткор"),
+("Melodic-Black", "  |- Мелодик Блэк"),
+("Modern-Metal", "  |- Модерн Метал"),
+("NS-Black-Metal", "  |- НС Блэк Метал"),
+("NWOBHM", "  |- NWOBHM"),
+("Pagan-Metal", "  |- Паган Метал"),
+("Post-Black-Metal", "  |- Пост Блэк Метал"),
+("Progressive-Death-Metal", "  |- Прогрессив Дэт Метал"),
+("Progressive-Metal", "  |- Прогрессив Метал"),
+("Raw-Black-Metal", "  |- Рав Блэк Метал"),
+("Sludge-Metal", "  |- Сладж-метал"),
+("Speed-Metal", "  |- Спид Метал"),
+("Stoner-Doom", "  |- Стоунер Дум"),
+("Stoner-Metal", "  |- Стоунер Метал"),
+("Symphonic-Metal", "  |- Симфонический Метал"),
+("TBM", "  |- TBM"),
+("Technical-Death", "  |- Техничный Дэт"),
+("Technical-Trash", "  |- Техничный Трэш"),
+("Thrash-n-Roll", "  |- Thrash'n'Roll"),
+("Viking-Metal", "  |- Викинг Метал"),
 ("Pop", "[COLOR F050F050]Поп-музыка[/COLOR]"),
-("Electro", "Электро"),
-("Rock-And-Roll", "Рок & ролл"),
-("Rock", "Рок"),
-("Blues", "Блюз"),
+("Electro", "  |- Электро"),
+("Rock-And-Roll", "  |- Рок & ролл"),
+("Rock", "  |- Рок"),
+("Blues", "  |- Блюз"),
 ("Rap", "[COLOR F050F050]Рэп[/COLOR]"),
-("Chicano-Rap", "Чикано Рэп"),
-("Crunk", "Кранк"),
-("East-Coast-Rap", "Рэп Восточного Побережья"),
-("Gangsta", "Гангста"),
-("Hardcore-Rap", "Хардкор Рэп"),
-("Pop-Rap", "Поп Рэп"),
-("Rapcore", "Рэпкор"),
-("Rap-Rock", "Рэп Рок"),
-("Southern-Rap", "Южный рэп"),
-("Texas-Rap", "Texas Rap"),
-("Thug-Rap", "Thug Rap"),
-("Underground-Rap", "Underground Rap"),
-("West-Coast-Rap", "Рэп Западного побережья"),
+("Chicano-Rap", "  |- Чикано Рэп"),
+("Crunk", "  |- Кранк"),
+("East-Coast-Rap", "  |- Рэп Восточного Побережья"),
+("Gangsta", "  |- Гангста"),
+("Hardcore-Rap", "  |- Хардкор Рэп"),
+("Pop-Rap", "  |- Поп Рэп"),
+("Rapcore", "  |- Рэпкор"),
+("Rap-Rock", "  |- Рэп Рок"),
+("Southern-Rap", "  |- Южный рэп"),
+("Texas-Rap", "  |- Texas Rap"),
+("Thug-Rap", "  |- Thug Rap"),
+("Underground-Rap", "  |- Underground Rap"),
+("West-Coast-Rap", "  |- Рэп Западного побережья"),
 ("Reggae", "[COLOR F050F050]Регги[/COLOR]"),
-("Raggamuffin", "Раггамаффин"),
-("Reggaeton", "Реггетон"),
+("Raggamuffin", "  |- Раггамаффин"),
+("Reggaeton", "  |- Реггетон"),
 ("Rock", "[COLOR F050F050]Рок[/COLOR]"),
-("Alternative-Rock", "Альтернативный рок"),
-("Indie-Rock", "Инди-рок"),
-("Punk-Rock", "Панк-рок"),
-("Hard-Rock", "Хард-рок"),
-("Post-Rock", "Пост-рок"),
-("Folk-Rock", "Фолк-рок"),
-("Post-Grunge", "Пост Гранж"),
-("Christian-Rock", "Христианский рок"),
-("Britpop", "Брит-поп"),
-("Progressive-Rock", "Прогрессивный рок"),
-("Acid", "Кислота"),
-("AOR", "АОР"),
-("Art-Rock", "Арт-рок"),
-("Avant-Rock", "Авант Рок"),
-("Blues-Rock", "Блюз Рок"),
-("Dark-Folk", "Дарк Фолк"),
-("Experimental", "Экспериментальный"),
-("Garage-Rock", "Гаражный рок"),
-("Glam-Metal", "Глэм Метал"),
-("Gothic-Rock", "Готик-рок"),
-("J-Rock", "Джей Рок"),
-("Krautrock", "Краут-рок"),
-("Neofolk", "Неофолк"),
-("New-Wave", "Новая волна"),
-("Noise-Rock", "Ноиз рок"),
-("Pornogrind", "Порнограйнд"),
-("Classic-Rock", "Классический рок"),
-("Post-Punk", "Пост-панк"),
-("Psychobilly", "Сайкобилли"),
-("Shoegaze", "Shoegaze"),
-("Ska-Punk", "Ска Панк"),
-("Skatepunk", "Скейт Панк"),
-("Sleaze-Rock", "Слиз Рок"),
-("Soft-Rock", "Софт Рок"),
-("Space-Rock", "Спейс-рок"),
-("Stoner-Rock", "Стоунер Рок"),
-("Symphonic-Rock", "Симфонический рок"),
-("Visual-Kei", "Visual Kei"),
-("Zeuhl", "Zeuhl"),
+("Alternative-Rock", "  |- Альтернативный рок"),
+("Indie-Rock", "  |- Инди-рок"),
+("Punk-Rock", "  |- Панк-рок"),
+("Hard-Rock", "  |- Хард-рок"),
+("Post-Rock", "  |- Пост-рок"),
+("Folk-Rock", "  |- Фолк-рок"),
+("Post-Grunge", "  |- Пост Гранж"),
+("Christian-Rock", "  |- Христианский рок"),
+("Britpop", "  |- Брит-поп"),
+("Progressive-Rock", "  |- Прогрессивный рок"),
+("Acid", "  |- Кислота"),
+("AOR", "  |- АОР"),
+("Art-Rock", "  |- Арт-рок"),
+("Avant-Rock", "  |- Авант Рок"),
+("Blues-Rock", "  |- Блюз Рок"),
+("Dark-Folk", "  |- Дарк Фолк"),
+("Experimental", "  |- Экспериментальный"),
+("Garage-Rock", "  |- Гаражный рок"),
+("Glam-Metal", "  |- Глэм Метал"),
+("Gothic-Rock", "  |- Готик-рок"),
+("J-Rock", "  |- Джей Рок"),
+("Krautrock", "  |- Краут-рок"),
+("Neofolk", "  |- Неофолк"),
+("New-Wave", "  |- Новая волна"),
+("Noise-Rock", "  |- Ноиз рок"),
+("Pornogrind", "  |- Порнограйнд"),
+("Classic-Rock", "  |- Классический рок"),
+("Post-Punk", "  |- Пост-панк"),
+("Psychobilly", "  |- Сайкобилли"),
+("Shoegaze", "  |- Shoegaze"),
+("Ska-Punk", "  |- Ска Панк"),
+("Skatepunk", "  |- Скейт Панк"),
+("Sleaze-Rock", "  |- Слиз Рок"),
+("Soft-Rock", "  |- Софт Рок"),
+("Space-Rock", "  |- Спейс-рок"),
+("Stoner-Rock", "  |- Стоунер Рок"),
+("Symphonic-Rock", "  |- Симфонический рок"),
+("Visual-Kei", "  |- Visual Kei"),
+("Zeuhl", "  |- Zeuhl"),
 ("Soundtrack", "[COLOR F050F050]Саундтреки (OST)[/COLOR]"),
 ("Classical", "[COLOR F050F050]Классическая[/COLOR]"),
-("Neoclassical", "Неоклассический"),
-("Classical-Crossover", "Классикал Кроссовер"),
+("Neoclassical", "  |- Неоклассический"),
+("Classical-Crossover", "  |- Классикал Кроссовер"),
 ("Instrumental", "[COLOR F050F050]Инструментальная музыка[/COLOR]"),
-("Acoustic", "Акустические"),
+("Acoustic", "  |- Акустические"),
 ("Electronic", "[COLOR F050F050]Электронная[/COLOR]"),
-("Club", "Танцевальная/Клубная"),
-("Techno", "Техно"),
-("8-bit", "8-бит"),
-("Ambient", "Окружающая среда"),
-("Breakbeat", "Брейкбит"),
-("Chillout", "Chillout"),
-("Chillwave", "Чиллвейв"),
-("Chiptune", "Чиптюн"),
-("Dark-Ambient", "Дарк-эмбиент"),
-("Darkwave", "Дарквейв"),
-("Digital-Hardcore", "Диджитал Хардкор"),
-("Downtempo", "Даунтемпо"),
-("Drone-Ambient", "Дрон Амбиент"),
-("Dubstep", "Дабстеп"),
-("Electro-Freestyle", "Электро Фристайл"),
-("Electroclash", "Электроклэш"),
-("Electropunk", "Электро Панк"),
-("Euro-House", "Евро дом"),
-("Futurepop", "Futurepop"),
-("Glitch", "Глитч"),
-("Goa", "Гоа"),
-("Idm", "HD,"),
-("Industrial-Rock", "Индастриал Рок"),
-("Nu-Rave", "Ню Рэйв"),
-("Power-Electronics", "Пауэр Электроникс"),
-("Progressive-House", "Прогрессив Хаус"),
-("Psytrance", "Psytrance"),
-("Speedcore", "Спидкор"),
-("Synthpop", "Синтипоп"),
-("Tech-House", "Тек-хаус"),
-("Tech-Trance", "Тек-транс"),
-("Trance-Vocal", "Транс Вокал"),
-("Trouse", "Trouse"),
-("UK-Funky", "UK Funky"),
-("UK-Garage", "UK Garage"),
+("Club", "  |- Танцевальная/Клубная"),
+("Techno", "  |- Техно"),
+("8-bit", "  |- 8-бит"),
+("Ambient", "  |- Окружающая среда"),
+("Breakbeat", "  |- Брейкбит"),
+("Chillout", "  |- Chillout"),
+("Chillwave", "  |- Чиллвейв"),
+("Chiptune", "  |- Чиптюн"),
+("Dark-Ambient", "  |- Дарк-эмбиент"),
+("Darkwave", "  |- Дарквейв"),
+("Digital-Hardcore", "  |- Диджитал Хардкор"),
+("Downtempo", "  |- Даунтемпо"),
+("Drone-Ambient", "  |- Дрон Амбиент"),
+("Dubstep", "  |- Дабстеп"),
+("Electro-Freestyle", "  |- Электро Фристайл"),
+("Electroclash", "  |- Электроклэш"),
+("Electropunk", "  |- Электро Панк"),
+("Euro-House", "  |- Евро дом"),
+("Futurepop", "  |- Futurepop"),
+("Glitch", "  |- Глитч"),
+("Goa", "  |- Гоа"),
+("Idm", "  |- HD,"),
+("Industrial-Rock", "  |- Индастриал Рок"),
+("Nu-Rave", "  |- Ню Рэйв"),
+("Power-Electronics", "  |- Пауэр Электроникс"),
+("Progressive-House", "  |- Прогрессив Хаус"),
+("Psytrance", "  |- Psytrance"),
+("Speedcore", "  |- Спидкор"),
+("Synthpop", "  |- Синтипоп"),
+("Tech-House", "  |- Тек-хаус"),
+("Tech-Trance", "  |- Тек-транс"),
+("Trance-Vocal", "  |- Транс Вокал"),
+("Trouse", "  |- Trouse"),
+("UK-Funky", "  |- UK Funky"),
+("UK-Garage", "  |- UK Garage"),
 ("Chanson", "[COLOR F050F050]Шансон[/COLOR]"),
-("Russkiy-Shanson", "Русский шансон"),
+("Russkiy-Shanson", "  |- Русский шансон"),
 ("Club", "[COLOR F050F050]Танцевальная/Клубная[/COLOR]"),
 ("Punk-Rock", "[COLOR F050F050]Панк-рок[/COLOR]"),
 ("Emo", "[COLOR F050F050]Эмо[/COLOR]"),
-("Emo-Punk", "Эмо Панк"),
-("Emo-Rock", "Эмо Рок"),
+("Emo-Punk", "  |- Эмо Панк"),
+("Emo-Rock", "  |- Эмо Рок"),
 ("Thematic", "[COLOR F050F050]Тематическая музыка[/COLOR]"),
 ("Hits", "[COLOR F050F050]Хиты[/COLOR]")
 ]
@@ -360,7 +377,7 @@ def Format(t):
 	return title
 
 def Root():
-				title="[B][ Поиск ][/B]"
+				title="[COLOR F0E0E067][B][ Поиск ][/B][/COLOR]"
 				url=""
 				img=thumb
 				uri = sys.argv[0] + '?mode=title'
@@ -371,7 +388,7 @@ def Root():
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
-				title="Жанры"
+				title="[COLOR F0E0E067][B][ Жанры ][/B][/COLOR]"
 				url=""
 				img=thumb
 				uri = sys.argv[0] + '?mode=genres'
@@ -382,7 +399,7 @@ def Root():
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
-				title="Исполнители"
+				title="[COLOR F0E0E067][B][ Исполнители ][/B][/COLOR]"
 				url=""
 				img=thumb
 				uri = sys.argv[0] + '?mode=artist'
@@ -392,6 +409,8 @@ def Root():
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+				Serch("http://kibergrad.com/popular-music")
 
 				xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -415,10 +434,11 @@ def SerchTitle():
 		xbmcplugin.endOfDirectory(pluginhandle)
 
 
-def SrcArtist():
-		q=inputbox().replace(" ","+")
+def SrcArtist(q=""):
+		if q=="": q=inputbox()
 		Lt=[]
-		url='http://kibergrad.com/search?q='+q+"&p=artists"
+		url='http://kibergrad.com/search?q='+q.replace(" ","+")+"&p=artists"
+		print url
 		http=getURL(url)
 		try:
 			ss='<h3>'
@@ -459,7 +479,7 @@ def SerchGenres(url):
 
 def Artist(L=[]):
 		if L==[]:
-				title="[COLOR F06060F0][B][ Поиск ][/B][/COLOR]"
+				title="[COLOR F0E0E067][B][ Поиск ][/B][/COLOR]"
 				url=""
 				img=thumb
 				uri = sys.argv[0] + '?mode=srcartist'
@@ -476,7 +496,8 @@ def Artist(L=[]):
 		for i in AL:
 				url, title=i
 				img=thumb
-				uri = sys.argv[0] + '?mode=serchartists'
+				#uri = sys.argv[0] + '?mode=serchartists'
+				uri = sys.argv[0] + '?mode=serchalbums'
 				uri += '&url='  + urllib.quote_plus(url)
 				uri += '&name='  + urllib.quote_plus(title)
 				uri += '&img='  + urllib.quote_plus(img)
@@ -489,12 +510,12 @@ def SerchArtists(url):
 				title="[COLOR F06060F0][B][ Альбомы ] [/B][/COLOR]"
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchalbums'
-				uri += '&url='  + urllib.quote_plus(url+'?p=albums')
+				uri += '&url='  + urllib.quote_plus(url)#+'?p=albums')
 				uri += '&name='  + urllib.quote_plus(title)
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
-				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 				
 				Lt=[]
 				for n in range (1,20):
@@ -504,10 +525,20 @@ def SerchArtists(url):
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchAlbums(url):
+				title="[COLOR F050F050][B][ Tреки ] [/B][/COLOR]"
+				img=thumb
+				uri = sys.argv[0] + '?mode=serchartists'
+				uri += '&url='  + urllib.quote_plus(url)#+'?p=albums')
+				uri += '&name='  + urllib.quote_plus(title)
+				uri += '&img='  + urllib.quote_plus(img)
+				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"Title": title})
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+				
 				Lt=[]
 				for n in range (1,5):
-					if n>1: url2=url+"&FAlbum_page="+str(n)
-					else: url2=url
+					if n>1: url2=url+'?p=albums'+"&FAlbum_page="+str(n)
+					else: url2=url+'?p=albums'
 					Lt=Album(url2, Lt)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -542,9 +573,9 @@ def Serch(url, Lt=[]):
 				dict=eval(i)
 				#print i
 				
-				album	=dict["album"].replace("? ","х ")
-				artist	=dict["artist"].replace("? ","х ")
-				title	=dict["title"].replace("? ","х ")
+				album	=dict["album"].replace("? ","х ").replace("&#039;","'")
+				artist	=dict["artist"].replace("? ","х ").replace("&#039;","'")
+				title	=dict["title"].replace("? ","х ").replace("&#039;","'")
 				img		=dict["cover"]
 				url		=dict["url"]
 				
@@ -557,7 +588,15 @@ def Serch(url, Lt=[]):
 				uri += '&info='  + urllib.quote_plus(i)
 				uri += '&name='  + urllib.quote_plus(title2)
 				uri += '&img='  + urllib.quote_plus(img)
-				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),])
+				
+				if artist.find(" feat.")>0: artist1=artist[:artist.find(" feat.")]
+				else: artist1=artist
+				uri2 = sys.argv[0] + '?mode=srcartist_q'
+				uri2 += '&info='  + urllib.quote_plus(i)
+				uri2 += '&name='  + urllib.quote_plus(artist1)
+				uri2 += '&img='  + urllib.quote_plus(img)
+				
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')])
 				
 				if title2 not in Lt:
 					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False,500)
@@ -594,12 +633,12 @@ def Album(url, Lt=[]):
 				ss='">'
 				es='</a>'
 				
-				artist=mfindal(it, ss, es)[0][len(ss):].replace("? ","х ")
+				artist=mfindal(it, ss, es)[0][len(ss):].replace("? ","х ").replace("&#039;","'")
 				dict["artist"] = artist
-				title2	=dict["title"].replace("? ","х ")
+				title2	=dict["title"].replace("? ","х ").replace("&#039;","'")
 				img		=dict["cover"]
 				url		=dict["url"]
-				title=title2.replace(" - ", '').replace(artist, '').replace("? ","х ")
+				title=title2.replace(" - ", '').replace(artist, '').replace("? ","х ").replace("&#039;","'")
 				title2=title2.replace(" - ", ' - [B]')+"[/B]"
 				album	=title
 				alb='[COLOR F07070F0][А] [/COLOR]'
@@ -610,7 +649,14 @@ def Album(url, Lt=[]):
 				uri += '&url='  + urllib.quote_plus(url)
 				uri += '&name='  + urllib.quote_plus(title2)
 				uri += '&img='  + urllib.quote_plus(img)
-				item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),])
+				
+				if title2.find(" feat.")>0: artist1=title2[:title2.find(" feat.")]
+				else: artist1=title2[:title2.find(" - ")]
+				uri2 = sys.argv[0] + '?mode=srcartist_q'
+				uri2 += '&name='  + urllib.quote_plus(artist1)
+				uri2 += '&img='  + urllib.quote_plus(img)
+				
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')])
 				
 				uri = sys.argv[0] + '?mode=serchtracs'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -621,7 +667,6 @@ def Album(url, Lt=[]):
 					xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True,50)
 					Lt.append(title2)
 		return Lt
-
 
 def SaveAll(url):
 		http=getURL(url)
@@ -768,4 +813,4 @@ elif mode == 'serchtracs':	SerchTracs(url)
 elif mode == 'save':	Save(info, name)
 elif mode == 'save_all':	SaveAll(url)
 elif mode == 'srcartist':	SrcArtist()
-
+elif mode == 'srcartist_q':	SrcArtist(name)
