@@ -6,6 +6,6 @@
     <setting id="DownloadDirectory" type="folder" label="Путь для кэша" default=""/>
     <setting id="Picture" type="bool" label="Сохранять картинки" default="false" />
     <setting id="Quality" type="enum" label="Качество" default="0" values="Выбор|720p|1080p|SD"/>
-    <setting id="immunicity" type="enum" label="Разблокировка" default="0" values="Нет|Immunicity|Proxy"/>
-    <setting id="Proxy" type="text" label="Прокси (адрес:порт)" default="127.0.0.1:8090" />
+    <setting id="immunicity" type="enum" label="Разблокировка" default="2" values="Нет|Immunicity|Proxy"/>
+    <setting id="Proxy" type="text" label="Прокси (адрес:порт)" default="n17-03-01.opera-mini.net:443" />
 </settings>

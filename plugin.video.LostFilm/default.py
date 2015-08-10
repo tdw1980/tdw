@@ -95,11 +95,10 @@ playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 
 #---------libtorrents-torrenter-by-slng---
 
-import Downloader
-try:import Downloader
-except: pass
-
 def openTorrent(url, userStorageDirectory):
+	try:import Downloader
+	except: pass
+
 	print userStorageDirectory
 	torrent = Downloader.Torrent(url, userStorageDirectory)
 	
@@ -131,6 +130,7 @@ def md5(string):
 
 
 def playTorrent(torrentUrl, StorageDirectory, contentId):
+		import Downloader
 		#torrentFile = StorageDirectory + os.sep + 'torrents' + os.sep + md5(torrentUrl) + '.torrent'
 		#torrentUrl = torrentFile.replace("\\\\","\\")
 		#torrentUrl = self.__settings__.getSetting("lastTorrent")
@@ -186,18 +186,31 @@ def playTorrent(torrentUrl, StorageDirectory, contentId):
 from TSCore import TSengine as tsengine
 
 def play_url(params):
-	torr_link=params['file']
-	img=urllib.unquote_plus(params["img"])
 	Engine = __settings__.getSetting("Engine")
 	if Engine=="1":
+		torr_link=params['file']
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		openTorrent(torr_link, DownloadDirectory)
 		return False
+	
+	img=urllib.unquote_plus(params["img"])
+	if __settings__.getSetting("immunicity") == "2":
+		import base64
+		file=GETtorr(params['file'])
+		f = open(file.decode('utf-8'), 'rb')
+		buf=f.read()
+		f.close
+		torr_link=base64.b64encode(buf)
+		tmd='RAW'
+	else:
+		torr_link=params['file']
+		tmd='TORRENT'
+	
 
 	#showMessage('heading', torr_link, 10000)
 	TSplayer=tsengine()
-	out=TSplayer.load_torrent(torr_link,'TORRENT')
+	out=TSplayer.load_torrent(torr_link,tmd)#'TORRENT'
 	
 	if out=='Ok':
 		j=0
@@ -368,7 +381,27 @@ def GETimg(target, referer=None, post=None):
 			return target
 			print 'HTTP ERROR ' + str(e)
 
+def GETtorr(target, referer=None, post=None):
+	lfimg=os.listdir(ru(LstDir))
+	print target
+	nmi =target.replace('http://tracktor.in/td.php?s=','')
 
+	if nmi in lfimg and os.path.getsize(os.path.join(ru(LstDir),nmi))>0:
+		return os.path.join( ru(LstDir),nmi)
+	else:
+		try:
+			req = urllib2.Request(url = target, data = post)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			fl = open(os.path.join( ru(LstDir),nmi), "wb")
+			fl.write(resp.read())
+		#resp.close()
+			fl.close()
+			return os.path.join( ru(LstDir),nmi)
+		except Exception, e:
+			#xbmc.log( '[%s]: GET EXCEPT [%s]' % (addon_id, e), 4 )
+			return target
+			print 'HTTP ERROR ' + str(e)
 
 import re, os, urllib, urllib2, cookielib, time, sys
 from time import gmtime, strftime
@@ -387,7 +420,7 @@ def get_HTML(url, post = None, ref = None, get_redirect = False):
     if url.find('http')<0 :
         if CT=="0": url='http:'+url
         else: url='https:'+url
-    #url=url.replace('www.lostfilm.tv','www.lostfilm.tv.3s3s.org')
+    #url="http://translate.googleusercontent.com/translate_c?u="+url
     request = urllib2.Request(url, post)
 
     host = urlparse.urlsplit(url).hostname
@@ -422,19 +455,22 @@ def get_HTML(url, post = None, ref = None, get_redirect = False):
 
 #-------------------------------------------------------------------------------
 # get cookies from last session
-import antizapret
 cj = cookielib.FileCookieJar(fcookies)
 hr  = urllib2.HTTPCookieProcessor(cj)
 if __settings__.getSetting("immunicity") == "1": 
+	import antizapret
 	opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
 	print "Immunicity"
 elif __settings__.getSetting("immunicity") == "2": 
-	proxy_support = urllib2.ProxyHandler({"http" : "http://"+__settings__.getSetting("Proxy")})
+	prx=__settings__.getSetting("Proxy")
+	if prx.find('http')<0 : prx="http://"+prx
+	proxy_support = urllib2.ProxyHandler({"http" : prx})
+	#proxy_support = urllib2.ProxyHandler({"http" : "http://n17-03-01.opera-mini.net:443"})
 	opener = urllib2.build_opener(proxy_support, hr)
 	print "Proxy "+__settings__.getSetting("Proxy")
 else: 
 	opener = urllib2.build_opener(hr)
-	print "NONE Proxy"
+	print "NO Proxy"
 urllib2.install_opener(opener)
 
 #----------- LOGIN to lostfilm.tv ----------------------------------------------
@@ -446,8 +482,6 @@ url1 = 'http://login1.bogi.ru/login.php?referer=http%3A%2F%2Fwww.lostfilm.tv%2F'
 login = __settings__.getSetting("login")
 passw = __settings__.getSetting("password")
 if login =="" or passw == '': showMessage('lostfilm', "Проверьте логин и пароль", times = 50000)
-
-
 
 values = {
 				'login'     : login,
@@ -1250,12 +1284,12 @@ except:
 
 
 
-#try:
+
 if  mode == "OpenRel":#mode == None or
 		post = urllib.urlencode(values)
 		html = get_HTML(url1, post, 'http://www.lostfilm.tv/')
 		soup = BeautifulSoup(html, fromEncoding="utf-8")
-		#-- step 2url=url.replace('www.lostfilm.tv','www.lostfilm.tv.3s3s.org')
+		#-- step 2
 		ref = url1
 		url1 = soup.find('form')['action']
 		values={}
@@ -1266,9 +1300,12 @@ if  mode == "OpenRel":#mode == None or
 				print "err: value"
 		post = urllib.urlencode(values)
 		html = get_HTML(url1, post, ref)
-#except:'https:'+
-#		print 'lostfilm: Ошибка доступа'
-		#showMessage('lostfilm', "Ошибка доступа", times = 50000)
+		#-- ok
+		r=GET_R(url)
+		if r:
+			xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+			xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+			xbmcplugin.endOfDirectory(handle,r,False)
 
 
 
@@ -1311,13 +1348,6 @@ elif mode == 'OpenPage':
 	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
 	xbmcplugin.endOfDirectory(handle)
 
-elif mode == 'OpenRel':
-	r=GET_R(url)
-	if r:
-		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-		xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
-		xbmcplugin.endOfDirectory(handle,r,False)
-
 elif mode == 'play_url2':
 		play_url2(params)
 
@@ -1327,6 +1357,5 @@ elif mode == 'playTorrent':
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		playTorrent(url, DownloadDirectory, ind)
-
 
 c.close()
