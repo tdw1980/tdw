@@ -211,56 +211,56 @@ GenreList=[
 
 
 ArtistList=[
-("http://kibergrad.com/578/2517", "25/17"),
-("http://kibergrad.com/63/acdc", "AC/DC"),
-("http://kibergrad.com/7/beyonce", "Beyonce"),
-("http://kibergrad.com/175/eminem", "Eminem"),
-("http://kibergrad.com/191/enigma", "Enigma"),
-("http://kibergrad.com/48/linkin-park", "Linkin Park"),
-("http://kibergrad.com/58/metallica", "Metallica"),
-("http://kibergrad.com/6123/mr-credo", "Mr. Credo"),
-("http://kibergrad.com/28/rammstein", "Rammstein"),
-("http://kibergrad.com/72/scorpions", "Scorpions"),
-("http://kibergrad.com/397/skillet", "Skillet"),
-("http://kibergrad.com/4768/skrillex", "Skrillex"),
-("http://kibergrad.com/1537/ak-47", "АК-47"),
-("http://kibergrad.com/1015/aleksandr-marshal", "Александр Маршал"),
-("http://kibergrad.com/2138/ariya", "Ария"),
-("http://kibergrad.com/13365/arkadiy-kobyakov", "Аркадий Кобяков"),
-("http://kibergrad.com/13272/barbariki", "Барбарики"),
-("http://kibergrad.com/13/basta", "Баста"),
-("http://kibergrad.com/1230/butyrka", "Бутырка "),
-("http://kibergrad.com/133/byanka", "Бьянка"),
-("http://kibergrad.com/1886/viktor-petlyura", "Виктор Петлюра"),
-("http://kibergrad.com/1228/viktor-coy", "Виктор Цой"),
-("http://kibergrad.com/13288/gamora", "ГАМОРА"),
-("http://kibergrad.com/9/grigoriy-leps", "Григорий Лепс"),
-("http://kibergrad.com/2/guf", "Гуф"),
-("http://kibergrad.com/3857/ddt", "ДДТ"),
-("http://kibergrad.com/3492/denis-maydanov", "Денис Майданов"),
-("http://kibergrad.com/147/irina-allegrova", "Ирина Аллегрова"),
-("http://kibergrad.com/3981/irina-krug-i-aleksey-bryancev", "Ирина Круг и Алексей Брянцев"),
-("http://kibergrad.com/1171/kino", "Кино"),
-("http://kibergrad.com/19/kollekciya", "Коллекция"),
-("http://kibergrad.com/120/korol-i-shut", "Король и Шут"),
-("http://kibergrad.com/1461/leningrad", "Ленинград"),
-("http://kibergrad.com/156/linda", "Линда"),
-("http://kibergrad.com/125/lyube", "Любэ"),
-("http://kibergrad.com/22/maksim", "Максим"),
-("http://kibergrad.com/1615/mihail-krug", "Михаил Круг"),
-("http://kibergrad.com/27/muzyka-iz-filma", "Музыка из фильма"),
-("http://kibergrad.com/1901/nautilus-pompilius", "Наутилус Помпилиус"),
-("http://kibergrad.com/1282/nyusha", "Нюша"),
-("http://kibergrad.com/3785/piknik", "Пикник"),
-("http://kibergrad.com/1273/polina-gagarina", "Полина Гагарина"),
-("http://kibergrad.com/45/potap-i-nastya-kamenskih", "Потап и Настя Каменских"),
-("http://kibergrad.com/3958/propaganda", "Пропаганда"),
-("http://kibergrad.com/56/ruki-vverh", "Руки Вверх"),
-("http://kibergrad.com/1625/sektor-gaza", "Сектор Газа "),
-("http://kibergrad.com/3978/sergey-nagovicyn", "Сергей Наговицын"),
-("http://kibergrad.com/98/stas-mihaylov", "Стас Михайлов"),
-("http://kibergrad.com/23/timati", "Тимати"),
-("http://kibergrad.com/13308/yarmak", "Ярмак")
+("http://kibergrad.fm/578/2517", "25/17"),
+("http://kibergrad.fm/63/acdc", "AC/DC"),
+("http://kibergrad.fm/7/beyonce", "Beyonce"),
+("http://kibergrad.fm/175/eminem", "Eminem"),
+("http://kibergrad.fm/191/enigma", "Enigma"),
+("http://kibergrad.fm/48/linkin-park", "Linkin Park"),
+("http://kibergrad.fm/58/metallica", "Metallica"),
+("http://kibergrad.fm/6123/mr-credo", "Mr. Credo"),
+("http://kibergrad.fm/28/rammstein", "Rammstein"),
+("http://kibergrad.fm/72/scorpions", "Scorpions"),
+("http://kibergrad.fm/397/skillet", "Skillet"),
+("http://kibergrad.fm/4768/skrillex", "Skrillex"),
+("http://kibergrad.fm/1537/ak-47", "АК-47"),
+("http://kibergrad.fm/1015/aleksandr-marshal", "Александр Маршал"),
+("http://kibergrad.fm/2138/ariya", "Ария"),
+("http://kibergrad.fm/13365/arkadiy-kobyakov", "Аркадий Кобяков"),
+("http://kibergrad.fm/13272/barbariki", "Барбарики"),
+("http://kibergrad.fm/13/basta", "Баста"),
+("http://kibergrad.fm/1230/butyrka", "Бутырка "),
+("http://kibergrad.fm/133/byanka", "Бьянка"),
+("http://kibergrad.fm/1886/viktor-petlyura", "Виктор Петлюра"),
+("http://kibergrad.fm/1228/viktor-coy", "Виктор Цой"),
+("http://kibergrad.fm/13288/gamora", "ГАМОРА"),
+("http://kibergrad.fm/9/grigoriy-leps", "Григорий Лепс"),
+("http://kibergrad.fm/2/guf", "Гуф"),
+("http://kibergrad.fm/3857/ddt", "ДДТ"),
+("http://kibergrad.fm/3492/denis-maydanov", "Денис Майданов"),
+("http://kibergrad.fm/147/irina-allegrova", "Ирина Аллегрова"),
+("http://kibergrad.fm/3981/irina-krug-i-aleksey-bryancev", "Ирина Круг и Алексей Брянцев"),
+("http://kibergrad.fm/1171/kino", "Кино"),
+("http://kibergrad.fm/19/kollekciya", "Коллекция"),
+("http://kibergrad.fm/120/korol-i-shut", "Король и Шут"),
+("http://kibergrad.fm/1461/leningrad", "Ленинград"),
+("http://kibergrad.fm/156/linda", "Линда"),
+("http://kibergrad.fm/125/lyube", "Любэ"),
+("http://kibergrad.fm/22/maksim", "Максим"),
+("http://kibergrad.fm/1615/mihail-krug", "Михаил Круг"),
+("http://kibergrad.fm/27/muzyka-iz-filma", "Музыка из фильма"),
+("http://kibergrad.fm/1901/nautilus-pompilius", "Наутилус Помпилиус"),
+("http://kibergrad.fm/1282/nyusha", "Нюша"),
+("http://kibergrad.fm/3785/piknik", "Пикник"),
+("http://kibergrad.fm/1273/polina-gagarina", "Полина Гагарина"),
+("http://kibergrad.fm/45/potap-i-nastya-kamenskih", "Потап и Настя Каменских"),
+("http://kibergrad.fm/3958/propaganda", "Пропаганда"),
+("http://kibergrad.fm/56/ruki-vverh", "Руки Вверх"),
+("http://kibergrad.fm/1625/sektor-gaza", "Сектор Газа "),
+("http://kibergrad.fm/3978/sergey-nagovicyn", "Сергей Наговицын"),
+("http://kibergrad.fm/98/stas-mihaylov", "Стас Михайлов"),
+("http://kibergrad.fm/23/timati", "Тимати"),
+("http://kibergrad.fm/13308/yarmak", "Ярмак")
 ]
 
 from tagger import *
@@ -410,7 +410,7 @@ def Root():
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
-				Serch("http://kibergrad.com/popular-music")
+				Serch("http://kibergrad.fm/popular-music")
 
 				xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -418,7 +418,7 @@ def Root():
 def SerchTitle():
 		q=inputbox().replace(" ","+")
 		Lt=[]
-		url='http://kibergrad.com/search?q='+q
+		url='http://kibergrad.fm/search?q='+q
 		http=getURL(url)
 		try:
 			ss='<li class="view clearit">'
@@ -437,7 +437,7 @@ def SerchTitle():
 def SrcArtist(q=""):
 		if q=="": q=inputbox()
 		Lt=[]
-		url='http://kibergrad.com/search?q='+q.replace(" ","+")+"&p=artists"
+		url='http://kibergrad.fm/search?q='+q.replace(" ","+")+"&p=artists"
 		print url
 		http=getURL(url)
 		try:
@@ -456,7 +456,7 @@ def Genres():
 		for i in GenreList:
 			#for n in range (1,10):
 				id, title=i
-				url="http://kibergrad.com/tag/"+id
+				url="http://kibergrad.fm/tag/"+id
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchgenres'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -577,7 +577,7 @@ def Serch(url, Lt=[]):
 				artist	=dict["artist"].replace("? ","х ").replace("&#039;","'")
 				title	=dict["title"].replace("? ","х ").replace("&#039;","'")
 				img		=dict["cover"]
-				url		=dict["url"]
+				url		="http://kibergrad.fm/"+dict["url"]
 				
 				trk='[COLOR F050F050][T] [/COLOR]'
 				title2 = artist+" - [B]"+title+"[/B]"
@@ -739,7 +739,7 @@ def Save2(dict, name):
 			print 'HTTP ERROR ' + str(e)
 
 def Save(dict, name, update=1):
-	target	=dict["dlurl"]
+	target	="http://kibergrad.fm/"+dict["dlurl"]
 	artist	=dict["artist"].replace("? ","х ")
 	title	=dict["title"].replace("? ","х ")
 	img		=dict["cover"]
@@ -755,6 +755,7 @@ def Save(dict, name, update=1):
 	fp = os.path.join(fp, ru(title+".mp3"))
 	
 	try:
+	#if 1==1:
 			req = urllib2.Request(url = target, data = None)
 			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
 			resp = urllib2.urlopen(req)
@@ -780,7 +781,7 @@ def Save(dict, name, update=1):
 			print 'HTTP ERROR ' + str(e)
 
 params = get_params()
-url  =	'http://kibergrad.com'
+url  =	'http://kibergrad.fm'
 mode =	None
 name =	''
 img =	' '
