@@ -1,4 +1,5 @@
 <settings>
+    <setting id="Engine" type="enum" label="30008" default="0" values="Ace|YATP"/>
     <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru(YEAR)En|Ru(YEAR)|Ru"/>
     <setting id="Period" type="enum" label="30002" default="1" values="Год|6 мес.|3 мес.|1 мес.|Неделя|Все"/>
     <setting id="Vid" type="enum" label="30006" default="0" values="Не менять|Список|Широкий|Эскизы|Карусель|Фанарт|Инфо 1|Инфо 3"/>

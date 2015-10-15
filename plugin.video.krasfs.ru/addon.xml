@@ -4,7 +4,7 @@
        version="1.1.0"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="1.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.torrent.ts"/>
   </requires>
   <extension point="xbmc.python.pluginsource"

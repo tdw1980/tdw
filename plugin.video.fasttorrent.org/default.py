@@ -59,13 +59,20 @@ def stft(text):
 				row_url = itm[3]
 				cover=""
 				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenCat'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
-					+ '&info=' + urllib.quote_plus(repr(dict))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(dict))
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
 
 def s2kp(id, info):
 	#try:
@@ -93,12 +100,20 @@ def s2kp(id, info):
 				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 				try:listitem.setInfo(type = "Video", infoLabels = dict)
 				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenCat'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+
 		return len(RL)
 	#except:
 		#return 0
@@ -127,15 +142,22 @@ def fileek(qury, info):
 				#print row_url
 				cover=""
 				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenCat'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
 		return len(RL)
 
 
@@ -378,26 +400,24 @@ def play_url2(params):
     if out=='Ok':
         lnk=TSplayer.get_link(int(params['ind']),title, img, img)
         if lnk:
-           
             item = xbmcgui.ListItem(path=lnk)
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)  
+            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
 
             while not xbmc.Player().isPlaying:
                 xbmc.sleep(300)
-            while TSplayer.player.active and not TSplayer.local: 
+            while TSplayer.player.active and not TSplayer.local:
                 TSplayer.loop()
                 xbmc.sleep(300)
                 if xbmc.abortRequested:
                     TSplayer.log.out("XBMC is shutting down")
                     break
-            if TSplayer.local and xbmc.Player().isPlaying: 
+            if TSplayer.local and xbmc.Player().isPlaying:
                 try: time1=TSplayer.player.getTime()
                 except: time1=0
                 
                 i = xbmcgui.ListItem("***%s"%title)
                 i.setProperty('StartOffset', str(time1))
                 xbmc.Player().play(TSplayer.filename.decode('utf-8'),i)
-
         else:
             item = xbmcgui.ListItem(path='')
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
@@ -2565,10 +2585,6 @@ def OpenList(url, name, dict,title):
 	hp = GET('http://www.fast-torrent.ru'+url.replace(".html", "/torrents.html"), httpSiteUrl, None)
 	#print url
 	L=gettorlist(hp)
-	#L=[["","","","","","","","",""],["","","","","","","","",""]]
-	#dict={}
-	#cover=''
-	#if 1==1:
 	try:#------------------- ищем ссылку online----------------
 		
 		ss='http://www.tvcok.ru/film'
@@ -2750,26 +2766,40 @@ def OpenList(url, name, dict,title):
 		#try:cover=dict["cover"]
 		#except:cover=""
 		cover=""
-		listitem = xbmcgui.ListItem(ru(row_name), thumbnailImage=cover, iconImage=cover )
-		try:listitem.setInfo(type = "Video", infoLabels = dict)
-		except: pass
+		if __settings__.getSetting('Engine') == "0":
+			print "ACE"
+			listitem = xbmcgui.ListItem(ru(row_name), thumbnailImage=cover, iconImage=cover )
+			try:listitem.setInfo(type = "Video", infoLabels = dict)
+			except: pass
 		#listitem.setProperty('fanart_image',cover)
-		purl = sys.argv[0] + '?mode=OpenCat'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&fanart_image=' + urllib.quote_plus(cover)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&info=' + urllib.quote_plus(repr(dict))
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			purl = sys.argv[0] + '?mode=OpenCat'\
+				+ '&url=' + urllib.quote_plus(row_url)\
+				+ '&fanart_image=' + urllib.quote_plus(cover)\
+				+ '&title=' + urllib.quote_plus(Title)\
+				+ '&info=' + urllib.quote_plus(repr(dict))
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		else:
+			print "YATP"
+			list_item = xbmcgui.ListItem(ru(row_name))
+			url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+			xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+
 	kfsnm=title[9:title.find("(")]#.replace("(","")
 	print kfsnm
 	if __settings__.getSetting("Krasfs")=="0" and name!=title: 
-		s2kp(kfsnm.strip(), {})
-		stft(kfsnm)
-		fileek(kfsnm, {})
+		try:s2kp(kfsnm.strip(), {})
+		except:pass
+		try:stft(kfsnm)
+		except:pass
+		try:fileek(kfsnm, {})
+		except:pass
 	if __settings__.getSetting("Krasfs")=="1" and name!=title and len(L)<1:
-		s2kp(kfsnm.strip(), {})
-		stft(kfsnm)
-		fileek(kfsnm, {})
+		try:s2kp(kfsnm.strip(), {})
+		except:pass
+		try:stft(kfsnm)
+		except:pass
+		try:fileek(kfsnm, {})
+		except:pass
 
 
 def OpenCat(url, name, dict):
@@ -2814,64 +2844,6 @@ def OpenCat(url, name, dict):
 			+ '&title=' + urllib.quote_plus(Ltitle[i])\
 			+ '&info=' + urllib.quote_plus(repr(dict))
 		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-
-
-
-xplayer=xbmc.Player(xbmc.PLAYER_CORE_AUTO)
-#if os.path.isdir("d:\\TorrentStream")==1: TSpath="d:\\TorrentStream\\"
-#elif os.path.isdir("c:\\TorrentStream")==1: TSpath="c:\\TorrentStream\\"
-#elif os.path.isdir("e:\\TorrentStream")==1: TSpath="e:\\TorrentStream\\"
-#elif os.path.isdir("f:\\TorrentStream")==1: TSpath="f:\\TorrentStream\\"
-#elif os.path.isdir("g:\\TorrentStream")==1: TSpath="g:\\TorrentStream\\"
-#elif os.path.isdir("h:\\TorrentStream")==1: TSpath="h:\\TorrentStream\\"
-#else: TSpath="C:\\"
-	
-def play_onl(url):
-	playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-	playlist.clear()
-	playlist.add(url)
-	xplayer.play(playlist)
-	
-def OpenPage(url, name, num, Lgl, dict):
-	Ltitle, Lurl, Lnum = Lgl
-	playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-	playlist.clear()
-	try:thumb2=dict["cover"]
-	except:thumb2=""
-	for i in range(num,len(Lnum)):
-		item = xbmcgui.ListItem(Ltitle[i], iconImage = thumb2, thumbnailImage = thumb2)
-		item.setInfo(type="Video", infoLabels=dict)
-		playlist.add(url=Lurl[i], listitem=item, index=-1)
-	xplayer.play(playlist)
-	showMessage('RuTor:', "Соединение...", 100)
-	time.sleep(0.3)
-	
-	for i in range(0,num):
-		item = xbmcgui.ListItem(Ltitle[i], iconImage = thumb2, thumbnailImage = thumb2)
-		item.setInfo(type="Video", infoLabels=dict)
-		playlist.add(url=Lurl[i], listitem=item, index=-1)
-	p = xplayer.isPlayingVideo()
-	ttl=0
-	bsz=0
-	while xplayer.isPlayingVideo() == 0 and ttl<20 :
-	#for i in range(0,30):
-		p = xplayer.isPlayingVideo()
-		d = os.path.isfile(TSpath+name)
-		
-		if d==0:
-			showMessage('RuTor:', "[COLOR FFFFF000]Поиск пиров...[/COLOR]", 100)
-			ttl+=1
-		elif p==0:
-			sz=os.path.getsize(TSpath+name)
-			pbr="I"*int(sz/(1048576*1.5))
-			showMessage("[COLOR FF00FF00]Буферизация: "+str(int(sz/1048576))+" Mb[/COLOR]", "[COLOR FF00FFFF]"+pbr[:51]+"[/COLOR]",100)
-			if bsz==sz: ttl+=1
-			else: ttl=0
-			bsz=sz
-		elif p==1:
-			return 0
-		time.sleep(1)
-		
 
 
 params = get_params()
@@ -3070,11 +3042,7 @@ elif mode == 'Online':
 elif mode == 'OpenCat':
 	try:img=info["cover"]
 	except: img=icon
-	#play_url({'file':url,'img':img})
 	start_torr(url,img)
-	#OpenCat(url, title, info)
-	#xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-	#xbmcplugin.endOfDirectory(handle)
 
 elif mode == 'OpenPage':
 	OpenPage(url, title, num, Lgl, info)
