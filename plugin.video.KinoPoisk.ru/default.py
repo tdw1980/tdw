@@ -103,6 +103,7 @@ def save_strm(params):
 		fl = open(os.path.join(ru(SaveDirectory),name+".strm"), "w")
 		fl.write(uri)
 		fl.close()
+		xbmc.executebuiltin('UpdateLibrary("video")')
 
 
 def save_all(torr_link,img, info={}):
