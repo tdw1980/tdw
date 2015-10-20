@@ -91,7 +91,7 @@ def addplist(params):
 def save_strm(params):
 		SaveDirectory = __settings__.getSetting("SaveDirectory")#[:-1]
 		if SaveDirectory=="":SaveDirectory=LstDir
-		name=urllib.unquote_plus(params['title']).decode('utf-8')
+		name=urllib.unquote_plus(params['title'].replace("\\","").replace("?","").replace(":","")).decode('utf-8')
 		uri = construct_request({
 			'torr_url': urllib.unquote_plus(params['t']),
 			'title': params['tt'].decode('utf-8'),
