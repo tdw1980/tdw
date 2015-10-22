@@ -576,7 +576,7 @@ def get_inf_db(n):
 
 
 def s2kp(id, info):
-	#try:
+	try:
 		
 		import tokp
 		skp=tokp.Tracker()
@@ -608,12 +608,12 @@ def s2kp(id, info):
 					+ '&info=' + urllib.quote_plus(repr(info))
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
-	#except:
-		#return 0
+	except:
+		return 0
 
 
 def fileek(qury, info):
-	#try:
+	try:
 		
 		import fileek
 		skp=fileek.Tracker()
@@ -645,6 +645,8 @@ def fileek(qury, info):
 					+ '&info=' + urllib.quote_plus(repr(info))
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
+	except:
+		return 0
 
 
 
@@ -720,21 +722,20 @@ def stft(text, info={}):
 	try:
 		import krasfs
 		tft=krasfs.Tracker()
-	except: pass
 	
-	RL=tft.Search(text, 4)
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «KrasFS.ru»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		RL=tft.Search(text, 4)
+		if len(RL)>0:
+			Title = "[COLOR F050F050]"+"[------- «KrasFS.ru»  "+text+" ---------]"+"[/COLOR]"
+			row_url = Title
+			listitem = xbmcgui.ListItem(Title)
+			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+			purl = sys.argv[0] + '?mode=Search'\
+				+ '&url=' + urllib.quote_plus(row_url)\
+				+ '&title=' + urllib.quote_plus(Title)\
+				+ '&text=' + urllib.quote_plus('0')
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 
-	for itm in RL:
+			for itm in RL:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
 				cover=""
@@ -750,7 +751,9 @@ def stft(text, info={}):
 					+ '&info=' + urllib.quote_plus(repr(info))
 				listitem.addContextMenuItems([('Сохранить все', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+itm[3]+'&info='+urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
+		return len(RL)
+	except:
+		return 0
 
 
 
