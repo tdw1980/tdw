@@ -15,13 +15,218 @@ def xt(x):return xbmc.translatePath(x)
 
 
 GenreList=[
-("Jazz", "[COLOR F0E0E067]Джаз[/COLOR]"),
-("Hits", "[COLOR F050F050]Хиты[/COLOR]")
+("/Genre/11/Pop","Pop"),
+("/Genre/25/Disco","Disco"),
+("/Genre/28/Hard-Rock","Hard Rock"),
+("/Genre/234/Eurodance","Eurodance"),
+("/Genre/1/Rock","Rock"),
+("/Genre/30/Heavy-Metal","Heavy Metal"),
+("/Genre/158/Blues-Rock","Blues Rock"),
+("/Genre/8/Rap","Rap"),
+("/Genre/12/Trance","Trance"),
+("/Genre/229/Ost","OST"),
+("/Genre/21/Synthpop","Synthpop"),
+("/Genre/67/Thrash-Metal","Thrash Metal")
 ]
 
 ArtistList=[
-("http://kibergrad.com/578/2517", "25/17"),
-("http://kibergrad.com/63/acdc", "AC/DC")
+("/Artist/96002/Imany","Imany"),
+("/Artist/124788/Lana-Del-Rey","Lana Del Rey"),
+("/Artist/5/Linkin-Park","Linkin Park"),
+("/Artist/11659/Calvin-Harris","Calvin Harris"),
+("/Artist/76588/%D0%9A%D0%BE%D1%80%D0%BE%D0%BB%D1%8C-%D0%98-%D0%A8%D1%83%D1%82","Король и Шут"),
+("/Artist/30/Eminem","Eminem"),
+("/Artist/937/Rammstein","Rammstein"),
+("/Artist/29/Shakira","Shakira"),
+("/Artist/278404/Robin-Schulz","Robin Schulz"),
+("/Artist/1268/Pharrell-Williams","Pharrell Williams"),
+("/Artist/923/Metallica","Metallica"),
+("/Artist/271/Hans-Zimmer","Hans Zimmer"),
+("/Artist/85569/%D0%9D%D1%8E%D1%88%D0%B0","Нюша"),
+("/Artist/228/Rihanna","Rihanna"),
+("/Artist/179673/Lilly-Wood-And-The-Prick","Lilly Wood &amp; The Prick"),
+("/Artist/272494/Faul","Faul"),
+("/Artist/235/Pink-Floyd","Pink Floyd"),
+("/Artist/134/Scorpions","Scorpions"),
+("/Artist/35084/Ellie-Goulding","Ellie Goulding"),
+("/Artist/3827/Enrique-Iglesias","Enrique Iglesias"),
+("/Artist/27233/The-Prodigy","The Prodigy"),
+("/Artist/8380/Pnau","PNAU"),
+("/Artist/82883/%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%B0%D1%8F-%D0%9F%D0%BB%D0%B5%D1%81%D0%B5%D0%BD%D1%8C","Красная Плесень"),
+("/Artist/272495/Wad-Ad","Wad Ad"),
+("/Artist/20851/Ac-Dc","AC/DC"),
+("/Artist/71003/%D0%9B%D0%B5%D0%BD%D0%B8%D0%BD%D0%B3%D1%80%D0%B0%D0%B4","Ленинград"),
+("/Artist/1867/Michael-Jackson","Michael Jackson"),
+("/Artist/84647/%D0%95%D0%BB%D0%BA%D0%B0","Ёлка"),
+("/Artist/326640/The-Avener","The Avener"),
+("/Artist/25537/%D0%9A%D0%B8%D0%BD%D0%BE","Кино"),
+("/Artist/246/Within-Temptation","Within Temptation"),
+("/Artist/31142/Serebro","Serebro"),
+("/Artist/26/The-Beatles","The Beatles"),
+("/Artist/15369/Sia","Sia"),
+("/Artist/86143/%D0%92%D0%B8%D0%BD%D1%82%D0%B0%D0%B6","Винтаж"),
+("/Artist/282015/Kadebostany","Kadebostany"),
+("/Artist/1190/Deep-Purple","Deep Purple"),
+("/Artist/60659/%D0%91%D0%B0%D1%81%D1%82%D0%B0","Баста"),
+("/Artist/40/Daft-Punk","Daft Punk"),
+("/Artist/287375/Dj-Snake","Dj Snake"),
+("/Artist/161/Queen","Queen"),
+("/Artist/139152/Imagine-Dragons","Imagine Dragons"),
+("/Artist/71089/%D0%9B%D1%8F%D0%BF%D0%B8%D1%81-%D0%A2%D1%80%D1%83%D0%B1%D0%B5%D1%86%D0%BA%D0%BE%D0%B8","Ляпис Трубецкой"),
+("/Artist/70285/%D0%90%D1%80%D0%B8%D1%8F","Ария"),
+("/Artist/133/Coldplay","Coldplay"),
+("/Artist/308532/Kiesza","Kiesza"),
+("/Artist/1002/Armin-Van-Buuren","Armin van Buuren"),
+("/Artist/175/Marilyn-Manson","Marilyn Manson"),
+("/Artist/1447/Pitbull","Pitbull"),
+("/Artist/68/Beyonce","Beyonce"),
+("/Artist/70669/%D0%A1%D0%B5%D0%BA%D1%82%D0%BE%D1%80-%D0%93%D0%B0%D0%B7%D0%B0","Сектор Газа"),
+("/Artist/247/Modern-Talking","Modern Talking"),
+("/Artist/67529/%D0%9E%D0%BA%D0%B5%D0%B0%D0%BD-%D0%95%D0%BB%D1%8C%D0%B7%D0%B8","Океан Ельзи"),
+("/Artist/17227/Wiz-Khalifa","Wiz Khalifa"),
+("/Artist/4/Limp-Bizkit","Limp Bizkit"),
+("/Artist/314289/Sam-Martin","Sam Martin"),
+("/Artist/920/Maroon-5","Maroon 5"),
+("/Artist/43/2Pac","2Pac"),
+("/Artist/31620/Major-Lazer","Major Lazer"),
+("/Artist/15/Madonna","Madonna"),
+("/Artist/127799/%D0%90%D0%BD%D0%B8-%D0%9B%D0%BE%D1%80%D0%B0%D0%BA","Ани Лорак"),
+("/Artist/90531/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80-%D0%92%D1%8B%D1%81%D0%BE%D1%86%D0%BA%D0%B8%D0%B8","Владимир Высоцкий"),
+("/Artist/76577/%D0%90%D0%BB%D0%B8%D1%81%D0%B0","Алиса"),
+("/Artist/121/Enigma","Enigma"),
+("/Artist/41792/Mr-Probz","Mr. Probz"),
+("/Artist/76573/%D0%91%D0%B8-2","БИ-2"),
+("/Artist/201572/Sam-Smith","Sam Smith"),
+("/Artist/414/30-Seconds-To-Mars","30 Seconds To Mars"),
+("/Artist/89199/%D0%9D%D0%B0%D1%82%D0%B0%D0%BB%D0%B8","Натали"),
+("/Artist/282572/Mo","M&#216;"),
+("/Artist/323098/Nico-And-Vinz","Nico &amp; Vinz"),
+("/Artist/48742/Avicii","Avicii"),
+("/Artist/10/Nickelback","Nickelback"),
+("/Artist/42/Nightwish","Nightwish"),
+("/Artist/237/Led-Zeppelin","Led Zeppelin"),
+("/Artist/3758/Nazareth","Nazareth"),
+("/Artist/2172/Dr-Alban","Dr. Alban"),
+("/Artist/89213/%D0%92%D0%B8%D0%B0-%D0%93%D1%80%D0%B0","ВИА Гра"),
+("/Artist/220774/Martin-Garrix","Martin Garrix"),
+("/Artist/142/Muse","Muse"),
+("/Artist/19/Three-Days-Grace","Three Days Grace"),
+("/Artist/26919/Hurts","Hurts"),
+("/Artist/12646/Katy-Perry","Katy Perry"),
+("/Artist/37/Snoop-Dogg","Snoop Dogg"),
+("/Artist/70474/%D0%A1%D0%BF%D0%BB%D0%B8%D0%BD","Сплин"),
+("/Artist/1138/Accept","Accept"),
+("/Artist/1589/Skillet","Skillet"),
+("/Artist/82786/%D0%A0%D1%83%D0%BA%D0%B8-%D0%92%D0%B2%D0%B5%D1%80%D1%85","Руки Вверх!"),
+("/Artist/171/Nirvana","Nirvana"),
+("/Artist/2312/Bad-Boys-Blue","Bad Boys Blue"),
+("/Artist/1294/Black-Sabbath","Black Sabbath"),
+("/Artist/126/Slipknot","Slipknot"),
+("/Artist/7/Scooter","Scooter"),
+("/Artist/316248/%D0%95%D0%B3%D0%BE%D1%80-%D0%9A%D1%80%D0%B8%D0%B4","Егор Крид"),
+("/Artist/186530/Iowa","Iowa"),
+("/Artist/14950/Lady-Gaga","Lady GaGa"),
+("/Artist/59649/Skrillex","Skrillex"),
+("/Artist/18958/Jason-Derulo","Jason Derulo"),
+("/Artist/171114/The-Rolling-Stones","The Rolling Stones"),
+("/Artist/21/50-Cent","50 Cent"),
+("/Artist/292011/%D0%91%D1%83%D1%80%D0%B8%D1%82%D0%BE","Бурито"),
+("/Artist/5553/Onerepublic","OneRepublic"),
+("/Artist/693/Brian-Tyler","Brian Tyler"),
+("/Artist/386/Britney-Spears","Britney Spears"),
+("/Artist/339/Fall-Out-Boy","Fall Out Boy"),
+("/Artist/86684/%D0%93%D1%80%D0%B0%D0%B6%D0%B4%D0%B0%D0%BD%D1%81%D0%BA%D0%B0%D1%8F-%D0%9E%D0%B1%D0%BE%D1%80%D0%BE%D0%BD%D0%B0","Гражданская Оборона"),
+("/Artist/76601/%D0%90%D0%B3%D0%B0%D1%82%D0%B0-%D0%9A%D1%80%D0%B8%D1%81%D1%82%D0%B8","Агата Кристи"),
+("/Artist/70894/%D0%AE%D0%BB%D0%B8%D1%8F-%D0%A1%D0%B0%D0%B2%D0%B8%D1%87%D0%B5%D0%B2%D0%B0","Юлия Савичева"),
+("/Artist/366/Iron-Maiden","Iron Maiden"),
+("/Artist/10513/Flo-Rida","Flo Rida"),
+("/Artist/76605/%D0%9F%D0%B8%D0%BA%D0%BD%D0%B8%D0%BA","Пикник"),
+("/Artist/1916/Judas-Priest","Judas Priest"),
+("/Artist/311914/Zhu","ZHU"),
+("/Artist/10934/Hollywood-Undead","Hollywood Undead"),
+("/Artist/46875/Two-Steps-From-Hell","Two Steps from Hell"),
+("/Artist/194/Moby","Moby"),
+("/Artist/197/Arash","Arash"),
+("/Artist/2566/Sandra","Sandra"),
+("/Artist/98053/%D0%94%D0%B4%D1%82","ДДТ"),
+("/Artist/1116/Lil-Jon","Lil Jon"),
+("/Artist/285354/Indila","Indila"),
+("/Artist/23/System-Of-A-Down","System Of A Down"),
+("/Artist/36/Korn","Korn"),
+("/Artist/68148/%D0%92%D0%B5%D1%80%D0%B0-%D0%91%D1%80%D0%B5%D0%B6%D0%BD%D0%B5%D0%B2%D0%B0","Вера Брежнева"),
+("/Artist/68349/%D0%A2%D0%B8%D0%BC%D0%B0%D1%82%D0%B8","Тимати"),
+("/Artist/51/Disturbed","Disturbed"),
+("/Artist/87472/%D0%94%D0%B8%D0%BC%D0%B0-%D0%91%D0%B8%D0%BB%D0%B0%D0%BD","Дима Билан"),
+("/Artist/80104/%D0%A1%D1%82%D0%B0%D1%81-%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB%D0%BE%D0%B2","Стас Михайлов"),
+("/Artist/6760/Uriah-Heep","Uriah Heep"),
+("/Artist/480/Paul-Mccartney","Paul McCartney"),
+("/Artist/57521/Nautilus-Pompilius","Nautilus Pompilius"),
+("/Artist/156/Atb","ATB"),
+("/Artist/311913/Steve-James","Steve James"),
+("/Artist/926/Mylene-Farmer","Mylene Farmer"),
+("/Artist/141605/Zedd","Zedd"),
+("/Artist/7790/Taylor-Swift","Taylor Swift"),
+("/Artist/121788/One-Direction","One Direction"),
+("/Artist/8/Ozzy-Osbourne","Ozzy Osbourne"),
+("/Artist/170092/Dvbbs","DVBBS"),
+("/Artist/192/Placebo","Placebo"),
+("/Artist/408/Jay-Z","Jay-Z"),
+("/Artist/17694/Selena-Gomez","Selena Gomez"),
+("/Artist/155/Red-Hot-Chili-Peppers","Red Hot Chili Peppers"),
+("/Artist/178854/%D0%94%D0%B6%D0%B8%D0%B3%D0%B0%D0%BD","Джиган"),
+("/Artist/205/Papa-Roach","Papa Roach"),
+("/Artist/158889/5Sta-Family","5sta Family"),
+("/Artist/2/The-Offspring","The Offspring"),
+("/Artist/39954/Stromae","Stromae"),
+("/Artist/392/Fergie","Fergie"),
+("/Artist/1467/U-D-O","U.D.O."),
+("/Artist/1039/Electric-Light-Orchestra","Electric Light Orchestra"),
+("/Artist/976/Kiss","Kiss"),
+("/Artist/365109/Charlie-Puth","Charlie Puth"),
+("/Artist/31/Bon-Jovi","Bon Jovi"),
+("/Artist/111230/Mc-Zali","Mc Zali"),
+("/Artist/25837/Swanky-Tunes","Swanky Tunes"),
+("/Artist/172058/%D0%9C%D0%B0%D0%BA%D1%81-%D0%9A%D0%BE%D1%80%D0%B6","Макс Корж"),
+("/Artist/89152/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80-%D0%9A%D1%83%D0%B7%D1%8C%D0%BC%D0%B8%D0%BD","Владимир Кузьмин"),
+("/Artist/76580/%D0%97%D0%B5%D0%BC%D1%84%D0%B8%D1%80%D0%B0","Земфира"),
+("/Artist/1008/C-C-Catch","C.C. Catch"),
+("/Artist/12159/Ramin-Djawadi","Ramin Djawadi"),
+("/Artist/95246/Dj-Half","DJ Half"),
+("/Artist/196785/%D0%9A%D0%B0%D1%81%D0%BF%D0%B8%D0%B8%D1%81%D0%BA%D0%B8%D0%B8-%D0%93%D1%80%D1%83%D0%B7","Каспийский Груз"),
+("/Artist/342996/Feder","Feder"),
+("/Artist/2156/Ennio-Morricone","Ennio Morricone"),
+("/Artist/94826/%D0%AE%D0%BB%D0%B8%D0%B0%D0%BD%D0%BD%D0%B0-%D0%9A%D0%B0%D1%80%D0%B0%D1%83%D0%BB%D0%BE%D0%B2%D0%B0","Юлианна Караулова"),
+("/Artist/310466/Raign","Raign"),
+("/Artist/2223/Rainbow","Rainbow"),
+("/Artist/197168/Leonora","Leonora"),
+("/Artist/348508/Mband","MBAND"),
+("/Artist/376331/Burito","Burito"),
+("/Artist/13402/The-Script","The Script"),
+("/Artist/238/Tokio-Hotel","Tokio Hotel"),
+("/Artist/18129/Noize-Mc","Noize MC"),
+("/Artist/357/Justin-Timberlake","Justin Timberlake"),
+("/Artist/84698/%D0%91%D1%83%D1%82%D1%8B%D1%80%D0%BA%D0%B0","Бутырка"),
+("/Artist/154/Smokie","Smokie"),
+("/Artist/8020/Adele","Adele"),
+("/Artist/345/Ludacris","Ludacris"),
+("/Artist/478/Chris-Rea","Chris Rea"),
+("/Artist/244/Boney-M","Boney M."),
+("/Artist/83462/%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB-%D0%9A%D1%80%D1%83%D0%B3","Михаил Круг"),
+("/Artist/193/T-I","T.I."),
+("/Artist/123/Adriano-Celentano","Adriano Celentano"),
+("/Artist/82773/Helena","Helena"),
+("/Artist/23297/Inna","Inna"),
+("/Artist/14/Green-Day","Green Day"),
+("/Artist/2344/Bring-Me-The-Horizon","Bring Me The Horizon"),
+("/Artist/1076/Helloween","Helloween"),
+("/Artist/170/Roxette","Roxette"),
+("/Artist/76596/%D0%9C%D1%83%D0%BC%D0%B8%D0%B8-%D0%A2%D1%80%D0%BE%D0%BB%D0%BB%D1%8C","Мумий Тролль"),
+("/Artist/3294/Miley-Cyrus","Miley Cyrus"),
+("/Artist/2520/Pet-Shop-Boys","Pet Shop Boys"),
+("/Artist/1112/Dj-Bobo","DJ Bobo"),
+("/Artist/261560/Borgeous","Borgeous"),
+("/Artist/92445/%D0%91%D1%8C%D1%8F%D0%BD%D0%BA%D0%B0","Бьянка"),
+("/Artist/367/Evanescence","Evanescence")
 ]
 
 from tagger import *
@@ -158,7 +363,7 @@ def Root():
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
-				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
 				title="[COLOR F0E0E067][B][ Исполнители ][/B][/COLOR]"
 				url=""
@@ -169,10 +374,10 @@ def Root():
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
-				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
-				#Serch("http://kibergrad.com/popular-music")
-
+				Serch_in_album("https://myzuka.org/Hits/Top100Monthly")
+				
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 
@@ -205,7 +410,7 @@ def Genres():
 		for i in GenreList:
 			#for n in range (1,10):
 				id, title=i
-				url="http://kibergrad.com/tag/"+id
+				url="https://myzuka.org"+id
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchgenres'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -219,11 +424,61 @@ def Genres():
 
 def SerchGenres(url):
 				Lt=[]
-				for n in range (1,20):
-					if n>1: url2=url+"?page="+str(n)
+				for n in range (1,10):
+					if n>1: url2=url+"/Page"+str(n)
 					else: url2=url
-					Lt=Album(url2, Lt)
+					Album2(url2)
 				xbmcplugin.endOfDirectory(pluginhandle)
+
+def Album2(url):
+		http=getURL(url)
+		try:
+			ss='ght="30">'
+			es='<td hei'
+			L=mfindal(http, ss, es)
+		except:
+			L=[]
+		for i in L:
+			try:
+				i=i.replace('  ','')
+				i=i.replace(chr(10),'').replace(chr(13),'')
+				i=i.replace('ght="30"><a href="','https://myzuka.org')
+				i=i.replace('</a></td><td><a href="','","https://myzuka.org')
+				i=i.replace('</a></td><td>','","')
+				i=i.replace('</td></tr><tr>','"')
+				i=i.replace('">','","')
+				i=i.replace('&amp;','&')
+				i=i.replace(' class="img-rounded","",',',')
+				i=i.replace('</td><td>','","')
+				i=i.replace('</td><td><b>','","')
+				i=i.replace('<img alt="','')
+				i=i.replace('" src="','","')
+				i='["'+i+"]"
+				#print i
+				ie=eval(i)
+				
+				
+				img		=ie[2]
+				album	=ie[1]
+				artist	=ie[4]
+				title	=ie[1]
+				url		=ie[0]
+				urlart	=ie[3]
+				title2 = artist+" - [B]"+title+"[/B]"
+				
+				uri = sys.argv[0] + '?mode=serchtracs'
+				uri += '&url='  + urllib.quote_plus(url)
+				uri += '&name='  + urllib.quote_plus(title)
+				uri += '&img='  + urllib.quote_plus(img)
+
+				alb='[COLOR F07070F0][А] [/COLOR]'
+				trk='[COLOR F050F050][T] [/COLOR]'
+				item = xbmcgui.ListItem(alb+title2, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})#222
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True,500)
+				
+			except:pass
+
 
 
 def Artist(L=[]):
@@ -237,13 +492,14 @@ def Artist(L=[]):
 				uri += '&img='  + urllib.quote_plus(img)
 				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"Title": title})
-				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
 		if L==[]:AL=ArtistList
 		else: AL=L
 			
 		for i in AL:
 				url, title=i
+				url='https://myzuka.org'+url
 				img=thumb
 				#uri = sys.argv[0] + '?mode=serchartists'
 				uri = sys.argv[0] + '?mode=serchalbums'
@@ -290,8 +546,9 @@ def SerchAlbums(url):
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchTracs(url):
+				if url.find("ttps://myzuka")<0: url='https://myzuka.org'+url
 				print url
-				Lt=Serch_in_album('https://myzuka.org'+url)
+				Lt=Serch_in_album(url)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def Serch_in_album(url, Lt=[]):
@@ -421,7 +678,7 @@ def Serch(url, Lt=[]):
 		return Lt
 
 def Album(url, Lt=[]):
-		#print url
+		print url
 		http=getURL(url)
 		http=http.replace('  ','')
 		http=http.replace(chr(10),'').replace(chr(13),'')
@@ -480,7 +737,7 @@ def Album(url, Lt=[]):
 				uri2 += '&name='  + urllib.quote_plus(artist)
 				uri2 += '&img='  + urllib.quote_plus(img)
 				
-				item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')])
+				#item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')])
 				
 				uri = sys.argv[0] + '?mode=serchtracs'
 				uri += '&url='  + urllib.quote_plus(url)
