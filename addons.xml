@@ -90,6 +90,23 @@
   </extension>
 </addon>
 
+<addon id="plugin.program.retrogames" name="RetroGames" version="0.2.0" provider-name="TDW">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+
+    <extension point="xbmc.python.pluginsource" library="browse.py">
+        <provides>executable</provides>
+    </extension>
+
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary>RetroGames</summary>
+        <description>RetroGames</description>
+        <disclaimer>RetroGames</disclaimer>
+    </extension>
+</addon>
+
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
        version="1.3.9"
