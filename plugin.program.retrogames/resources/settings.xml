@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <setting id="MD" type="file" label="Путь к mednafen" default=""/>
+    <setting id="RD" type="folder" label="Путь для хранения" default=""/>
 </settings>

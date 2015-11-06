@@ -25,8 +25,16 @@ import subprocess
 addon=xbmcaddon.Addon('plugin.program.retrogames')
 handle=int(sys.argv[1])
 
-RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
-Mpath = "D:\\1\\med\\mednafen.exe"
+try:
+	RDir = os.path.join( addon.getSetting("RD"), "roms" )
+	if os.path.exists(RDir) == False and RDir<>"": os.makedirs(RDir)
+	else: RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
+except:
+	RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
+
+TMPdir = os.path.join( addon.getAddonInfo('path'), "temp" )
+
+#Mpath = "D:\\1\\med\\mednafen.exe"
 Mpath = addon.getSetting("MD")
 fsp=' -video.fs "1" '
 MedList=[".nes", ".gen", ".gbc", ".ngp", ".snes", ".sms", ".pce"]
@@ -268,8 +276,19 @@ def rem(path):
 		except: pass
 
 def play(path):
-	dload("name", "temp", path, "")
-	dir(os.path.join(Rdir,"temp","name.dr"))
+		if os.path.exists(TMPdir)== False: os.makedirs(TMPdir)
+		fp = os.path.join(TMPdir, "tmp.7z")
+		try:
+			req = urllib2.Request(url = target, data = None)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			fl = open(fp, "wb")
+			fl.write(resp.read())
+			fl.close()
+			un7zip(fp)
+			os.remove(fp)
+			dir(TMPdir)
+		except: pass
 
 def unzip(filename):
 	from zipfile import ZipFile
