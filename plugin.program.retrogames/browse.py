@@ -28,7 +28,6 @@ handle=int(sys.argv[1])
 try:
 	RDir = os.path.join( addon.getSetting("RD"), "roms" )
 	if os.path.exists(RDir) == False and RDir<>"": os.makedirs(RDir)
-	else: RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
 except:
 	RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
 
@@ -220,7 +219,7 @@ def run(path):
 def dload(title, type, target, cover):
 	title=ru(title.replace('\\','').replace('?',''))
 	#print target
-	Dldir = addon.getSetting("DownloadDirectory")
+	Dldir = RDir
 	if Dldir == "":Dldir = os.path.join( addon.getAddonInfo('path'), "roms" )
 	
 	fp = os.path.join(ru(Dldir), type, title+'.dr')
