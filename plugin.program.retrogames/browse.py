@@ -26,8 +26,10 @@ addon=xbmcaddon.Addon('plugin.program.retrogames')
 handle=int(sys.argv[1])
 
 try:
-	RDir = os.path.join( addon.getSetting("RD"), "roms" )
-	if os.path.exists(RDir) == False and RDir<>"": os.makedirs(RDir)
+	if addon.getSetting("RD")<>"":
+		RDir = os.path.join( addon.getSetting("RD"), "roms" )
+		if os.path.exists(RDir) == False: os.makedirs(RDir)
+	else: RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
 except:
 	RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
 
@@ -36,7 +38,7 @@ TMPdir = os.path.join( addon.getAddonInfo('path'), "temp" )
 #Mpath = "D:\\1\\med\\mednafen.exe"
 Mpath = addon.getSetting("MD")
 fsp=' -video.fs "1" '
-MedList=[".nes", ".gen", ".gbc", ".ngp", ".snes", ".sms", ".pce"]
+MedList=[".nes", ".gen", ".gbc", ".gba", ".ngp", ".snes", ".sms", ".smc", ".pce", ".gg", ".lnx", ".ngc", ".vb"]
 #rarfile.UNRAR_TOOL=os.path.join( addon.getAddonInfo('path'), 'resources','lib','unrar.exe')
 Z7path=os.path.join( addon.getAddonInfo('path'), 'resources','lib','7za.exe')
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
@@ -237,7 +239,7 @@ def dload(title, type, target, cover):
 			fl = open(fp, "wb")
 			fl.write(resp.read())
 			fl.close()
-			if os.path.exists(cp)== False:
+			try:
 				req = urllib2.Request(url = cover, data = None)
 				req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
 				resp = urllib2.urlopen(req)
@@ -251,7 +253,7 @@ def dload(title, type, target, cover):
 				fl = open(ap, "wb")
 				fl.write(resp.read())
 				fl.close()
-
+			except: pass
 			un7zip(fp)
 			os.remove(fp)
 			return os.path.join( ru(Dldir),nmi)
@@ -274,7 +276,8 @@ def rem(path):
 		try:os.remove(sp)
 		except: pass
 
-def play(path):
+def play(target):
+		rem(TMPdir)
 		if os.path.exists(TMPdir)== False: os.makedirs(TMPdir)
 		fp = os.path.join(TMPdir, "tmp.7z")
 		try:
