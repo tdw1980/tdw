@@ -178,7 +178,8 @@ def PlayStation(url,name,img):
 def add(id, name):
 	try:L=eval(__settings__.getSetting("Favorites"))
 	except:L=[]
-	L.append((id,name))
+	st=(id,name)
+	if st not in L:L.append(st)
 	__settings__.setSetting("Favorites",repr(L))
 
 
