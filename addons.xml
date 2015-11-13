@@ -72,6 +72,24 @@
   </extension>
 </addon>
 
+<addon id="plugin.audio.radiopotok.ru"
+       name="RadioPotok.ru"
+       version="1.0.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Radiopotok - Онлайн радио</summary>
+    <description>Слушайте радио онлайн!</description>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.zaycev.net"
        name="zaycev.net"
        version="0.2.0"
