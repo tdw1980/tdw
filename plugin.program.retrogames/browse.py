@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # CONSTANTS
-__author__ = 'TDW'
-__version__ = '1.0.0'
-__url__ = 'http://xbmc.ru'
-__date__ = '2/2015'
+#__author__ = 'TDW'
+#__version__ = '1.0.0'
+#__url__ = 'http://xbmc.ru'
+#__date__ = '2/2015'
 
 # IMPORTS
 import sys, os
@@ -34,13 +34,20 @@ except:
 	RDir = os.path.join( addon.getAddonInfo('path'), "roms" )
 
 TMPdir = os.path.join( addon.getAddonInfo('path'), "temp" )
+CDir = os.path.join( addon.getAddonInfo('path'), "images", "covers" )
 
 #Mpath = "D:\\1\\med\\mednafen.exe"
 Mpath = addon.getSetting("MD")
 fsp=' -video.fs "1" '
 MedList=[".nes", ".gen", ".gbc", ".gba", ".ngp", ".snes", ".sms", ".smc", ".pce", ".gg", ".lnx", ".ngc", ".vb"]
+
+from core_conf import*
+
 #rarfile.UNRAR_TOOL=os.path.join( addon.getAddonInfo('path'), 'resources','lib','unrar.exe')
-Z7path=os.path.join( addon.getAddonInfo('path'), 'resources','lib','7za.exe')
+
+if os.name=="nt":	Z7path=os.path.join( addon.getAddonInfo('path'), 'resources','lib','7za.exe')
+else:				Z7path=os.path.join( addon.getAddonInfo('path'), 'resources','lib','7za_rpi')
+
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
 cover=os.path.join( addon.getAddonInfo('path'), "icon.png" )
@@ -99,6 +106,7 @@ def mfindal(http, ss, es):
 	return L
 
 def root():
+	cover=os.path.join(CDir, "Download.png")
 	add_item ("Каталог", 'OnlRoot', RDir, cover)
 	try:dir(RDir)
 	except:xbmcplugin.endOfDirectory(handle)
@@ -186,8 +194,14 @@ def dir(path, cover=None):
 			nart=os.path.join(path, i, "funart.png")
 			if os.path.exists(nart): funart=nart
 			else: funart=None
+		ecover=os.path.splitext(i)[1]+".png"
+		if os.path.exists(ecover):cover=ecover
 		ext=os.path.splitext(i)[1]
-		cl_name=i.replace(".dr","")
+		cl_name=i.replace(ext,"")
+		if cover==None:
+			lcover=os.path.join(CDir, cl_name+".png")
+			if os.path.exists(lcover):cover=lcover
+		
 		if ext not in hide: add_item(cl_name, "run", os.path.join(path, i),cover, funart)
 	xbmcplugin.endOfDirectory(handle)
 
@@ -200,21 +214,47 @@ def drl(path):
 	return rlst
 
 def run(path):
-	command=Mpath+fsp+'"'+path+'"'
-	#print command
+	if Mpath.find("mednafen")>0:
+		command=Mpath+fsp+'"'+path+'"'
+	elif Mpath.find("retroarch")>0:
+		ext=os.path.splitext(path)[1]
+		try:core=CoreDict[ext]
+		except: core=''
+		print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+		print os.name
+		if os.name=="nt":command=Mpath+' -L '+os.path.join(os.path.split(Mpath)[0], "cores", core)+'_libretro "'+path+'"'
+		else:command=Mpath+' '+core+' '+path.replace(" ", "\\ ").replace("'", "\\'")
+	else:
+		command=Mpath+' "'+path+'"'
+	#print command +' , --subsystem='
 	ext=os.path.splitext(path)[1]
 	if os.path.isdir(path):
 		#print ext
 		if ext ==".dr":
 			rlst=drl(path)
 			if len(rlst)==1:
-				command2=Mpath+fsp+'"'+os.path.join(path,rlst[0])+'"'
+				newpath=os.path.join(path,rlst[0])
+				if Mpath.find("mednafen")>0:
+					command2=Mpath+fsp+'"'+newpath+'"'
+				elif Mpath.find("retroarch")>0:
+					ext=os.path.splitext(newpath)[1]
+					try:core=CoreDict[ext]
+					except: core=""
+					if os.name=="nt":
+						command2=Mpath+' -L '+os.path.join(os.path.split(Mpath)[0], "cores", core)+'_libretro "'+newpath+'"'
+					else:command2=Mpath+' '+core+' '+newpath.replace(" ", "\\ ").replace("'", "\\'")
+				else:
+					command2=Mpath+' "'+newpath+'"'
+				print command2
 				os.system(command2)
 			else:dir(path)
 		else:dir(path)
 	else:
 		if ext in MedList:
-			subprocess.call(command)#os.system(command)
+			print command
+			os.system(command)
+			#subprocess.call(command)
+			print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
 		else:os.system(path)
 
 
