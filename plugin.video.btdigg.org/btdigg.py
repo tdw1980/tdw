@@ -76,7 +76,7 @@ def xt(x):return xbmc.translatePath(x)
 
 def formtext(http):
 	#http=http.replace(chr(10),"")#.replace(chr(13),"")
-	http=http.replace("'",'"').replace('&nbsp;'," ")#исключить
+	http=http.replace("'",'"').replace('&nbsp;'," ")
 	http=http.replace('           <',"<").replace('          <',"<").replace('         <',"<").replace('        <',"<").replace('       <',"<").replace('      <',"<").replace('     <',"<").replace('    <',"<").replace('   <',"").replace('  <',"<").replace(' <',"<")
 	http=http.replace('&amp;nbsp;',"")
 	#http=http.replace('</a> </td> <td align=center>',"', '").replace('</td> </tr>  <tr> <td align=left>  ',"']"+chr(10)).replace('> ',"', '")
@@ -84,95 +84,9 @@ def formtext(http):
 	
 	return http
 
-def formating(str):
-	str=str.strip()
-	str=str.replace('%','%25')
-	str=str.replace('&','%26')
-	str=str.replace('?','%3F')
-	str=str.replace('&','%26')
-	str=str.replace('!','%21')
-	str=str.replace(':','%3A')
-	str=str.replace('#','%23')
-	str=str.replace(',','%2C')
-	str=str.replace(';','%3B')
-	str=str.replace('@','%40')
-	str=str.replace('(','%28')
-	str=str.replace(')','%29')
-	str=str.replace('"','%22')
-	
-	str=str.replace('а','%E0')
-	str=str.replace('б','%E1')
-	str=str.replace('в','%E2')
-	str=str.replace('г','%E3')
-	str=str.replace('д','%E4')
-	str=str.replace('е','%E5')
-	str=str.replace('ё','%b8')
-	str=str.replace('ж','%E6')
-	str=str.replace('з','%E7')
-	str=str.replace('и','%E8')
-	str=str.replace('й','%E9')
-	str=str.replace('к','%EA')
-	str=str.replace('л','%EB')
-	str=str.replace('м','%EC')
-	str=str.replace('н','%ED')
-	str=str.replace('о','%EE')
-	str=str.replace('п','%EF')
-	str=str.replace('р','%F0')
-	str=str.replace('с','%F1')
-	str=str.replace('т','%F2')
-	str=str.replace('у','%F3')
-	str=str.replace('ф','%F4')
-	str=str.replace('х','%F5')
-	str=str.replace('ц','%F6')
-	str=str.replace('ч','%F7')
-	str=str.replace('ш','%F8')
-	str=str.replace('щ','%F9')
-	str=str.replace('ь','%FA')
-	str=str.replace('ы','%FB')
-	str=str.replace('ъ','%FC')
-	str=str.replace('э','%FD')
-	str=str.replace('ю','%FE')
-	str=str.replace('я','%FF')
-	
-	str=str.replace('А','%C0')
-	str=str.replace('Б','%C1')
-	str=str.replace('В','%C2')
-	str=str.replace('Г','%C3')
-	str=str.replace('Д','%C4')
-	str=str.replace('Е','%C5')
-	str=str.replace('Ё','%A8')
-	str=str.replace('Ж','%C6')
-	str=str.replace('З','%C7')
-	str=str.replace('И','%C8')
-	str=str.replace('Й','%C9')
-	str=str.replace('К','%CA')
-	str=str.replace('Л','%CB')
-	str=str.replace('М','%CC')
-	str=str.replace('Н','%CD')
-	str=str.replace('О','%CE')
-	str=str.replace('П','%CF')
-	str=str.replace('Р','%D0')
-	str=str.replace('С','%D1')
-	str=str.replace('Т','%D2')
-	str=str.replace('У','%D3')
-	str=str.replace('Ф','%D4')
-	str=str.replace('Х','%D5')
-	str=str.replace('Ц','%D6')
-	str=str.replace('Ч','%D7')
-	str=str.replace('Ш','%D8')
-	str=str.replace('Щ','%D9')
-	str=str.replace('Ь','%DA')
-	str=str.replace('Ы','%DB')
-	str=str.replace('Ъ','%DC')
-	str=str.replace('Э','%DD')
-	str=str.replace('Ю','%DE')
-	str=str.replace('Я','%DF')
-	str=str.replace(' ','+')
-	return str
-
 def inputbox():
 	skbd = xbmc.Keyboard()
-	skbd.setHeading('Поиск:')
+	skbd.setHeading('РџРѕРёСЃРє:')
 	skbd.doModal()
 	if skbd.isConfirmed():
 		SearchStr = skbd.getText()
@@ -182,34 +96,35 @@ def inputbox():
 
 
 def upd(category, sort, s):
-		request = urllib2.Request('http://api.btdigg.org/api/private-c47ba652ee73735a/s02?q='+s.replace(" ","+")+"&order=1")
-
+	Lout=[]
+	for p in range (0,9):
+		request = urllib2.Request('http://api.btdigg.org/api/private-c47ba652ee73735a/s02?q='+s.replace(" ","+")+"&p="+str(p)+"&order=1")
+		
 		request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)') 
 		request.add_header('Accept', '*/*') 
 		request.add_header('Accept-Language', 'ru-RU') 
-		#request.add_header('Referer',    'http://www.btdigg.org') 
-		Lout=[]
 		try: 
 			f = urllib2.urlopen(request) 
 			html = f.read()
 			list=eval(html)
 			for i in list:
 				info_hash=i["info_hash"]
-				name=str(i["name"])
+				name=eval('u"'+i["name"].replace('"','')+'"')
 				files=i["files"]
 				reqs=i["reqs"]
 				magnet=i["magnet"]
 				weight=i["weight"]
 				size=i["size"]
 				torrent='http://torcache.net/torrent/'+info_hash+".torrent"
-				Lout.append([str(weight),str(size),xt(name),torrent])
-			return Lout
+				if size>11000:Lout.append([str(reqs),str(float(size)/1024/1024/1024)[:5]+" GB / "+str(files),name,magnet])
+			
 		except IOError, e: 
 			if hasattr(e, 'reason'): 
 				print 'We failed to reach a server. Reason: '+ e.reason
 			elif hasattr(e, 'code'): 
 				print 'The server couldn\'t fulfill the request. Error code: '+ e.code
 			return ""
+	return Lout
 
 
 def format(L):
