@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <setting id="MD" type="file" label="Путь к mednafen" default=""/>
+    <setting id="MD" type="file" label="Путь к эмулятору" default=""/>
     <setting id="RD" type="folder" label="Путь для хранения" default=""/>
+    <setting id="cores" type="text"label="Тип=ядро(необязателен)" default="nes=bnes, gen=genesis_plus_gx"/>
 </settings>
