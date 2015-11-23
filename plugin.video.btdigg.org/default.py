@@ -42,11 +42,74 @@ def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
 
 
+def rulower(str):
+	str=str.strip()
+	str=xt(str).lower()
+	str=str.replace('Й','й')
+	str=str.replace('Ц','ц')
+	str=str.replace('У','у')
+	str=str.replace('К','к')
+	str=str.replace('Е','е')
+	str=str.replace('Н','н')
+	str=str.replace('Г','г')
+	str=str.replace('Ш','ш')
+	str=str.replace('Щ','щ')
+	str=str.replace('З','з')
+	str=str.replace('Х','х')
+	str=str.replace('Ъ','ъ')
+	str=str.replace('Ф','ф')
+	str=str.replace('Ы','ы')
+	str=str.replace('В','в')
+	str=str.replace('А','а')
+	str=str.replace('П','п')
+	str=str.replace('Р','р')
+	str=str.replace('О','о')
+	str=str.replace('Л','л')
+	str=str.replace('Д','д')
+	str=str.replace('Ж','ж')
+	str=str.replace('Э','э')
+	str=str.replace('Я','я')
+	str=str.replace('Ч','ч')
+	str=str.replace('С','с')
+	str=str.replace('М','м')
+	str=str.replace('И','и')
+	str=str.replace('Т','т')
+	str=str.replace('Ь','ь')
+	str=str.replace('Б','б')
+	str=str.replace('Ю','ю')
+	return str
+
 def btd(text):
+	
+	listitem = xbmcgui.ListItem("[COLOR FF0FFF0F] НОВЫЙ ПОИСК[/COLOR]")
+	url = 'plugin://plugin.video.btdigg.org/?mode=s'
+	xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, isFolder=True)
+	
+	
 	import btdigg
 	digg=btdigg.Tracker()
 	RL=digg.Search(text)
+	L1=[]
+	L2=[]
+	
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+	
 	for itm in RL:
+		if rulower(xt(itm[2])).find(rulower(text))<0:	L2.append(itm)
+		else:					L1.append(itm)
+	
+	for itm in L1:
+				Title = "[COLOR FFFFFFFF]"+itm[0]+"|"+itm[1]+"|  "+itm[2]+"[/COLOR]"
+				row_url = itm[3]
+				cover=""
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				#listitem.setProperty('fanart_image', cover)
+				url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+ urllib.quote_plus(row_url)
+				xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, isFolder=True)
+	
+	for itm in L2:
 				Title = itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
 				cover=""
@@ -109,14 +172,16 @@ except:
 	pass
 
 
-if mode == None:
+if mode == None :
 	btd(inputbox())
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
+	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 	
 if mode == 's':
 	btd(inputbox())
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-	xbmcplugin.endOfDirectory(handle)
+	xbmcplugin.endOfDirectory(handle, True, True)
+	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")

@@ -74,15 +74,6 @@ def showMessage(heading, message, times = 3000):
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
 
-def formtext(http):
-	#http=http.replace(chr(10),"")#.replace(chr(13),"")
-	http=http.replace("'",'"').replace('&nbsp;'," ")
-	http=http.replace('           <',"<").replace('          <',"<").replace('         <',"<").replace('        <',"<").replace('       <',"<").replace('      <',"<").replace('     <',"<").replace('    <',"<").replace('   <',"").replace('  <',"<").replace(' <',"<")
-	http=http.replace('&amp;nbsp;',"")
-	#http=http.replace('</a> </td> <td align=center>',"', '").replace('</td> </tr>  <tr> <td align=left>  ',"']"+chr(10)).replace('> ',"', '")
-	#http=cleartext(http)
-	
-	return http
 
 def inputbox():
 	skbd = xbmc.Keyboard()
@@ -97,7 +88,7 @@ def inputbox():
 
 def upd(category, sort, s):
 	Lout=[]
-	for p in range (0,9):
+	for p in range (0,15):
 		request = urllib2.Request('http://api.btdigg.org/api/private-c47ba652ee73735a/s02?q='+s.replace(" ","+")+"&p="+str(p)+"&order=1")
 		
 		request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)') 
@@ -115,9 +106,23 @@ def upd(category, sort, s):
 				magnet=i["magnet"]
 				weight=i["weight"]
 				size=i["size"]
+				
+				if size<1073741824:	s_size=str(float(size)/1024/1024)[:5]+" MB /"
+				else:				s_size=str(float(size)/1024/1024/1024)[:5]+" GB /"
+				
+				if files<10:     s_files="   "+str(files)+"   "
+				elif files<100:  s_files="  "+str(files)+"  "
+				elif files<1000: s_files=" "+str(files)+" "
+				
+				srf=int(size/files/1024/1024)
+				
+				if reqs<10:		sids="   "+str(reqs)+"   "
+				elif reqs<100:	sids="  "+str(reqs)+"  "
+				elif reqs<1000:	sids=" "+str(reqs)+" "
+				
 				torrent='http://torcache.net/torrent/'+info_hash+".torrent"
-				if size>11000:Lout.append([str(reqs),str(float(size)/1024/1024/1024)[:5]+" GB / "+str(files),name,magnet])
-			
+				if srf>23: Lout.append([sids, s_size+s_files+" |", name, magnet])
+
 		except IOError, e: 
 			if hasattr(e, 'reason'): 
 				print 'We failed to reach a server. Reason: '+ e.reason
