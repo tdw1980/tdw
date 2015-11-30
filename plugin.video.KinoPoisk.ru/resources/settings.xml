@@ -4,4 +4,5 @@
     <setting id="DownloadDirectory" type="folder" label="30008" default=""/>
     <setting id="SaveDirectory" type="folder" label="30009" default=""/>
     <setting id="SaveDirectory2" type="folder" label="30010" default=""/>
+    <setting id="NFO" type="enum" label="30011" default="0" values="Русских|Всех|Нет"/>
 </settings>

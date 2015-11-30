@@ -1,11 +1,12 @@
 <strings>
-    <string id="30001">Название</string>
-    <string id="30003">Скрыть экранки</string>
-    <string id="30004">Скрыть звук с экранки</string>
-    <string id="30005">Egine</string>
-    <string id="30006">Имя для поиска</string>
-    <string id="30007">Вид списка</string>
-    <string id="30008">Download Directory</string>
-    <string id="30009">Путь сохранения фильмов</string>
-    <string id="30010">Путь сохранения сериалов</string>
+    <string id="30001">РќР°Р·РІР°РЅРёРµ</string>
+    <string id="30003">РЎРєСЂС‹С‚СЊ СЌРєСЂР°РЅРєРё</string>
+    <string id="30004">РЎРєСЂС‹С‚СЊ Р·РІСѓРє СЃ СЌРєСЂР°РЅРєРё</string>
+    <string id="30005">РўРѕСЂСЂРµРЅС‚-РїР»РµРµСЂ</string>
+    <string id="30006">РРјСЏ РґР»СЏ РїРѕРёСЃРєР°</string>
+    <string id="30007">Р’РёРґ СЃРїРёСЃРєР°</string>
+    <string id="30008">РљСЌС€ Libtorrent</string>
+    <string id="30009">РџСѓС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёСЏ С„РёР»СЊРјРѕРІ</string>
+    <string id="30010">РџСѓС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРµСЂРёР°Р»РѕРІ</string>
+    <string id="30011">РЎРѕС…СЂР°РЅСЏС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РґР»СЏ СЃРµСЂРёР°Р»РѕРІ</string>
 </strings>

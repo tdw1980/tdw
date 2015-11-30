@@ -5,9 +5,11 @@ import xbmcplugin,xbmcgui,xbmcaddon
 import time
 
 pluginhandle = int(sys.argv[1])
-xbmcplugin.setContent(int(sys.argv[1]), 'music')
 __settings__ = xbmcaddon.Addon(id='plugin.audio.radiopotok.ru')
 thumb = os.path.join( __settings__.getAddonInfo('path'), 'icon.png')
+Clist=['files', 'songs', 'artists', 'albums', 'movies', 'tvshows', 'episodes', 'musicvideos', 'addons']
+vn=int(__settings__.getSetting("CL"))
+xbmcplugin.setContent(int(sys.argv[1]), Clist[vn])
 
 def showMessage(heading, message, times = 3000):
 	heading = heading.encode('utf-8')
@@ -168,9 +170,10 @@ def dir(url="http://radiopotok.ru/radiostations/"):
 def PlayStation(url,name,img):
 	http = getURL(url)
 	L=http.splitlines()
+	u=[]
 	for i in L:
-		if i[:4]=="http": url=i
-		if i[:4]=="rtmp": url=i
+		if i[:4]=="http" or i[:4]=="rtmp": u.append(i)
+	url=u[0]
 	item = xbmcgui.ListItem(name, iconImage = img, thumbnailImage = img)
 	item.setInfo(type="Music", infoLabels={"Title": name})
 	xbmc.Player(xbmc.PLAYER_CORE_AUTO).play(url, item)
@@ -193,7 +196,8 @@ def rem(id):
 
 
 def Favorites():
-	L=eval(__settings__.getSetting("Favorites"))
+	try:L=eval(__settings__.getSetting("Favorites"))
+	except:L=[]
 	if len(L)==0 and __settings__.getSetting("FP")=="1":
 		title="[COLOR F050F050][B]ПОИСК[/B][/COLOR]"
 		uri = sys.argv[0] + '?mode=Category'
@@ -223,40 +227,42 @@ def Favorites():
 	xbmcplugin.endOfDirectory(pluginhandle)
 
 
-GenreList=[
-("http://radiopotok.ru/catalog/radio/classic-music/","[COLOR F050F050][B]--------   Жанры   -------[/B][/COLOR]"),
-("http://radiopotok.ru/catalog/radio/classic-music/","Классика"),
-("http://radiopotok.ru/rating/radio/radio_jazz/","Джаз"),
-("http://radiopotok.ru/rating/radio/classic_rock/","Рок"),
-("http://radiopotok.ru/radio/91/","Поп"),
-("http://radiopotok.ru/radio/100/","Клубная"),
-("http://radiopotok.ru/radio/178/","Хип Хоп"),
-("http://radiopotok.ru/radio/499/","Чилаут"),
-("http://radiopotok.ru/radio/107/","Детское"),
-("http://radiopotok.ru/radio/774/", "[COLOR F050F050][B]--------  Города  -------[/B][/COLOR]"),
-("http://radiopotok.ru/radio/847/", "Барнаул"), 
-("http://radiopotok.ru/radio/839/", "Воронеж"), 
-("http://radiopotok.ru/radio/751/", "Екатеринбург"), 
-("http://radiopotok.ru/radio/818/", "Иркутск"), 
-("http://radiopotok.ru/radio/843/", "Казань"), 
-("http://radiopotok.ru/radio/835/", "Кемерово"), 
-("http://radiopotok.ru/radio/783/", "Краснодар"), 
-("http://radiopotok.ru/radio/742/", "Красноярск"), 
-("http://radiopotok.ru/radio/774/", "Москва"), 
-("http://radiopotok.ru/radio/786/", "Нижний Новгород"), 
-("http://radiopotok.ru/radio/760/", "Новосибирск"), 
-("http://radiopotok.ru/radio/855/", "Оренбург"), 
-("http://radiopotok.ru/radio/820/", "Пермь"), 
-("http://radiopotok.ru/radio/811/", "Ростов-На-Дону"), 
-("http://radiopotok.ru/radio/792/", "Самара"), 
-("http://radiopotok.ru/radio/765/", "Санкт-Петербург"), 
-("http://radiopotok.ru/radio/850/", "Саратов"), 
-("http://radiopotok.ru/radio/853/", "Ставрополь"), 
-("http://radiopotok.ru/radio/806/", "Уфа"), 
-("http://radiopotok.ru/radio/797/", "Челябинск")
-]
+
 
 def Category():
+		GenreList=[
+		("http://radiopotok.ru/catalog/radio/classic-music/","[COLOR F050F050][B]--------   Жанры   -------[/B][/COLOR]"),
+		("http://radiopotok.ru/catalog/radio/classic-music/","Классика"),
+		("http://radiopotok.ru/rating/radio/radio_jazz/","Джаз"),
+		("http://radiopotok.ru/rating/radio/classic_rock/","Рок"),
+		("http://radiopotok.ru/radio/91/","Поп"),
+		("http://radiopotok.ru/radio/100/","Клубная"),
+		("http://radiopotok.ru/radio/178/","Хип Хоп"),
+		("http://radiopotok.ru/radio/499/","Чилаут"),
+		("http://radiopotok.ru/radio/107/","Детское"),
+		("http://radiopotok.ru/radio/774/", "[COLOR F050F050][B]--------  Города  -------[/B][/COLOR]"),
+		("http://radiopotok.ru/radio/847/", "Барнаул"), 
+		("http://radiopotok.ru/radio/839/", "Воронеж"), 
+		("http://radiopotok.ru/radio/751/", "Екатеринбург"), 
+		("http://radiopotok.ru/radio/818/", "Иркутск"), 
+		("http://radiopotok.ru/radio/843/", "Казань"), 
+		("http://radiopotok.ru/radio/835/", "Кемерово"), 
+		("http://radiopotok.ru/radio/783/", "Краснодар"), 
+		("http://radiopotok.ru/radio/742/", "Красноярск"), 
+		("http://radiopotok.ru/radio/774/", "Москва"), 
+		("http://radiopotok.ru/radio/786/", "Нижний Новгород"), 
+		("http://radiopotok.ru/radio/760/", "Новосибирск"), 
+		("http://radiopotok.ru/radio/855/", "Оренбург"), 
+		("http://radiopotok.ru/radio/820/", "Пермь"), 
+		("http://radiopotok.ru/radio/811/", "Ростов-На-Дону"), 
+		("http://radiopotok.ru/radio/792/", "Самара"), 
+		("http://radiopotok.ru/radio/765/", "Санкт-Петербург"), 
+		("http://radiopotok.ru/radio/850/", "Саратов"), 
+		("http://radiopotok.ru/radio/853/", "Ставрополь"), 
+		("http://radiopotok.ru/radio/806/", "Уфа"), 
+		("http://radiopotok.ru/radio/797/", "Челябинск")
+		]
+
 		title="[COLOR F050F050][B]ВСЕ СТАНЦИИ[/B][/COLOR]"
 		img=thumb
 		uri = sys.argv[0] + '?mode=all'

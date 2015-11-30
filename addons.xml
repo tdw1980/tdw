@@ -74,7 +74,7 @@
 
 <addon id="plugin.audio.radiopotok.ru"
        name="RadioPotok.ru"
-       version="1.0.1"
+       version="1.1.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -108,7 +108,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.program.retrogames" name="RetroGames" version="0.5.2" provider-name="TDW">
+<addon id="plugin.program.retrogames" name="RetroGames" version="0.6.0" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -127,7 +127,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.3.9"
+       version="1.4.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

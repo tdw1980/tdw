@@ -294,7 +294,7 @@ def tolnx(s):
 	lstr="'"+s.replace("'","'\\''")+"'"
 	return lstr
 
-def run(path):
+def run_off(path):
 	if Mpath.find("mednafen")>0:
 		command=Mpath+fsp+'"'+path+'"'
 	elif Mpath.find("retroarch")>0:
@@ -338,6 +338,66 @@ def run(path):
 			#subprocess.call(command)
 			print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
 		else:os.system(path)
+
+def run(path):
+	ext=os.path.splitext(path)[1]
+	if os.path.isdir(path):
+		#print ext
+		if ext ==".dr":
+			rlst=drl(path)
+			if len(rlst)==1:
+				newpath=os.path.join(path,rlst[0])
+				print newpath
+				gameplay(newpath)
+			else:dir(path)
+		else:dir(path)
+	else:
+		if ext in MedList:
+			gameplay(path)
+		else:os.system(path)
+
+def gameplay(path):
+	if Mpath.find("mednafen")>0:
+		command=Mpath+fsp+'"'+path+'"'
+	elif Mpath.find("retroarch")>0:
+		ext=os.path.splitext(path)[1]
+		try:core=CoreDict[ext]
+		except: core=''
+		print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+		print os.name
+		if os.name=="nt":command=Mpath+' -L '+os.path.join(os.path.split(Mpath)[0], "cores", core)+'_libretro "'+path+'"'
+		else:command=Mpath+' '+core+' '+tolnx(path)
+	else:
+		command=Mpath+' "'+path+'"'
+	print command
+	print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+	#subprocess.call(command)
+	subprocess.Popen(command, shell = True)
+	#os.system(command)
+
+def gameplay_off(path):
+	print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+	if Mpath.find("mednafen")>0:
+		command = [Mpath,'-video.fs','1',path]
+	elif Mpath.find("retroarch")>0:
+		ext=os.path.splitext(path)[1]
+		try:core=CoreDict[ext]
+		except: core=''
+		print os.name
+		if os.name=="nt":
+			#command=Mpath+' -L '+os.path.join(os.path.split(Mpath)[0], "cores", core)+'_libretro "'+path+'"'
+			command=[Mpath,'-L'+os.path.join(os.path.split(Mpath)[0], "cores", core)+'_libretro',path]
+		else:
+			#command=Mpath+' '+core+' '+tolnx(path)
+			command=[Mpath, core, path]
+	else:
+		command=[Mpath, path]
+	print command
+	print '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+	#subprocess.call(command)
+	subprocess.Popen(command, shell = True)
+	#os.system(command)
+
 
 def sel_dload(title, type, url, cover, funart):
 		http=getURL(url)
@@ -431,6 +491,19 @@ def rem2(path):
 			if pf!=path and ext not in hide: os.remove(pf)
 	xbmc.executebuiltin('Container.Refresh')
 
+
+def sel_play(url):
+		http=getURL(url)
+		
+		ss='<div style="margin-left:5px;">'
+		es='.rar"><img src="/wp'
+		t1=mfindal(http, ss, es)[0]
+		n=t1.find("http://gbaroms.ru/")
+		url=t1[n:]+".rar"
+		
+		play(url)
+
+
 def play(target):
 		rem(TMPdir)
 		if os.path.exists(TMPdir)== False: os.makedirs(TMPdir)
@@ -478,50 +551,6 @@ def unrar(filename):
 	rar.extractall(os.path.split(filename)[0],None,None) 
 
 
-def select(name, cover):#,type, path
-	addon.setSetting(id="id_name", value=name)
-	#addon.setSetting(id="id_type", value=type)
-	#addon.setSetting(id="id_path", value=path)
-	addon.setSetting(id="id_cover", value=cover)
-	import SelectBox
-	SelectBox.run("w1")
-	return addon.getSetting("w1")
-
-
-def get_params():
-	param=[]
-	paramstring=sys.argv[2]
-	if len(paramstring)>=2:
-		params=sys.argv[2]
-		cleanedparams=params.replace('?','')
-		if (params[len(params)-1]=='/'):
-			params=params[0:len(params)-2]
-		pairsofparams=cleanedparams.split('&')
-		param={}
-		for i in range(len(pairsofparams)):
-			splitparams={}
-			splitparams=pairsofparams[i].split('=')
-			if (len(splitparams))==2:
-				param[splitparams[0]]=splitparams[1]
-	return param
-
-params = get_params()
-
-try:mode = urllib.unquote_plus(params["mode"])
-except:mode =""
-try:path = urllib.unquote_plus(params["path"])
-except:path = RDir
-try:name = urllib.unquote_plus(params["name"])
-except:name = "noname"
-try:cover = urllib.unquote_plus(params["cover"])
-except:cover = ""
-try:funart = urllib.unquote_plus(params["funart"])
-except:funart = ""
-
-try:type = urllib.unquote_plus(params["type"])
-except:type = "x"
-
-
 def get_HTML(url, post = None, ref = None, get_redirect = False):
 	request = urllib2.Request(url, post)
 	import urlparse
@@ -562,6 +591,7 @@ def getID():
 
 
 def sevn2zip(url7z):
+	print url7z
 	if url7z[-3:]=="rar": format=".rar"
 	else: format=".7z"
 	categoryUrl="http://www.convertfiles.com/converter.php"
@@ -602,6 +632,54 @@ def sevn2zip(url7z):
 
 
 
+def select(name, cover, funart=""):#,type, path
+	
+	if funart=="": funart=cover.replace('_0.png','_1.png')
+	
+	addon.setSetting(id="id_name", value=name)
+	#addon.setSetting(id="id_type", value=type)
+	addon.setSetting(id="id_funart", value=funart)
+	addon.setSetting(id="id_cover", value=cover)
+	import SelectBox
+	SelectBox.run("w1")
+	return addon.getSetting("w1")
+
+
+def get_params():
+	param=[]
+	paramstring=sys.argv[2]
+	if len(paramstring)>=2:
+		params=sys.argv[2]
+		cleanedparams=params.replace('?','')
+		if (params[len(params)-1]=='/'):
+			params=params[0:len(params)-2]
+		pairsofparams=cleanedparams.split('&')
+		param={}
+		for i in range(len(pairsofparams)):
+			splitparams={}
+			splitparams=pairsofparams[i].split('=')
+			if (len(splitparams))==2:
+				param[splitparams[0]]=splitparams[1]
+	return param
+
+params = get_params()
+
+try:mode = urllib.unquote_plus(params["mode"])
+except:mode =""
+try:path = urllib.unquote_plus(params["path"])
+except:path = RDir
+try:name = urllib.unquote_plus(params["name"])
+except:name = "noname"
+try:cover = urllib.unquote_plus(params["cover"])
+except:cover = ""
+try:funart = urllib.unquote_plus(params["funart"])
+except:funart = ""
+
+try:type = urllib.unquote_plus(params["type"])
+except:type = "x"
+
+
+
 if mode=="":root()
 if mode=="run":run(path)
 if mode=="OnlRoot":OnlRoot()
@@ -609,7 +687,14 @@ if mode=="OnlList":OnlList(path, type)
 if mode=="GBAList":GBAList(path, type, cover)
 if mode=="GBAGenre":GBAGenre(path, type)
 if mode=="Genre":Genre(path, type)
-if mode=="sel_dload":sel_dload(name, type, path, cover, funart)
+if mode=="sel_dload":
+	try:
+		r=select(name, cover, funart)
+		if r=="save":sel_dload(name, type, path, cover, funart)
+		if r=="run":sel_play(path)
+	except:
+		sel_dload(name, type, path, cover, funart)
+
 if mode=="dload":
 	try:
 		r=select(name, cover)

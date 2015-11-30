@@ -49,7 +49,7 @@ class MyVideoAddon(AddonDialogWindow):
     def set_controls(self):
         name=__settings__.getSetting("id_name")
         #type=__settings__.getSetting("id_type")
-        #path=__settings__.getSetting("id_path")
+        funart=__settings__.getSetting("id_funart")
         cover=__settings__.getSetting("id_cover")
 
         idw="w1"#__settings__.getSetting("idw")
@@ -82,8 +82,14 @@ class MyVideoAddon(AddonDialogWindow):
         #image_label = xbmcgui.ControlLabel(1, 1, 1, 1, 'ControlImage')
         #self.placeControl(image_label, 5, 0)
         # ControlImage
-        self.image = xbmcgui.ControlImage(1, 1, 1, 1, cover.replace('_0.png','_1.png'))#os.path.join(images, 'banner.jpg')
+        self.image = xbmcgui.ControlImage(1, 1, 1, 1, funart)#os.path.join(images, 'banner.jpg')
         self.placeControl(self.image, -1, 0,16,32)
+        if funart.find("png")>0:
+            self.image = xbmcgui.ControlImage(1, 1, 1, 1, funart.replace("-1.png","1.png").lower())
+            self.placeControl(self.image, -1, 0,16,32)
+            self.image = xbmcgui.ControlImage(1, 1, 1, 1, funart.replace("-1.png","1.png"))
+            self.placeControl(self.image, -1, 0,16,32)
+
         self.image2 = xbmcgui.ControlImage(1, 1, 1, 1, os.path.join(images, 'glass.png'))#os.path.join(images, 'banner.jpg')
         self.placeControl(self.image2, 8, 0,7,30)
         self.image3 = xbmcgui.ControlImage(1, 1, 1, 1, cover)#os.path.join(images, 'banner.jpg')

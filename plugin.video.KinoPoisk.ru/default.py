@@ -40,7 +40,7 @@ def play_url(torr_link,img, info={}):
     if out=='Ok':
         for k,v in TSplayer.files.iteritems():
             li = xbmcgui.ListItem(urllib.unquote(k))
-            
+            #fokus(urllib.unquote(k))# -----------------========================:::::::::::::::::: ТУТ
             uri = construct_request({
                 't': torr_link,
                 'tt': k.encode('utf-8'),
@@ -61,7 +61,7 @@ def play_url(torr_link,img, info={}):
                 'ii':img,
                 'mode': 'save_strm'
             })
-            li.addContextMenuItems([('Сохранить STRM', 'XBMC.RunPlugin(%s)' % uri2),('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri)])
+            li.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri)])
             uri = construct_request({
                 'torr_url': torr_link,
                 'title': k,
@@ -104,13 +104,328 @@ def save_strm(params):
 		fl.write(uri)
 		fl.close()
 		xbmc.executebuiltin('UpdateLibrary("video")')
+		
 
+def save_tvshow_nfo(tts,img, info={}):
+		title=info['title']
+		cn=title.find(" (")
+		title=title[:cn]
+		name=ru(info['originaltitle'])#.replace(" (сериал)","")
+		cn=name.find(" (")
+		if cn>0:
+			name=name[:cn]
+			rus=1
+
+		fanart=info['fanart']
+		cover=info['cover']
+		year=info['year']
+		plot=info['plot']
+		
+		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		if SaveDirectory=="":SaveDirectory=LstDir
+		nfo='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+chr(10)
+		nfo='<tvshow>'+chr(10)
+		
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<showtitle>"+title+"</showtitle>"+chr(10)
+		nfo+="	<year>"+str(year)+"</year>"+chr(10)
+		nfo+="	<season>-1</season>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
+		nfo+="</tvshow>"+chr(10)
+		
+		nf=__settings__.getSetting("NFO")
+		nfowr="no"
+		if nf=="0" and rus==1: nfowr="ok"
+		if nf=="1": nfowr="ok"
+		
+		if nfowr=="ok":
+			fl = open(os.path.join(SaveDirectory, "tvshow.nfo"), "w")
+			fl.write(nfo)
+			fl.close()
+
+
+def save_nfo(tts,img, info={}):
+		sts,ste=find_se(tts)
+		try: s=int(sts.replace("s",""))
+		except: s=0
+		try: e=int(ste.replace("e",""))
+		except: e=0
+		
+		title="season "+str(s)+" episode "+str(e)
+		name=ru(info['originaltitle'])#.replace(" (сериал)","")
+		cn=name.find(" (")
+		rus=0
+		if cn>0:
+			name=name[:cn]
+			rus=1
+		
+		plot=xt(tts)
+		cover=info['cover']
+		fanart=info['fanart']
+		if s>0:
+			if s<10: ss=".S0"+str(s)
+			else:ss=".S"+str(s)
+		else: ss=".0"
+		
+		if e>0:
+			if e<10: es=".E0"+str(e)
+			else:es=".E"+str(e)
+		else: es=""
+
+		if es!="":tts=name+ss+es
+		
+		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		if SaveDirectory=="":SaveDirectory=LstDir
+		nfo="<episodedetails>"+chr(10)
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<season>"+str(s)+"</season>"+chr(10)
+		nfo+="	<episode>"+str(e)+"</episode>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
+		nfo+="</episodedetails>"+chr(10)
+		
+		nfo=__settings__.getSetting("NFO")
+		nfowr="no"
+		if nfo=="0" and rus==1: nfowr="ok"
+		if nfo=="1": nfowr="ok"
+		
+		if nfowr=="ok":
+			fl = open(os.path.join(SaveDirectory, tts+".nfo"), "w")
+			fl.write(nfo)
+			fl.close()
+		return tts
+
+def fokus(txt):
+	pass
+
+def find_se(txt):
+	txt=txt.lower()
+	
+	txt=txt.replace(".","")
+	LE=mfindal(txt,"s","e")
+	s=-1
+	e=-1
+	for i in LE:
+		print i
+		if len(i)<4:
+			try: 
+				s=int(i[1:])
+				ss=i
+			except: pass
+	if s>0:
+		n=txt.find(ss)
+		try: e=int(txt[n+len(ss)+1:n+len(ss)+3])
+		except: e=-1
+			
+	if e<0: e=find_e(txt)
+	if s<0: s=find_s(txt)
+			
+	return (s,e)
+	
+def find_se(txt):
+	txt=txt.lower()
+	for i in range (2000,2020):
+		txt=txt.replace(str(i),"")
+
+	F=["480","720","1080",".mp4",".ts","5.1","264"]
+	for i in F:
+		txt=txt.replace(i,"")
+
+	SL=['.sezon','.Сезон','.сезон',  'sezon','Сезон','сезон']
+	for i in SL:
+		try:txt=txt.replace(i,"^")
+		except: pass
+
+	EL=['seriya','serija','Серия','серия','vypusk']
+	for i in EL:
+		try:txt=txt.replace(i,"#")
+		except: pass
+			
+	EL2=['.e',' e','e','x']
+	for i in EL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"@"+str(j))
+			except: pass
+
+	SL2=['.s',' s','s']
+	for i in SL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"*"+str(j))
+			except: pass
+
+
+	T=["0","1","2","3","4","5","6","7","8","9",".","-","\\",  "#","@","^","*"]#,"x","s","e"
+	L=tuple(txt)
+	nst=""
+	for i in L:
+		if i in T: nst+=i
+			
+	nst=nst.replace("-",".")
+	nst=nst.replace("#.","#").replace(".#","#")
+	nst=nst.replace("@.","@").replace(".@","@")
+	nst=nst.replace("^.","^").replace(".^","^")
+	nst=nst.replace("*.","*").replace(".*","*")
+	nst=nst.replace("......",".").replace(".....",".").replace("....",".").replace("...",".").replace("..",".")
+	if nst[:1]==".": nst=nst[1:]
+	if nst[-1:]==".": nst=nst[:-1]
+	nc=nst.find("\\")
+	if nc>0: 
+		nst1=nst[:nc]
+		nst2=nst[nc+1:]
+		n1=nst2.find("*")
+		n2=nst2.find("^")
+		if n1>-1 or n2>-1:nst=nst2
+		else:
+			#print nst1
+			try:nst1="^"+str(int(nst1.replace(".","").replace("^","").replace("*","")))
+			except:
+				nss=nst1.find("^")
+				if nss>-1:nst1=nst1[:nss+2]
+				else:nst1=""
+			try:nst2="@"+str(int(nst2))
+			except:nst2=">"+nst2
+			nst=nst1+nst2
+	sez="!?!"
+	if 1==1:
+		ns=nst.find("*")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns+1:ns+3]))
+			except:
+				try:sez="s"+str(int(nst[ns+1:ns+2]))
+				except:sez="!*!"
+			#print sez
+			
+	if sez=="!?!" or sez=="!*!":
+		ns=nst.find("^")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns-2:ns]))
+			except:
+				try:sez="s"+str(int(nst[ns-1:ns]))
+				except:
+					try: sez="s"+str(int(nst[ns+1:ns+3]))
+					except:
+						try:sez="s"+str(int(nst[ns+1:ns+2]))
+						except:sez="!^!"
+
+	epd="!?!"
+	if 1==1:
+		ns=nst.find("@")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns+1:ns+4]))
+			except:
+				try:epd="e"+str(int(nst[ns+1:ns+3]))
+				except:
+					try:epd="e"+str(int(nst[ns+1:ns+2]))
+					except:epd="!@!"
+			
+			if sez=="!?!":
+					try: sez="s"+str(int(nst[ns-2:ns]))
+					except:
+						try:sez="s"+str(int(nst[ns-1:ns]))
+						except:sez=="!?@!"
+			#print sez
+			
+	if epd=="!?!" or epd=="!@!":
+		ns=nst.find("#")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns-3:ns]))
+			except:
+				try:epd="e"+str(int(nst[ns-2:ns]))
+				except:
+					try:epd="e"+str(int(nst[ns-1:ns]))
+					except:
+						try: epd="e"+str(int(nst[ns+1:ns+4]))
+						except:
+							try:epd="e"+str(int(nst[ns+1:ns+3]))
+							except:
+								try:epd="e"+str(int(nst[ns+1:ns+2]))
+								except:epd="!#!"
+	
+	if sez=="!?!" and epd!="!?!":
+		if ns>3:
+					try: sez="s"+str(int(nst[:2]))
+					except:
+						try:sez="s"+str(int(nst[:1]))
+						except:sez=="!?!"
+
+	if sez=="!?!" and epd=="!?!":
+					try:epd="e"+str(int(nst))
+					except:
+						try:
+							tmp=float(nst)
+							sez="s"+str(int(tmp))
+							sss,eee=divmod(tmp, 1)
+							epd="e"+str(eee*100).replace(".0","")
+						except: pass
+
+	if sez!="!?!" and epd=="!?!":
+			ns=nst.find(">")
+			if ns>0:
+					try:epd="e"+str(int(nst[ns+1:].replace(".","")))
+					except:epd=="!?!"
+
+	print sez+"\t:\t"+epd+"\t:\t"+nst
+	return (sez,epd)
+
+def find_e(txt):
+	txt=txt.replace(" ","")
+	L=['seriya#','#seriya','serija#','#serija', 'e#']
+	for i in L:
+		for i1 in range (0,200):
+					n=200-i1
+					sn1='00'+str(n)
+					sn2='0'+str(n)
+					sn3=str(n)
+					n1=txt.find(i.replace("#",sn1))
+					n2=txt.find(i.replace("#",sn2))
+					n3=txt.find(i.replace("#",sn3))
+					if n1>-1: return n
+					if n2>-1: return n
+					if n3>-1: return n
+	if txt.find("sezon")<0 and txt.find("сезон")<0:
+		for i in range (2000,2020):
+			txt=txt.replace(str(i),"")
+		txt=txt[:-3]
+		for i in range (0,300):
+			n=300-i
+			n1=txt.find(str(n))
+			if n1>-1: return n
+
+	return -1
+	
+
+def find_s(txt):
+	txt=txt.replace(" ","")
+	
+	L=['#sezon','sezon#','s#',eval(repr("#Сезон"))]#'#Сезон',u'Сезон#',u'#сезон',u'сезон#',
+	for i in L:
+		for i1 in range (0,20):
+					n=20-i1
+					sn1='0'+str(n)
+					sn2=str(n)
+					n1=txt.find(i.replace("#",sn1))
+					n2=txt.find(i.replace("#",sn2))
+					#print i.replace("#",sn2)
+					if n1>-1: return n
+					if n2>-1: return n
+	return -1
+	
 
 def save_all(torr_link,img, info={}):
 	TSplayer=TSengine()
 	out=TSplayer.load_torrent(torr_link,'TORRENT')
 	if out=='Ok':
-		name=ru(info['originaltitle'])#+' ('+str(info['year'])+')'ru(urllib.unquote_plus(info['title']))#.decode('utf-8')
+		name=ru(info['originaltitle'])
+		cn=name.find(" (")
+		if cn>0:name=name[:cn]
+		#+' ('+str(info['year'])+')'ru(urllib.unquote_plus(info['title']))#.decode('utf-8')
 		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
 		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
 		if SaveDirectory=="":SaveDirectory=LstDir
@@ -128,10 +443,14 @@ def save_all(torr_link,img, info={}):
 			tts=tts.replace("\\",' ')
 			try:tts=ru(os.path.basename(tts))#[nf+1:]
 			except: tts=xt(os.path.basename(tts))
+			tts=save_nfo(tts,img, info)
 			fl = open(os.path.join(SaveDirectory, tts+".strm"), "w")
 			fl.write(uri)
 			fl.close()
+			
+		save_tvshow_nfo(tts,img, info)
 	TSplayer.end()
+	xbmc.executebuiltin('UpdateLibrary("video")')
 
 def play_url2(params):
     #print 'play'
@@ -635,6 +954,7 @@ def fileek(qury, info):
 				#print row_url
 				cover=""
 				dict={}
+				info['url']=row_url
 				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 				try:listitem.setInfo(type = "Video", infoLabels = dict)
 				except: pass
@@ -643,6 +963,8 @@ def fileek(qury, info):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(Title)\
 					+ '&info=' + urllib.quote_plus(repr(info))
+				
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
 	except:
@@ -714,7 +1036,7 @@ def rutor(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(Title)\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('Сохранить все', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1379,18 +1701,18 @@ if mode == "Torrents2":
 	ttl2=s2kp(rus.replace("a","а"), info)
 	ttl=ttl+ttl2
 	#ttl=srr(text, info)+ttl
-	if ttl<15:
-		ttl=stft(text, info)
-	if ttl<6: 
-		n=en.find("(")
-		if n>0: text = en[:n-1]
-		else: text = en
-		ttl=stft(text, info)
-	if ttl<6: 
-		n=rus.find("(")
-		if n>0: text = rus.replace("a","а")[:n-1]
-		else: text = rus.replace("a","а")
-		ttl=stft(text, info)
+#	if ttl<15:
+#		ttl=stft(text, info)
+#	if ttl<6: 
+#		n=en.find("(")
+#		if n>0: text = en[:n-1]
+#		else: text = en
+#		ttl=stft(text, info)
+#	if ttl<6: 
+#		n=rus.find("(")
+#		if n>0: text = rus.replace("a","а")[:n-1]
+#		else: text = rus.replace("a","а")
+#		ttl=stft(text, info)
 
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
