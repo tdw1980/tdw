@@ -165,7 +165,7 @@
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.4.2"
+       version="2.4.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

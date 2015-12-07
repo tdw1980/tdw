@@ -199,7 +199,35 @@ def GET_old(target, referer, post_params = None, accept_redirect = True, get_red
 		return None
 
 
+
+
+
+
+
+
+fcookies = os.path.join(addon.getAddonInfo('path'), r'cookies.txt')
+cj = cookielib.FileCookieJar(fcookies)
+hr  = urllib2.HTTPCookieProcessor(cj)
+
+if __settings__.getSetting("immunicity") == "1": 
+	import antizapret
+	opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
+	print "Immunicity"
+elif __settings__.getSetting("immunicity") == "2": 
+	prx=__settings__.getSetting("Proxy")
+	if prx.find('http')<0 : prx="http://"+prx
+	proxy_support = urllib2.ProxyHandler({"http" : prx})
+	#proxy_support = urllib2.ProxyHandler({"http" : "http://n17-03-01.opera-mini.net:443"})
+	opener = urllib2.build_opener(proxy_support, hr)
+	print "Proxy "+__settings__.getSetting("Proxy")
+else: 
+	opener = urllib2.build_opener(hr)
+	print "NO Proxy"
+
+urllib2.install_opener(opener)
+
 def GET(target, referer, post=None):
+
 	#print target
 	try:
 		req = urllib2.Request(url = target, data = post)
