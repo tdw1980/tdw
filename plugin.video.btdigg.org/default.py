@@ -107,6 +107,8 @@ def btd(text):
 				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 				#listitem.setProperty('fanart_image', cover)
 				url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+ urllib.quote_plus(row_url)
+				uri = 'plugin://plugin.video.btdigg.org/?mode=save&url='+ urllib.quote_plus(row_url)
+				listitem.addContextMenuItems([('[B]Сохранить STRM[/B]', 'Container.Update("'+uri+'")'),])
 				xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, isFolder=True)
 	
 	for itm in L2:
@@ -171,6 +173,102 @@ try:
 except:
 	pass
 
+try:
+	ind  = urllib.unquote_plus(params["ind"])
+except:
+	pass
+
+from requests import post
+
+def _request(data):
+
+    json_rpc_url = 'http://127.0.0.1:8668/json-rpc'
+    reply = post(json_rpc_url, json=data).json()
+    try:
+        return reply['result']
+    except KeyError:
+        raise RuntimeError('JSON-RPC returned error:\n{0}'.format(reply['error']))
+
+
+def add_torrent(torrent):
+    _request({'method': 'add_torrent', 'params': {'torrent': torrent, 'paused': False}})
+
+
+def check_torrent_added():
+    return _request({'method': 'check_torrent_added'})
+
+
+def get_last_added_torrent():
+    return _request({'method': 'get_last_added_torrent'})
+
+
+def get_torrent_info(info_hash):
+    return _request({'method': 'get_torrent_info', 'params': {'info_hash': info_hash}})
+
+
+def remove_torrent(info_hash, delete_files):
+    _request({'method': 'remove_torrent', 'params': {'info_hash': info_hash, 'delete_files': delete_files}})
+
+def get_file_list(torrent):
+	add_torrent(torrent)
+	for i in range (1,60):
+		xbmc.sleep(1000)
+		if check_torrent_added(): return get_last_added_torrent()
+	return False
+	
+def save_all(torrent):
+	dict= get_file_list(torrent)
+	if dict==False:
+		print "timeout"
+		showMessage("BTDigg", "Нет сидов", times = 3000)
+	else:
+		L=dict["files"]
+		info_hash=dict["info_hash"]
+		name=dict["name"]
+		nv=0
+		vlist=["mkv","avi","mp4","mov","m4v"]
+		for j in L:
+			title=j[0]
+			ext=title.lower()[-3:]
+			if ext in vlist: nv+=1
+		
+		ind=-1
+		for i in L:
+			ind+=1
+			title=i[0]
+			
+			Directory= __settings__.getSetting("SaveDirectory")#"D:\\1\\2\\3"
+			if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+			if nv==1:SaveDirectory = ru(Directory)
+			else: SaveDirectory = os.path.join(ru(Directory), name)
+			if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+
+			uri = "plugin://plugin.video.yatp/?action=play&torrent="+urllib.quote_plus(torrent)+"&file_index="+str(ind)
+			#vlist=["mkv","avi","mp4","mov","m4v"]
+			ext=title.lower()[-3:]
+			if ext in vlist:
+				tts=title
+				tts=tts.replace("\\",' ')
+				#try:tts=ru(os.path.basename(tts))#[nf+1:]
+				#except: tts=xt(os.path.basename(tts))
+				try:
+					fl = open(os.path.join(SaveDirectory, tts+".strm"), "w")
+					fl.write(uri)
+					fl.close()
+				except:
+					pass
+		remove_torrent(info_hash, True)
+		showMessage("BTDigg", "Сохранено", times = 3000)
+
+def mfindal(http, ss, es):
+	L=[]
+	while http.find(es)>0:
+		s=http.find(ss)
+		e=http.find(es)
+		i=http[s:e]
+		L.append(i)
+		http=http[e+2:]
+	return L
 
 if mode == None :
 	btd(inputbox())
@@ -185,3 +283,6 @@ if mode == 's':
 	xbmcplugin.endOfDirectory(handle, True, True)
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
+
+if mode == 'save':
+	save_all(url)
