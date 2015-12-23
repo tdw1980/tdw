@@ -165,7 +165,7 @@
 
 <addon id="plugin.video.LostFilm"
        name="LostFilm"
-       version="0.5.4"
+       version="0.5.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -177,7 +177,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>LostFilm</summary>
-    <description>LostFilm for AceStreem and Libtorrent</description>
+    <description>LostFilm for AceStreem, YATP or Libtorrent</description>
     <platform>all</platform>
   </extension>
 </addon>

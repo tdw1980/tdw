@@ -193,7 +193,7 @@ def play_url(params):
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		openTorrent(torr_link, DownloadDirectory)
 		return False
-	
+
 	img=urllib.unquote_plus(params["img"])
 	if __settings__.getSetting("immunicity") == "2":
 		import base64
@@ -207,6 +207,10 @@ def play_url(params):
 		torr_link=params['file']
 		tmd='TORRENT'
 	
+	if Engine=="2":
+		purl ="plugin://plugin.video.yatp/?action=play&torrent="+ urllib.quote_plus(torr_link)
+		xbmc.executebuiltin("PlayMedia("+purl+")")
+		return False
 
 	#showMessage('heading', torr_link, 10000)
 	TSplayer=tsengine()
@@ -931,14 +935,20 @@ def Allrelis(L):
 			row_url = i[1]
 			listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-			purl = sys.argv[0] + '?mode=OpenCat'\
-				+ '&url=' + urllib.quote_plus(row_url)\
-				+ '&title=' + urllib.quote_plus('Title')\
-				+ '&text=' + urllib.quote_plus('0')
+			
 			Engine = __settings__.getSetting("Engine")
+			if Engine=="2":
+				purl ="plugin://plugin.video.yatp/?action=list_files&torrent="+ urllib.quote_plus(row_url)
+			else:
+				purl = sys.argv[0] + '?mode=OpenCat'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + urllib.quote_plus('Title')\
+					+ '&text=' + urllib.quote_plus('0')
+			#Engine = __settings__.getSetting("Engine")
+			
 			if Engine=="1":xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 			else:xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-		return True 
+		return True
 
 
 p = re.compile(r'<.*?>')
