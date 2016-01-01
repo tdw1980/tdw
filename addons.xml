@@ -146,7 +146,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.4.2"
+       version="1.4.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -184,7 +184,7 @@
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.4.5"
+       version="2.4.6"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

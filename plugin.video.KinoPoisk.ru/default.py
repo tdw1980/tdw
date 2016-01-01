@@ -454,7 +454,7 @@ def save_all(torr_link,img, info={}):
 
 def play_url2(params):
     #print 'play'
-    torr_link=urllib.unquote(params["torr_url"])
+    torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
     img=urllib.unquote_plus(params["img"])
     title=urllib.unquote_plus(params["title"])
     #showMessage('heading', torr_link, 10000)
@@ -1692,7 +1692,7 @@ if mode == "Torrents2":
 	try:en=params["info"]["originaltitle"].encode('utf8')
 	except: en=params["info"]["originaltitle"]
 	if rus == en:text = rus.replace("a","а")+" "+str(params["info"]["year"])
-	else:text = params["info"]["originaltitle"]+" "+str(params["info"]["year"])+" "+rus.replace("a","а")
+	else:text = params["info"]["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
 	

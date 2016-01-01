@@ -21,7 +21,7 @@ import socket
 socket.setdefaulttimeout(50)
 
 icon = xbmc.translatePath(os.path.join(os.getcwd().replace(';', ''), 'icon.png'))
-siteUrl = 'www.rutor.org'
+siteUrl = 'open-tor.org'
 httpSiteUrl = 'http://' + siteUrl
 sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'plugin.video.RuTor.cookies.sid')
 
@@ -62,7 +62,7 @@ if not prt_file:
 
 
 def play_url(params):
-	torr_link="http://www.rutor.org"+params['file']
+	torr_link="http://open-tor.org"+params['file']
 	
 	img=urllib.unquote_plus(params["img"])
 	#showMessage('heading', torr_link, 10000)
@@ -337,10 +337,11 @@ def upd(category, sort, text, n):
 	elif text<>'':stext=text
 	stext=stext.replace("%", "%20").replace(" ", "%20").replace("?", "%20").replace("#", "%20")
 	if stext=="":
-		categoryUrl = xt('http://www.rutor.org/browse/'+n+'/'+category+'/0/'+sort)
+		categoryUrl = xt('http://open-tor.org/browse/'+n+'/'+category+'/0/'+sort)
 	else:
-		if text=='1':categoryUrl = 'http://www.rutor.org/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
-		else: categoryUrl = 'http://www.rutor.org/search/'+n+'/'+category+'/110/'+sort+'/'+stext
+		if text=='1':categoryUrl = 'http://open-tor.org/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
+		else: categoryUrl = 'http://open-tor.org/search/'+n+'/'+category+'/110/'+sort+'/'+stext
+	
 	
 	http = GET(categoryUrl, httpSiteUrl, None)
 	
@@ -349,7 +350,7 @@ def upd(category, sort, text, n):
 		return None
 	else:
 		http=formtext(http)
-		print http
+		
 		LL=http.splitlines()
 		return LL
 
@@ -1111,7 +1112,7 @@ def debug(s):
 	fl.close()
 
 def get_qual(ntor):
-	hp = GET('http://www.rutor.org/torrent/'+ntor, httpSiteUrl, None)
+	hp = GET('http://open-tor.org/torrent/'+ntor, httpSiteUrl, None)
 	n=hp.find('>Связанные раздачи<')
 	k=hp.find('>Искать ещё похожие раздачи<')
 	hp=hp[n:k]
@@ -1150,7 +1151,7 @@ def get_minfo(ntor):
 			except: #dbi = None
 			
 			#if dbi == None:
-				hp = GET('http://www.rutor.org/torrent/'+ntor, httpSiteUrl, None)
+				hp = GET('http://open-tor.org/torrent/'+ntor, httpSiteUrl, None)
 				hp=clearinfo(hp)
 				LI=hp.splitlines()
 				dict={}
@@ -1360,7 +1361,7 @@ def Search(category, sort, text, url='0'):
 	Filtr = __settings__.getSetting("Filtr")
 
 	RL=upd(category, sort, text, url)
-	print RL
+	
 	RootList=format(RL)
 	
 	
