@@ -165,7 +165,7 @@
 
 <addon id="plugin.video.LostFilm"
        name="LostFilm"
-       version="0.5.5"
+       version="0.5.6"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

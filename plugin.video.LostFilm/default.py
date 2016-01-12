@@ -238,6 +238,7 @@ def play_url(params):
 			xbmcplugin.addDirectoryItem(handle, uri, li, False)
 
 	if j<2:
+		xbmcplugin.endOfDirectory(handle, False, False)
 		#play_url2({'torr_url': torr_link,'title': k,'ind':v,'img':img,'mode': 'play_url2'})
 		TSplayer.play_url_ind(1,k, icon, img)
 		TSplayer.end()
