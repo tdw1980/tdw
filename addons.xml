@@ -184,7 +184,7 @@
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.4.6"
+       version="2.5.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -196,7 +196,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>RuTor</summary>
-    <description>RuTor for TorrentStreem</description>
+    <description>RuTor for AceStreem</description>
     <platform>all</platform>
   </extension>
 </addon>

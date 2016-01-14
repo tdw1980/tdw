@@ -21,8 +21,7 @@ import socket
 socket.setdefaulttimeout(50)
 
 icon = xbmc.translatePath(os.path.join(os.getcwd().replace(';', ''), 'icon.png'))
-siteUrl = 'open-tor.org'
-httpSiteUrl = 'http://' + siteUrl
+
 sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'plugin.video.RuTor.cookies.sid')
 
 h = int(sys.argv[1])
@@ -34,6 +33,11 @@ PLUGIN_NAME   = 'RuTor'
 addon = xbmcaddon.Addon(id='plugin.video.RuTor')
 __settings__ = xbmcaddon.Addon(id='plugin.video.RuTor')
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
+
+siteUrl = 'open-tor.org'
+siteUrl = __settings__.getSetting('Url')
+httpSiteUrl = 'http://' + siteUrl
+
 
 
 #---------tsengine----by-nuismons-----
@@ -62,7 +66,7 @@ if not prt_file:
 
 
 def play_url(params):
-	torr_link="http://open-tor.org"+params['file']
+	torr_link=httpSiteUrl+params['file']
 	
 	img=urllib.unquote_plus(params["img"])
 	#showMessage('heading', torr_link, 10000)
@@ -337,10 +341,10 @@ def upd(category, sort, text, n):
 	elif text<>'':stext=text
 	stext=stext.replace("%", "%20").replace(" ", "%20").replace("?", "%20").replace("#", "%20")
 	if stext=="":
-		categoryUrl = xt('http://open-tor.org/browse/'+n+'/'+category+'/0/'+sort)
+		categoryUrl = xt(httpSiteUrl+'/browse/'+n+'/'+category+'/0/'+sort)
 	else:
-		if text=='1':categoryUrl = 'http://open-tor.org/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
-		else: categoryUrl = 'http://open-tor.org/search/'+n+'/'+category+'/110/'+sort+'/'+stext
+		if text=='1':categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
+		else: categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/110/'+sort+'/'+stext
 	
 	
 	http = GET(categoryUrl, httpSiteUrl, None)
@@ -1112,7 +1116,7 @@ def debug(s):
 	fl.close()
 
 def get_qual(ntor):
-	hp = GET('http://open-tor.org/torrent/'+ntor, httpSiteUrl, None)
+	hp = GET(httpSiteUrl+'/torrent/'+ntor, httpSiteUrl, None)
 	n=hp.find('>Связанные раздачи<')
 	k=hp.find('>Искать ещё похожие раздачи<')
 	hp=hp[n:k]
@@ -1151,7 +1155,7 @@ def get_minfo(ntor):
 			except: #dbi = None
 			
 			#if dbi == None:
-				hp = GET('http://open-tor.org/torrent/'+ntor, httpSiteUrl, None)
+				hp = GET(httpSiteUrl+'/torrent/'+ntor, httpSiteUrl, None)
 				hp=clearinfo(hp)
 				LI=hp.splitlines()
 				dict={}
