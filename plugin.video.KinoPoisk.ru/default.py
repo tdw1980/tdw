@@ -1022,6 +1022,46 @@ def rutor(text, info={}):
 			+ '&title=' + urllib.quote_plus(Title)\
 			+ '&text=' + urllib.quote_plus('0')
 		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+
+	for itm in RL:
+		if itm[2].find(text)>=0:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+	return len(RL)
+
+def rutoris(text, info={}):
+	#try:
+	import rutor_is
+	rtr=rutor_is.Tracker()
+	#except: pass
+	
+	RL=rtr.Search(text, "0")
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Rutor.is»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=Search'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 
 	for itm in RL:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
@@ -1697,6 +1737,7 @@ if mode == "Torrents2":
 	#if n>0: text = text[:n-1]
 	
 	ttl=rutor(text, info)
+	if ttl<1: ttl=rutoris(text, info)
 	ttl3=fileek(text, info)
 	ttl2=s2kp(rus.replace("a","а"), info)
 	ttl=ttl+ttl2

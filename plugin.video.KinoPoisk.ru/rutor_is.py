@@ -20,9 +20,9 @@ import socket
 socket.setdefaulttimeout(50)
 
 icon = ""
-siteUrl = 'ru-ru.org'
+siteUrl = 'rutor.in'
 httpSiteUrl = 'http://' + siteUrl
-sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'rutors.cookies.sid')
+sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'rutor.cookies.sid')
  
 cj = cookielib.FileCookieJar(sid_file) 
 hr  = urllib2.HTTPCookieProcessor(cj) 
@@ -84,79 +84,97 @@ def GET(target, referer, post=None):
 		print e
 
 
-def upd(category, sort, text, n):
-	try: n=str(int(n))
-	except: n="0"
-	if text=='0':stext=""
-	elif text=='1':stext=inputbox()
-	elif text<>'':stext=text
-	stext=stext.replace("%", "%20").replace(" ", "%20").replace("?", "%20").replace("#", "%20")
-	if stext=="":
-		categoryUrl = xt(httpSiteUrl+'/browse/'+n+'/'+category+'/0/'+sort)
-	else:
-		if text=='1':categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
-		else: categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/110/'+sort+'/'+stext
+def upd(text):
+	text=text.replace(" ", "%20")
+	categoryUrl = 'http://rutor.in/search.php?sr=topics&sf=titleonly&fp=1&tracker_search=torrent&keywords='+text
 	http = GET(categoryUrl, httpSiteUrl, None)
 	if http == None:
 		print'RuTor: Сервер не отвечает'
 		return None
 	else:
-		http=formtext(http)
-		LL=http.splitlines()
+		
+		LL=formtext(http)
 		return LL
 
-
-def format(L):
-	if L==None: 
-		return ["","","","","","","","",""]
-	else:
-		Ln=[]
-		i=0
-		for itm in L:
-			i+=1
-			if len(itm)>6:
-				if itm[:5]=="flag1": 
-					try:Ln.append(eval(itm[6:]))
-					except: pass
-		return Ln
-
-def cleartext(str):
-	str=str.replace('http://s.rutor.org/','/s/')
-	str=str.replace('</td><td ><a class="downgif" href="',"', '")
-	str=str.replace('"><img src="/s/t/d.gif" alt="D" /></a><a href="magnet:?xt=',"', '")
-	str=str.replace('alt="M" /></a><a href="/torrent/',"', '")
-	str=str.replace('</a></td> <td align="right">',"', '")
-	str=str.replace('<img src="/s/t/com.gif" alt="C" /></td><td align="right">',"', '")
-	str=str.replace('</td><td align="center"><span class="green"><img src="/s/t/arrowup.gif" alt="S" />',"', '")
-	str=str.replace('</span><img src="/s/t/arrowdown.gif" alt="L" /><span class="red">',"', '")
-	str=str.replace('">',"', '")
-	str=str.replace('</span></td></tr>',"']")
-	str=str.replace('</span>',"']")
-	str=str.replace("</table>", "\r")
-	return str
-
-
+def mfindal(http, ss, es):
+	L=[]
+	while http.find(es)>0:
+		s=http.find(ss)
+		e=http.find(es)
+		i=http[s:e]
+		L.append(i)
+		http=http[e+2:]
+	return L
 
 def formtext(http):
-	http=http.replace(chr(10),"")#.replace(chr(13),"")
+	http=http.replace(chr(10),"").replace('\t',"")
 	
-	http=http.replace('&#039;',"").replace('colspan = "2"',"").replace('&nbsp;',"") #исключить
-	http=http.replace('</td></tr><tr class="gai"><td>',"\rflag1 ['") 
-	http=http.replace('</td></tr><tr class="gai">',"\rflag1 ") #начало
-	#http=http.replace('/></a>\r<a href',' *** ').replace('alt="C" /></td>\r<td align="right"',' *** ') #склеить
-	http=http.replace('<tr class="tum"><td>',"\rflag1 ['").replace('<tr class="gai"><td>',"\rflag1 ['") #разделить
-	http=cleartext(http)
-	return http
+	ss='<tr valign="middle" class="col_line">'
+	es='span class="my_tt complet" title='
+	L = mfindal(http, ss, es)
+	Lout=[]
+	for i in L:
+		try:
+			#print i
+			ss='style="white-space:nowrap;width:100px;">'
+			es='</td><td class="row'
+			data=mfindal(i, ss, es)[0][len(ss):]
+			#print data
+		
+			ss='href="./download/file.php?id='
+			es='&amp;sid='
+			id=mfindal(i, ss, es)[0][len(ss):]
+			#print id
+			url='http://rutor.in/download/file.php?id='+id
+			
+			ss='" class="topictitle">'
+			es='</a> </td><td class="row'
+			title=mfindal(i, ss, es)[0][len(ss):].replace("&quot;",'"')
+			#print title
+	
+			ss='<span title="Размер">'
+			es='</p></td><!--<td class'
+			size=mfindal(i, ss, es)[0][len(ss):].replace('&nbsp;','')
+			#print size
+			nnn=size.find('.')
+			if nnn>2:size=size[:nnn]+size[nnn+3:]
+				
+			if len(size)==4:size=size.center(14)
+			elif len(size)==5:size=size.center(12)
+			elif len(size)==6:size=size.center(10)
+			elif len(size)==7:size=size.center(8)
+			elif len(size)==8:size=size.center(6)
+			elif len(size)==9:size=size.center(4)
+			#size=size+" "+str(len(size))
+
+			ss='title="Сидеров">'
+			es='</span> | <span class="my_tt leech"'
+			sids=mfindal(i, ss, es)[0][len(ss):]
+			#print sids
+			
+			if len(sids)==1:sids=sids.center(9)
+			elif len(sids)==2:sids=sids.center(8)
+			elif len(sids)==3:sids=sids.center(7)
+			elif len(sids)==4:sids=sids.center(6)
+
+			
+			UF=0
+			Tresh=["Repack"," PC ","XBOX","RePack","FB2","TXT","DOC"," MP3"," JPG"," PNG"," SCR","CAMRip",") TS","CamRip"]
+			for TRi in Tresh:
+				if title.find(TRi)>=0:UF+=1
+			if UF<1: Lout.append([sids,size,xt(title),url])
+		except: pass
+	return Lout
 
 
-def Storr(category, sort, text, url='0'):
+def Storr(text):
 	HideScr = 'true'
 	HideTSnd = 'true'
 	TitleMode = 0
 	EnabledFiltr = 'false'
 	Filtr = ""
 
-	RL=upd(category, sort, text, url)
+	RL=upd(text)
 	RootList=format(RL)
 	Lout=[]
 	k=0
@@ -203,14 +221,14 @@ def Storr(category, sort, text, url='0'):
 				for Fi in F1:
 					if Tlo.find(rulower(Fi))>=0:UF+=1
 					if Glo.find(rulower(Fi))>=0:UF+=1
-			Tresh=["Repack"," PC ","XBOX","RePack","FB2","TXT","DOC"," MP3"," JPG"," PNG"," SCR"]
+			Tresh=["Repack"," PC ","XBOX","RePack","FB2","TXT","DOC"," MP3"," JPG"," PNG"," SCR","CAMRip",") TS","CamRip"]
 			for TRi in Tresh:
 				if tTitle[5].find(TRi)>=0:UF+=1
 					
 			if HideScr == 'true':
-				nH1=Title.find("CAMRip")
-				nH2=Title.find(") TS")
-				nH3=Title.find("CamRip")
+				nH1=Title.find()
+				nH2=Title.find()
+				nH3=Title.find()
 				nH4=Title.find(" DVDScr")
 				nH=nH1+nH2+nH3+nH4
 			else:
@@ -244,7 +262,7 @@ def Storr(category, sort, text, url='0'):
 			if UF==0 and nH<0 and sH<0 and (CT not in TLD):
 				#TLD.append(CT)
 				if tTitle[1][:4]=="http":row_url = tTitle[1]
-				else:row_url = httpSiteUrl+tTitle[1]
+				else:row_url = "http://www.rutor.in"+tTitle[1]
 				Title=Title.replace("&quot;",'"')
 				Lout.append([sids,size,xt(Title),row_url])
 				#print Title
@@ -265,5 +283,5 @@ class Tracker:
 		pass
 
 	def Search(self, text="миля", category=0):
-		Lout=Storr(category, "0", text, url='0')
+		Lout=upd(text)
 		return Lout
