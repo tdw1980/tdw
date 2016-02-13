@@ -547,16 +547,20 @@ def SerchAlbums(url):
 
 def SerchTracs(url):
 				if url.find("ttps://myzuka")<0: url='https://myzuka.org'+url
-				print url
+				#print url
 				Lt=Serch_in_album(url)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
-def Serch_in_album(url, Lt=[]):
+def Serch_in_album(url, Lt=[], S=0):
+	if url.find("ttps://myzuka")<0: url='https://myzuka.org'+url
+	#print url
 	http=getURL(url)
 	try:
 		ss='itemprop="image" src="'
 		es='<div class="share-block">'
-		img=mfindal(http, ss, es)[0][len(ss):].replace(chr(10),'').replace(chr(13),'').replace('"/>        </div>','').replace('amp;','')
+		es='&amp;il=False&amp;msl=0"/'
+		img=mfindal(http, ss, es)[0][len(ss):].replace(chr(10),'').replace(chr(13),'').replace('"/>        </div>','').replace('amp;','')+"&il=False&msl=0"
+		#print img
 	except:img=""
 	try:
 		ss='<h1>'
@@ -572,6 +576,7 @@ def Serch_in_album(url, Lt=[]):
 	try:
 		ss='data-url="/Song/Play/'
 		es='><!---->'
+		es='title="Слушать '
 		L=mfindal(http, ss, es)
 	except:
 		L=[]
@@ -580,9 +585,13 @@ def Serch_in_album(url, Lt=[]):
 		try:
 			if len (i)>10:
 				i=i.replace('data-url=','{"url":')
+				i=i.replace('data-position =',',"position":')
+				i=i.replace('data-url=','{"url":')
 				i=i.replace('amp;','')
-				i=i.replace('title="Слушать ',',"artist":"')
+				i=i.replace('data-title=',',"artist":')
+				#i=i.replace('title="Слушать ',',"artist2":')
 				i=i.replace(' - ','", "title":"')
+				i=i.replace('&#39;',"'")
 				i=i+'}'
 				#print i
 				dict=eval(i)
@@ -611,7 +620,10 @@ def Serch_in_album(url, Lt=[]):
 				uri += '&img='  + urllib.quote_plus(img)
 				
 				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.myzuka.org/'+uri+'")'),])
-				
+				if S>0: 
+					Save(dict, title,update=0)
+					xbmc.executebuiltin('UpdateLibrary("music")')
+					
 				xbmcplugin.addDirectoryItem(pluginhandle, purl, item, False, len(L))
 		except:pass
 
@@ -636,6 +648,7 @@ def Serch(url, Lt=[]):
 				i=i.replace('</td></tr><tr>','"')
 				i=i.replace('">','","')
 				i='["'+i+"]"
+				#print i
 				ie=eval(i)
 				
 				img=""
@@ -644,6 +657,7 @@ def Serch(url, Lt=[]):
 				title	=ie[3]
 				#img		=ie["cover"]
 				url		=ie[2]
+				dlurl	=ie[2]
 				urlart	=ie[0]
 				title2 = artist+" - [B]"+title+"[/B]"
 				
@@ -651,9 +665,9 @@ def Serch(url, Lt=[]):
 				item = xbmcgui.ListItem(trk+title2, iconImage = img, thumbnailImage = img)
 				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist})#, "album":album
 				
-				
+				dict={"dlurl":dlurl, "title":title, "artist":artist, "cover":"", "album":""}
 				uri = sys.argv[0] + '?mode=save'
-				uri += '&info='  + urllib.quote_plus(i)
+				uri += '&info='  + urllib.quote_plus(repr(dict))
 				uri += '&name='  + urllib.quote_plus(title2)
 				uri += '&img='  + urllib.quote_plus(img)
 				
@@ -678,7 +692,7 @@ def Serch(url, Lt=[]):
 		return Lt
 
 def Album(url, Lt=[]):
-		print url
+		#print url
 		http=getURL(url)
 		http=http.replace('  ','')
 		http=http.replace(chr(10),'').replace(chr(13),'')
@@ -737,7 +751,7 @@ def Album(url, Lt=[]):
 				uri2 += '&name='  + urllib.quote_plus(artist)
 				uri2 += '&img='  + urllib.quote_plus(img)
 				
-				#item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri+'")'),('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')])
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить альбом [/COLOR]', 'Container.Update("plugin://plugin.audio.myzuka.org/'+uri+'")'),])#('[COLOR F050F050] Исполнитель [/COLOR]', 'Container.Update("plugin://plugin.audio.kibergrad.com/'+uri2+'")')
 				
 				uri = sys.argv[0] + '?mode=serchtracs'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -750,7 +764,7 @@ def Album(url, Lt=[]):
 			except:pass
 		return Lt
 
-def SaveAll(url):
+def SaveAll2(url):
 		http=getURL(url)
 		try:
 			ss='<li class="view clearit">'
@@ -822,11 +836,11 @@ def Save2(dict, name):
 
 def Save(dict, name, update=1):
 	target	=dict["dlurl"]
-	print target
+	#print target
 	artist	=dict["artist"]
 	title	=dict["title"]
 	img		=dict["cover"]
-	print img
+	#print img
 	album	=dict["album"].strip()
 
 	Dldir = __settings__.getSetting("DownloadDirectory")
@@ -845,7 +859,7 @@ def Save(dict, name, update=1):
 			fl = open(fp, "wb")
 			fl.write(resp.read())
 			fl.close()
-			if os.path.exists(cp)== False:
+			if os.path.exists(cp)== False and img !="":
 				req = urllib2.Request(url = img, data = None)
 				req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
 				resp = urllib2.urlopen(req)
@@ -867,7 +881,7 @@ def Save(dict, name, update=1):
 def Play(url):
 	http=getURL(url)
 	ss='data-url="/Song/Play/'
-	es='" title="Слушать'
+	es='" data-position = "'
 	purl=mfindal(http, ss, es)[0].replace(ss,"https://myzuka.org/Song/Download/").replace('amp;','')
 	xbmc.Player(xbmc.PLAYER_CORE_AUTO).play(purl)
 
@@ -904,7 +918,7 @@ elif mode == 'serchartists':	SerchArtists(url)
 elif mode == 'serchalbums':	SerchAlbums(url)
 elif mode == 'serchtracs':	SerchTracs(url)
 elif mode == 'save':	Save(info, name)
-elif mode == 'save_all':	SaveAll(url)
+elif mode == 'save_all':	Serch_in_album(url, S=1)
 elif mode == 'srcartist':	SrcArtist()
 elif mode == 'srcartist_q':	SrcArtist(name)
 elif mode == 'play':	Play(url)
