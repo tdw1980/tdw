@@ -52,7 +52,11 @@ def play_url(torr_link,img, info={}):
             
             #li.addContextMenuItems([('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri),])
             try:title=info['originaltitle']+' ('+str(info['year'])+')'
-            except:title="error"
+            except:
+                try:title=info['namef']
+                except:title="error"
+                print "----------title------------"
+                print title
             uri2 = construct_request({
                 't': torr_link,
                 'tt': k.encode('utf-8'),
@@ -77,6 +81,66 @@ def play_url(torr_link,img, info={}):
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
     TSplayer.end()
 
+def play_url2(params):
+    #print 'play'
+    torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
+    img=urllib.unquote_plus(params["img"])
+    title=urllib.unquote_plus(params["title"])
+    #showMessage('heading', torr_link, 10000)
+    TSplayer=TSengine()
+    out=TSplayer.load_torrent(torr_link,'TORRENT')
+    if out=='Ok':
+        lnk=TSplayer.get_link(int(params['ind']),title, img, img)
+        if lnk:
+           
+            item = xbmcgui.ListItem(path=lnk, thumbnailImage=img, iconImage=img)
+            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)  
+
+            while not xbmc.Player().isPlaying:
+                xbmc.sleep(300)
+            while TSplayer.player.active and not TSplayer.local: 
+                TSplayer.loop()
+                xbmc.sleep(300)
+                if xbmc.abortRequested:
+                    TSplayer.log.out("XBMC is shutting down")
+                    break
+            if TSplayer.local and xbmc.Player().isPlaying: 
+                try: time1=TSplayer.player.getTime()
+                except: time1=0
+                
+                i = xbmcgui.ListItem("***%s"%title)
+                i.setProperty('StartOffset', str(time1))
+                xbmc.Player().play(TSplayer.filename.decode('utf-8'),i)
+
+        else:
+            item = xbmcgui.ListItem(path='')
+            xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
+    else:
+        try:    xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title2"])+'")')
+        except: xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title"])+'")')
+    TSplayer.end()
+    xbmc.Player().stop
+
+
+
+#--------------tsengine----by-nuismons--------------
+
+
+def alter(text):
+		info={"title":text}
+		print text
+		rutor(text, info)
+		dugtor(text, info)
+		fileek(text, info)
+		s2kp(text, info)
+		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+		xbmcplugin.endOfDirectory(handle)
+		xbmc.sleep(300)
+		xbmc.executebuiltin("Container.SetViewMode(51)")
+
+
+
+
 def addplist(params):
     li = xbmcgui.ListItem(params['tt'])
     uri = construct_request({
@@ -95,6 +159,7 @@ def save_strm(params):
 		uri = construct_request({
 			'torr_url': urllib.unquote_plus(params['t']),
 			'title': params['tt'].decode('utf-8'),
+			'title2': name,
 			'ind':urllib.unquote_plus(params['i']),
 			'img':urllib.unquote_plus(urllib.unquote_plus(params['ii'])),
 			'func': 'play_url2',
@@ -115,6 +180,7 @@ def save_tvshow_nfo(tts,img, info={}):
 		if cn>0:
 			name=name[:cn]
 			rus=1
+		else: rus=0
 
 		fanart=info['fanart']
 		cover=info['cover']
@@ -452,46 +518,7 @@ def save_all(torr_link,img, info={}):
 	TSplayer.end()
 	xbmc.executebuiltin('UpdateLibrary("video")')
 
-def play_url2(params):
-    #print 'play'
-    torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
-    img=urllib.unquote_plus(params["img"])
-    title=urllib.unquote_plus(params["title"])
-    #showMessage('heading', torr_link, 10000)
-    TSplayer=TSengine()
-    out=TSplayer.load_torrent(torr_link,'TORRENT')
-    if out=='Ok':
-        lnk=TSplayer.get_link(int(params['ind']),title, img, img)
-        if lnk:
-           
-            item = xbmcgui.ListItem(path=lnk, thumbnailImage=img, iconImage=img)
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)  
 
-            while not xbmc.Player().isPlaying:
-                xbmc.sleep(300)
-            while TSplayer.player.active and not TSplayer.local: 
-                TSplayer.loop()
-                xbmc.sleep(300)
-                if xbmc.abortRequested:
-                    TSplayer.log.out("XBMC is shutting down")
-                    break
-            if TSplayer.local and xbmc.Player().isPlaying: 
-                try: time1=TSplayer.player.getTime()
-                except: time1=0
-                
-                i = xbmcgui.ListItem("***%s"%title)
-                i.setProperty('StartOffset', str(time1))
-                xbmc.Player().play(TSplayer.filename.decode('utf-8'),i)
-
-        else:
-            item = xbmcgui.ListItem(path='')
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
-    TSplayer.end()
-    xbmc.Player().stop
-
-
-
-#--------------tsengine----by-nuismons--------------
 
 from TSCore import TSengine as tsengine
 
@@ -923,7 +950,7 @@ def s2kp(id, info):
 				listitem.setProperty('fanart_image', cover)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
@@ -961,7 +988,7 @@ def fileek(qury, info):
 				listitem.setProperty('fanart_image', cover)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				
 				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
@@ -999,7 +1026,7 @@ def srr(text, info={}):
 				listitem.setProperty('fanart_image', cover)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 
@@ -1039,7 +1066,7 @@ def rutor(text, info={}):
 				listitem.setProperty('fanart_image', cover)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
@@ -1074,11 +1101,54 @@ def rutoris(text, info={}):
 				listitem.setProperty('fanart_image', cover)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
+
+
+def dugtor(text, info={}):
+	#try:
+	import dugtor
+	rtr=dugtor.Tracker()
+	#except: pass
+	
+	RL=rtr.Search(text, "0")
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Dugtor.ru»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=Search'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+
+	for itm in RL:
+		if itm[2].find(text)>=0:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + info['title']\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+	return len(RL)
+
+
 
 def stft(text, info={}):
 	try:
@@ -1738,6 +1808,11 @@ if mode == "Torrents2":
 	
 	ttl=rutor(text, info)
 	if ttl<1: ttl=rutoris(text, info)
+	if ttl<1: rutor(rus.replace("a","а"), info)
+	
+	ttl4=dugtor(text, info)
+	if ttl4<1: dugtor(rus.replace("a","а"), info)
+	
 	ttl3=fileek(text, info)
 	ttl2=s2kp(rus.replace("a","а"), info)
 	ttl=ttl+ttl2
@@ -1768,14 +1843,19 @@ if mode == "OpenTorrent":
 	engine = __settings__.getSetting("Engine")
 	#print "engine = "+str(engine)
 	if engine==0 or engine=='0':
+		info['namef']=urllib.unquote_plus(get_params()["title"])
 		play_url(url,img,info)
 	else:
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")[:-1]#.replace("\\\\","\\")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		playTorrent(url, DownloadDirectory)
 
+elif mode == 'alter':
+	alter(urllib.unquote_plus(get_params()["title"])[1:])
+
 elif mode == 'play_url2':
 	play_url2(get_params())
+
 elif mode == 'save_strm':
 	save_strm(get_params())
 		
