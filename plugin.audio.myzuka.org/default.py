@@ -337,6 +337,12 @@ def mfindal(http, ss, es):
 		http=http[e+2:]
 	return L
 
+def rt(x):
+	L=[('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y')]
+	for i in L:
+		x=x.replace(i[0], i[1])
+	return x
+
 
 def Format(t):
 	title =t
@@ -453,6 +459,7 @@ def Album2(url):
 				i=i.replace('</td><td><b>','","')
 				i=i.replace('<img alt="','')
 				i=i.replace('" src="','","')
+				i=rt(i)
 				i='["'+i+"]"
 				#print i
 				ie=eval(i)
@@ -566,6 +573,7 @@ def Serch_in_album(url, Lt=[], S=0):
 		ss='<h1>'
 		es='</h1>'
 		album2=mfindal(http, ss, es)[0][len(ss):-6].replace('amp;','')
+		album2=rt(album2)
 	except:album2=""
 	try:
 		ss='<h1>'
@@ -588,6 +596,7 @@ def Serch_in_album(url, Lt=[], S=0):
 				i=i.replace('data-position =',',"position":')
 				i=i.replace('data-url=','{"url":')
 				i=i.replace('amp;','')
+				i=rt(i)
 				i=i.replace('data-title=',',"artist":')
 				#i=i.replace('title="Слушать ',',"artist2":')
 				i=i.replace(' - ','", "title":"')
@@ -620,13 +629,10 @@ def Serch_in_album(url, Lt=[], S=0):
 				uri += '&img='  + urllib.quote_plus(img)
 				
 				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.myzuka.org/'+uri+'")'),])
-				if S>0: 
-					Save(dict, title,update=0)
-					xbmc.executebuiltin('UpdateLibrary("music")')
-					
+				if S>0: Save(dict, title,update=0)
 				xbmcplugin.addDirectoryItem(pluginhandle, purl, item, False, len(L))
 		except:pass
-
+	if S>0:xbmc.executebuiltin('UpdateLibrary("music")')
 
 def Serch(url, Lt=[]):
 		http=getURL(url)
@@ -647,6 +653,7 @@ def Serch(url, Lt=[]):
 				i=i.replace('</a></td><td>','","')
 				i=i.replace('</td></tr><tr>','"')
 				i=i.replace('">','","')
+				i=rt(i)
 				i='["'+i+"]"
 				#print i
 				ie=eval(i)
@@ -710,6 +717,7 @@ def Album(url, Lt=[]):
 				it=it.replace(' class="item "><div class="vis"><a href=',' ,"url":')
 				it=it.replace('><img src=',' ,"cover":')
 				it=it.replace('amp;','')
+				it=rt(it)
 				it=it.replace(' alt=',' ,"album":')
 				it=it.replace(' data-qazy=true></a><div class="overlay"><ul><li>Аплоадер: <a href="/Profile/',' ,"uploader": ("')
 				it=it.replace('</a> </li><li>Добавлен: ','") ,"load":"')
@@ -722,15 +730,16 @@ def Album(url, Lt=[]):
 				it=it.replace(': <a href="', '"), "year": ("')
 				it=it.replace('class="tags', '')
 				it=it+'")}'
+				
 				it=it.strip()
 				#print it
 				dict=eval(it)
 				
 				ss='<title>'
 				es=': скачать альбомы и сборники'
-				artist=mfindal(http, ss, es)[0][len(ss):]#.replace("&#039;","'")
+				artist=rt(mfindal(http, ss, es)[0][len(ss):])#.replace("&#039;","'")
 
-				dict["artist"] = artist
+				dict["artist"] = rt(artist)
 				album	=dict["album"]#.replace("&#039;","'")
 				img		=dict["cover"]
 				url		=dict["url"]
@@ -763,76 +772,6 @@ def Album(url, Lt=[]):
 					Lt.append(title)
 			except:pass
 		return Lt
-
-def SaveAll2(url):
-		http=getURL(url)
-		try:
-			ss='<li class="view clearit">'
-			es='<a class="icon icon-list-download download-btn'
-			L=mfindal(http, ss, es)
-		except:
-			L=[]
-		for i in L:
-				k=i.find("data-play-src=")
-				i=i[k:]
-				i=i.replace('  ','')
-				i=i.replace(chr(10),'').replace(chr(13),'')
-				i=i.replace('" data-','", "')
-				i=i.replace('="','": "')
-				i=i.replace('></a>','')
-				i=i.replace('-name','')
-				#i=i.replace('album-name','album')
-				#i=i.replace('artist-name','artist')
-				i=i.replace('name','title')
-				i=i.replace('data-play-src','url')
-				i=i.replace('download-src','dlurl')
-				i='{"'+i+"}"
-				dict=eval(i)
-				#print i
-				
-				album	=dict["album"].replace("? ","х ")
-				artist	=dict["artist"].replace("? ","х ")
-				title	=dict["title"].replace("? ","х ")
-				img		=dict["cover"]
-				url		=dict["url"]
-				
-				trk='[COLOR F050F050][T] [/COLOR]'
-				title2 = artist+" - [B]"+title+"[/B]"
-				item = xbmcgui.ListItem(trk+title2, iconImage = img, thumbnailImage = img)
-				item.setInfo(type="Music", infoLabels={"title":title, "artist":artist, "album":album})
-				
-				Save(dict, title2, update=0)
-				xbmcplugin.addDirectoryItem(pluginhandle, url, item, False,len(L))
-		xbmc.executebuiltin('UpdateLibrary("music")')
-		xbmcplugin.endOfDirectory(pluginhandle)
-
-
-
-def Save2(dict, name):
-	target=dict["dlurl"]
-	LstDir = __settings__.getSetting("DownloadDirectory")
-	if LstDir == "":LstDir = os.path.join( addon.getAddonInfo('path'), "mp3" )
-	referer=None
-	post=None
-	lfimg=os.listdir(ru(LstDir))
-	nmi = ru(name)#os.path.basename(target)
-
-	if nmi in lfimg and os.path.getsize(os.path.join(ru(LstDir),nmi))>0:
-		return os.path.join(ru(LstDir),nmi)
-	else:
-		try:
-			req = urllib2.Request(url = target, data = post)
-			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
-			resp = urllib2.urlopen(req)
-			fl = open(os.path.join( ru(LstDir),nmi+".mp3"), "wb")
-			fl.write(resp.read())
-		#resp.close()
-			fl.close()
-			return os.path.join( ru(LstDir),nmi)
-		except Exception, e:
-			#xbmc.log( '[%s]: GET EXCEPT [%s]' % (addon_id, e), 4 )
-			return target
-			print 'HTTP ERROR ' + str(e)
 
 def Save(dict, name, update=1):
 	target	=dict["dlurl"]
