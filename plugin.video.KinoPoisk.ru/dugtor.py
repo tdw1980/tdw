@@ -146,8 +146,9 @@ def formtext(http):
 		ss='href="/search-torrents/download/'
 		es='"><img src="/templates/primary/search-torrents/images/download'
 		url='http://dugtor.ru/search-torrents/download/'+mfindal(i, ss, es)[0][len(ss):]+"/start"
-		print url
-		LL.append([sids,size,title.decode('cp1251'),url])
+		#print url
+		try:LL.append([sids,size,title.decode('cp1251'),url])
+		except:LL.append([sids,size,cp1251(title),url])
 	return LL
 
 

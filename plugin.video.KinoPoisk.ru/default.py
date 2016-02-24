@@ -440,6 +440,182 @@ def find_se(txt):
 	print sez+"\t:\t"+epd+"\t:\t"+nst
 	return (sez,epd)
 
+
+
+def find_se(txt):
+	txt=txt.lower()
+	for i in range (2000,2020):
+		txt=txt.replace(str(i),"")
+
+	F=["480","720","1080",".mp4",".ts","5.1","264"]
+	for i in F:
+		txt=txt.replace(i,"")
+
+	SL=['.sezon','.Сезон','.сезон',  'sezon','Сезон','сезон']
+	for i in SL:
+		try:txt=txt.replace(i,"^")
+		except: pass
+
+	EL=['seriya','serija','Серия','серия','vypusk']
+	for i in EL:
+		try:txt=txt.replace(i,"#")
+		except: pass
+			
+	EL2=['.e',' e','e','x']
+	for i in EL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"@"+str(j))
+			except: pass
+
+	SL2=['.s',' s','s']
+	for i in SL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"*"+str(j))
+			except: pass
+
+
+	T=["0","1","2","3","4","5","6","7","8","9",".","-","\\",  "#","@","^","*"]#,"x","s","e"
+	L=tuple(txt)
+	nst=""
+	for i in L:
+		if i in T: nst+=i
+			
+	nst=nst.replace("-",".")
+	nst=nst.replace("#.","#").replace(".#","#")
+	nst=nst.replace("@.","@").replace(".@","@")
+	nst=nst.replace("^.","^").replace(".^","^")
+	nst=nst.replace("*.","*").replace(".*","*")
+	nst=nst.replace("......",".").replace(".....",".").replace("....",".").replace("...",".").replace("..",".")
+	if nst[:1]==".": nst=nst[1:]
+	if nst[-1:]==".": nst=nst[:-1]
+	nc=nst.find("\\")
+	if nc>0: 
+		nst1=nst[:nc]
+		nst2=nst[nc+1:]
+		n1=nst2.find("*")
+		n2=nst2.find("^")
+		if n1>-1 or n2>-1:nst=nst2
+		else:
+			#print nst1
+			try:nst1="^"+str(int(nst1.replace(".","").replace("^","").replace("*","")))
+			except:
+				nss=nst1.find("^")
+				if nss>-1:nst1=nst1[:nss+2]
+				else:nst1=""
+			try:nst2="@"+str(int(nst2))
+			except:nst2=">"+nst2
+			nst=nst1+nst2
+	sez="!?!"
+	if 1==1:
+		ns=nst.find("*")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns+1:ns+3]))
+			except:
+				try:sez="s"+str(int(nst[ns+1:ns+2]))
+				except:sez="!*!"
+			#print sez
+			
+	if sez=="!?!" or sez=="!*!":
+		ns=nst.find("^")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns-2:ns]))
+			except:
+				try:sez="s"+str(int(nst[ns-1:ns]))
+				except:
+					try: sez="s"+str(int(nst[ns+1:ns+3]))
+					except:
+						try:sez="s"+str(int(nst[ns+1:ns+2]))
+						except:sez="!^!"
+
+	epd="!?!"
+	if 1==1:
+		ns=nst.find("@")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns+1:ns+4]))
+			except:
+				try:epd="e"+str(int(nst[ns+1:ns+3]))
+				except:
+					try:epd="e"+str(int(nst[ns+1:ns+2]))
+					except:epd="!@!"
+			
+			if sez=="!?!":
+					try: sez="s"+str(int(nst[ns-2:ns]))
+					except:
+						try:sez="s"+str(int(nst[ns-1:ns]))
+						except:sez=="!?@!"
+			#print sez
+			
+	if epd=="!?!" or epd=="!@!":
+		
+		ns=nst.find("#")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns-3:ns]))
+			except:
+				try:epd="e"+str(int(nst[ns-2:ns]))
+				except:
+					try:epd="e"+str(int(nst[ns-1:ns]))
+					except:epd=="!?!"
+
+		if ns>-1 and ns<len(nst)-2:
+				pb=0
+				try:
+					epd="e"+str(int(nst[ns+1:ns+4]))
+					pb=1
+				except:
+							try:
+								epd="e"+str(int(nst[ns+1:ns+3]))
+								pb=1
+							except:
+								try:
+									epd="e"+str(int(nst[ns+1:ns+2]))
+									pb=1
+								except:epd="!#!"
+	
+				if sez=="!?!" and epd!="!?!" and pb==1:
+					try:sez="s"+str(int(nst[ns-2:ns]))
+					except:
+						try:sez="s"+str(int(nst[ns-1:ns]))
+						except:pass
+
+	if sez=="!?!" and epd!="!?!":
+		if ns>3:
+					try: sez="s"+str(int(nst[:2]))
+					except:
+						try:sez="s"+str(int(nst[:1]))
+						except:sez=="!?!"
+
+	if sez=="!?!" and epd=="!?!":
+					try:epd="e"+str(int(nst))
+					except:
+						try:
+							tmp=float(nst)
+							sez="s"+str(int(tmp))
+							sss,eee=divmod(tmp, 1)
+							epd="e"+str(eee*100).replace(".0","")
+						except: pass
+
+	if sez!="!?!" and epd=="!?!":
+			ns=nst.find(">")
+			if ns>0:
+					try:epd="e"+str(int(nst[ns+1:].replace(".","")))
+					except:epd=="!?!"
+
+
+	if sez=="!?!" and epd!="!?!":
+						try:
+							e1=epd.replace("e","")+"#"
+							tmp=float(nst.replace(e1,"0"))
+							sez="s"+str(int(tmp))
+						except: pass
+
+
+	print sez+"\t:\t"+epd+"\t:\t"+nst
+	return (sez,epd)
+
+
+
 def find_e(txt):
 	txt=txt.replace(" ","")
 	L=['seriya#','#seriya','serija#','#serija', 'e#']
@@ -610,6 +786,11 @@ def playTorrent(url, StorageDirectory):
 
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
+def rt(x):
+	L=[('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y')]
+	for i in L:
+		x=x.replace(i[0], i[1])
+	return x
 
 def mfindal(http, ss, es):
 	L=[]
@@ -1114,7 +1295,8 @@ def dugtor(text, info={}):
 	rtr=dugtor.Tracker()
 	#except: pass
 	
-	RL=rtr.Search(text, "0")
+	try:RL=rtr.Search(text, "0")
+	except: RL=[]
 	if len(RL)>0:
 		Title = "[COLOR F050F050]"+"[------- «Dugtor.ru»  "+text+" ---------]"+"[/COLOR]"
 		row_url = Title
@@ -1131,7 +1313,7 @@ def dugtor(text, info={}):
 		text=text.replace(sy,"")
 
 	for itm in RL:
-		if itm[2].find(text)>=0:
+		if xt(itm[2]).find(text)>=0:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
 				cover=""
@@ -1390,6 +1572,7 @@ def SrcNavi(md="Navigator"):
 #		if len(i)>10:
 			url="http://m.kinopoisk.ru/movie/"+i[len(ss):]
 			http = GET (url, httpSiteUrl)
+			http = rt(http)
 			#debug (http)
 			# ------------- ищем описание -----------------
 			s='<div id="content">'
@@ -1805,7 +1988,7 @@ if mode == "Torrents2":
 	else:text = params["info"]["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
-	
+	text=rt(text)
 	ttl=rutor(text, info)
 	if ttl<1: ttl=rutoris(text, info)
 	if ttl<1: rutor(rus.replace("a","а"), info)
