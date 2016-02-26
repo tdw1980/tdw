@@ -211,7 +211,11 @@ def play_url(params):
 		purl ="plugin://plugin.video.yatp/?action=play&torrent="+ urllib.quote_plus(torr_link)
 		xbmc.executebuiltin("PlayMedia("+purl+")")
 		return False
-
+	
+	if Engine=="3":
+		tthp.play(torr_link, handle, 0)
+		return False
+	
 	#showMessage('heading', torr_link, 10000)
 	TSplayer=tsengine()
 	out=TSplayer.load_torrent(torr_link,tmd)#'TORRENT'
@@ -1171,7 +1175,30 @@ def OpenCat(url, name, dict):
 			+ '&info=' + urllib.quote_plus(repr(dict))
 		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 
+try:
+	import tthp
+except:
+	print "Error import t2http"
 
+def t2http_list(url):
+	L=tthp.list(url)
+	if len (L)<2:
+		tthp.play(url, handle, 0)
+	else:
+		for i in L:
+			#print i
+			listitem = xbmcgui.ListItem(i.name)
+			purl = sys.argv[0] + '?mode=t2http_play'\
+				+ '&url=' + urllib.quote_plus(url)\
+				+ '&num=' + urllib.quote_plus(str(i.index))
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+	
+		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+		xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+		xbmcplugin.endOfDirectory(handle)
+
+def t2http_play(uri, id):
+	tthp.play(uri, handle, id)
 
 #xplayer=xbmc.Player(xbmc.PLAYER_CORE_AUTO)
 #if os.path.isdir("d:\\TorrentStream")==1: TSpath="d:\\TorrentStream\\"
@@ -1352,6 +1379,8 @@ elif mode == 'OpenCat':
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		openTorrent(url, DownloadDirectory)
+	elif Engine=="3":
+		t2http_list(url)
 
 elif mode == 'OpenPage':
 	GET_C(url)
@@ -1368,5 +1397,8 @@ elif mode == 'playTorrent':
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
 		playTorrent(url, DownloadDirectory, ind)
+
+elif mode == 't2http_play':
+	tthp.play(url, handle, num)
 
 c.close()
