@@ -27,6 +27,50 @@ headers  = {
 	'Accept-Encoding':'identity, *;q=0'
 }
 
+# -------- Torrent2Http---by-Anteo---
+try:
+	import tthp
+except:
+	print "Error import t2http"
+
+def t2http_list(url, info={}):
+		L=tthp.list(url)
+	#if len (L)<2:
+	#	tthp.play(url, handle, 0)
+	#else:
+		for i in L:
+			#print i
+			listitem = xbmcgui.ListItem(i.name)
+			purl = sys.argv[0] + '?mode=t2http_play'\
+				+ '&url=' + urllib.quote_plus(url)\
+				+ '&ind=' + urllib.quote_plus(str(i.index))
+			
+			try:title=info['originaltitle']+' ('+str(info['year'])+')'
+			except:
+				try:title=info['namef']
+				except:title="error"
+
+			uri2 = construct_request({
+				't': url,
+				'tt': i.name,
+				'title': title,
+				'i':str(i.index),
+				'ii':"",
+				'mode': 'save_strm'
+				})
+			listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),])
+			
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+			
+
+		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+		xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+		xbmcplugin.endOfDirectory(handle)
+
+def t2http_play(uri, id):
+	tthp.play(uri, handle, id)
+
+
 
 #---------asengine----by-nuismons-----
 
@@ -84,6 +128,12 @@ def play_url(torr_link,img, info={}):
 def play_url2(params):
     #print 'play'
     torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
+    
+    Engine = __settings__.getSetting("Engine")
+    if Engine=="2":
+        tthp.play(torr_link, handle, int(params['ind']))
+        return False
+    
     img=urllib.unquote_plus(params["img"])
     title=urllib.unquote_plus(params["title"])
     #showMessage('heading', torr_link, 10000)
@@ -1863,6 +1913,10 @@ except:
 	try:mode = params["mode"]
 	except:mode = None
 
+try:ind = int(params["ind"])
+except:ind = 0
+
+
 if mode == None:
 	setList("CatList", Category)
 	setList("GenreList", Genre)
@@ -2028,6 +2082,8 @@ if mode == "OpenTorrent":
 	if engine==0 or engine=='0':
 		info['namef']=urllib.unquote_plus(get_params()["title"])
 		play_url(url,img,info)
+	elif engine=="2":
+		t2http_list(url,info)
 	else:
 		DownloadDirectory = __settings__.getSetting("DownloadDirectory")[:-1]#.replace("\\\\","\\")
 		if DownloadDirectory=="":DownloadDirectory=LstDir
@@ -2047,5 +2103,10 @@ elif mode == 'save_all':
 	except:url = info['url']
 	save_all(url,"",info)
 		
-		
+
+elif mode == 't2http_play':
+	try:url = urllib.unquote_plus(get_params()["url"])
+	except:url = info['url']
+	tthp.play(url, handle, ind)
+
 c.close()

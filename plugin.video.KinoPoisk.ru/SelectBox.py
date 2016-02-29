@@ -6,7 +6,7 @@ import xbmcaddon, xbmcgui, xbmc
 
 _ADDON_NAME = 'plugin.video.KinoPoisk.ru'
 _addon = xbmcaddon.Addon(id=_ADDON_NAME)
-_addon_path = _addon.getAddonInfo('path').decode(sys.getfilesystemencoding())
+_addon_path = _addon.getAddonInfo('path')#.decode(sys.getfilesystemencoding())
 __settings__ = xbmcaddon.Addon(id='plugin.video.KinoPoisk.ru')
 
 sys.path.append(os.path.join(_addon_path, 'lib'))
