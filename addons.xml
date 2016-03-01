@@ -297,8 +297,8 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
-    <extension point="xbmc.python.module" library="lib"/>
-    <extension point="xbmc.addon.metadata">
+    <extension point="xbmc.python.script" library="lib"/>
+    <provides>executable</provides>
         <platform>all</platform>
         <language>en</language>
         <summary lang="en">Downloads torrents and share it over HTTP</summary>
