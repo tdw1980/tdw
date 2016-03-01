@@ -3,7 +3,7 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
-    <extension point="xbmc.python.script" library="lib"/>
+    <extension point="xbmc.python.script" library="lib/torrent2http"/>
         <provides>executable</provides>
     </extension>
     <extension point='xbmc.addon.metadata'>
