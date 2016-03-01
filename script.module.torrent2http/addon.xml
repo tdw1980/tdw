@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <addon id="script.module.torrent2http" name="torrent2http" version="0.1.3" provider-name="anteo">
   <requires>
     <import addon='xbmc.python' version='2.1.0'/>
   </requires>
-    <extension point="xbmc.python.script" library="lib/torrent2http"/>
+  <extension point="xbmc.python.script" library="default.py">
     <provides>executable</provides>
   </extension>
   <extension point='xbmc.addon.metadata'>
     <platform>all</platform>
     <summary>torrent2http</summary>
   </extension>
-  <extension library="lib/torrent2http" point="xbmc.service" />
+  <extension library="default.py" point="xbmc.service" />
   <extension point='xbmc.python.module'/>
 </addon>
