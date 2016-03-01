@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import sys, os
 import xbmc, xbmcgui
 
@@ -5,6 +7,10 @@ sys.path.append(os.path.join(xbmc.translatePath("special://home/"),"addons","scr
 from torrent2http import State, Engine, MediaType
 from contextlib import closing
 progressBar = xbmcgui.DialogProgress()
+
+def ru(x):return unicode(x,'utf8', 'ignore')
+def xt(x):return xbmc.translatePath(x)
+
 
 def list(uri):
   # Create instance of Engine 
@@ -24,7 +30,7 @@ def list(uri):
   return files
 
 def play(uri, handle, file_id=0):
-  progressBar.create('T2Http', 'Open torrent')
+  progressBar.create('Torrent2Http', 'Запуск')
   # XBMC addon handle
   # handle = ...
   # Playable list item
@@ -40,9 +46,9 @@ def play(uri, handle, file_id=0):
     # Start engine and instruct torrent2http to begin download first file, 
     # so it can start searching and connecting to peers  
     engine.start(file_id)
+    progressBar.update(0, 'Torrent2Http', 'Загрузка торрента', "")
     while not xbmc.abortRequested and not ready:
         xbmc.sleep(500)
-        progressBar.update(0, 'T2Http', 'check_torrent', "")
         status = engine.status()
         # Check if there is loading torrent error and raise exception 
         engine.check_torrent_error(status)
@@ -67,23 +73,29 @@ def play(uri, handle, file_id=0):
             if not file_status:
                 continue
         if status.state == State.DOWNLOADING:
-            progressBar.update(0, 'T2Http', 'Wait until minimum pre_buffer', "")
             # Wait until minimum pre_buffer_bytes downloaded before we resolve URL to XBMC
             if file_status.download >= pre_buffer_bytes:
                 ready = True
                 break
-                
+            print file_status
+            progressBar.update(100*file_status.download/pre_buffer_bytes, 'Torrent2Http', xt('Предварительная буферизация: '+str(file_status.download/1024/1024)+" MB"), "")
+            
         elif status.state in [State.FINISHED, State.SEEDING]:
-            progressBar.update(0, 'T2Http', 'We have already downloaded file', "")
+            #progressBar.update(0, 'T2Http', 'We have already downloaded file', "")
             # We have already downloaded file
             ready = True
+            break
+        
+        if progressBar.iscanceled():
+            progressBar.update(0)
+            progressBar.close()
             break
         # Here you can update pre-buffer progress dialog, for example.
         # Note that State.CHECKING also need waiting until fully finished, so it better to use resume_file option
         # for engine to avoid CHECKING state if possible.
         # ...
+    progressBar.close()
     if ready:
-        progressBar.close()
         # Resolve URL to XBMC
         #listitem = xbmcgui.ListItem()
         #listitem.SetPath(file_status.url)
