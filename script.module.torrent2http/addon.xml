@@ -4,7 +4,9 @@
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.script" library="lib"/>
-    <provides>executable</provides>
+        <provides>executable</provides>
+    </extension>
+    <extension point='xbmc.addon.metadata'>
         <platform>all</platform>
         <language>en</language>
         <summary lang="en">Downloads torrents and share it over HTTP</summary>
@@ -13,4 +15,5 @@
         <description lang="en">Provides sequential torrent downloading for online streaming video and other media over HTTP.</description>
         <email>anteo@academ.org</email>
     </extension>
+    <extension point='xbmc.python.module'/>
 </addon>
