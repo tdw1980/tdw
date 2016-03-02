@@ -36,7 +36,7 @@ except:
 def t2http_list(url, info={}):
 		L=tthp.list(url)
 	#if len (L)<2:
-	#	tthp.play(url, handle, 0)
+	#	tthp.play(url, handle, 0, __settings__.getSetting("DownloadDirectory"))
 	#else:
 		for i in L:
 			#print i
@@ -68,7 +68,7 @@ def t2http_list(url, info={}):
 		xbmcplugin.endOfDirectory(handle)
 
 def t2http_play(uri, id):
-	tthp.play(uri, handle, id)
+	tthp.play(uri, handle, id, __settings__.getSetting("DownloadDirectory"))
 
 
 
@@ -131,7 +131,7 @@ def play_url2(params):
     
     Engine = __settings__.getSetting("Engine")
     if Engine=="2":
-        tthp.play(torr_link, handle, int(params['ind']))
+        tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
         return False
     
     img=urllib.unquote_plus(params["img"])
@@ -2107,6 +2107,6 @@ elif mode == 'save_all':
 elif mode == 't2http_play':
 	try:url = urllib.unquote_plus(get_params()["url"])
 	except:url = info['url']
-	tthp.play(url, handle, ind)
+	tthp.play(url, handle, ind, __settings__.getSetting("DownloadDirectory"))
 
 c.close()

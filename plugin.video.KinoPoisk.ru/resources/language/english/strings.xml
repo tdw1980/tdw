@@ -5,7 +5,7 @@
     <string id="30005">Торрент-плеер</string>
     <string id="30006">Имя для поиска</string>
     <string id="30007">Вид списка</string>
-    <string id="30008">Кэш Libtorrent</string>
+    <string id="30008">Кэш Libtorrent и T2Http</string>
     <string id="30009">Путь сохранения фильмов</string>
     <string id="30010">Путь сохранения сериалов</string>
     <string id="30011">Сохранять информацию для сериалов</string>

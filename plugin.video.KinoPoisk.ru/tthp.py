@@ -29,7 +29,9 @@ def list(uri):
         xbmc.sleep(200)
   return files
 
-def play(uri, handle, file_id=0):
+def play(uri, handle, file_id=0, DDir=""):
+  print DDir
+  if DDir=="": DDir=os.path.join(xbmc.translatePath("special://home/"),"userdata")
   progressBar.create('Torrent2Http', 'Запуск')
   # XBMC addon handle
   # handle = ...
@@ -41,7 +43,7 @@ def play(uri, handle, file_id=0):
   ready = False
   # Set pre-buffer size to 15Mb. This is a size of file that need to be downloaded before we resolve URL to XMBC 
   pre_buffer_bytes = 15*1024*1024
-  engine = Engine(uri)
+  engine = Engine(uri, download_path=DDir)
   with closing(engine):
     # Start engine and instruct torrent2http to begin download first file, 
     # so it can start searching and connecting to peers  
@@ -94,6 +96,7 @@ def play(uri, handle, file_id=0):
         # Note that State.CHECKING also need waiting until fully finished, so it better to use resume_file option
         # for engine to avoid CHECKING state if possible.
         # ...
+    progressBar.update(0)
     progressBar.close()
     if ready:
         # Resolve URL to XBMC
