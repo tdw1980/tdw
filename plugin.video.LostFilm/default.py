@@ -213,7 +213,7 @@ def play_url(params):
 		return False
 	
 	if Engine=="3":
-		tthp.play(torr_link, handle, 0)
+		tthp.play(torr_link, handle, 0, __settings__.getSetting("DownloadDirectory"))
 		return False
 	
 	#showMessage('heading', torr_link, 10000)
@@ -1183,7 +1183,7 @@ except:
 def t2http_list(url):
 	L=tthp.list(url)
 	if len (L)<2:
-		tthp.play(url, handle, 0)
+		tthp.play(url, handle, 0, __settings__.getSetting("DownloadDirectory"))
 	else:
 		for i in L:
 			#print i
@@ -1198,7 +1198,7 @@ def t2http_list(url):
 		xbmcplugin.endOfDirectory(handle)
 
 def t2http_play(uri, id):
-	tthp.play(uri, handle, id)
+	tthp.play(uri, handle, id, __settings__.getSetting("DownloadDirectory"))
 
 #xplayer=xbmc.Player(xbmc.PLAYER_CORE_AUTO)
 #if os.path.isdir("d:\\TorrentStream")==1: TSpath="d:\\TorrentStream\\"
@@ -1399,6 +1399,7 @@ elif mode == 'playTorrent':
 		playTorrent(url, DownloadDirectory, ind)
 
 elif mode == 't2http_play':
-	tthp.play(url, handle, num)
+	DDir = __settings__.getSetting("DownloadDirectory")
+	tthp.play(url, handle, num, DDir)
 
 c.close()
