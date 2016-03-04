@@ -2,6 +2,7 @@
     <setting id="Url" type="text" label="URL(open-tor.org, ru-ru.org ...)" default="open-tor.org"/>
     <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru/En|Ru"/>
     <setting id="Hide Scr" type="bool" label="30003" default="false"/>
+    <setting id="KP" type="bool" label="30002" default="true"/>
     <setting id="Hide TSound" type="bool" label="30004" default="false"/>
     <setting id="EnabledFiltr" type="bool" label="30006" default="false"/>
     <setting id="Filtr" type="text" label="30007" default="эротика, этти"/>

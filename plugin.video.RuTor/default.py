@@ -896,6 +896,19 @@ def ShowNew():
 p = re.compile(r'<.*?>')
 #p.sub('', html)
 
+def kp_id(str):
+	ss="http://www.kinopoisk.ru/film/"
+	es='/" target='
+	n=str.find(ss)
+	if n>0:
+		tst=str[n:]
+		k=tst.find(es)
+		kp=tst[:k].replace(ss,"")
+		return kp
+	else:
+		return ""
+
+
 def clearinfo2(str):
 	str=str.replace(chr(13)+chr(10),chr(10))
 	str=str.replace(chr(10)+chr(13),chr(10))
@@ -1003,6 +1016,16 @@ def clearinfo(str):
 	str=str.replace('http://changecopyright.ru/bannersout/banner-468x60.png',"")
 	str=str.replace('http://hq-video.org/images/1080-r.png',"")
 	str=str.replace('http://hq-video.org/images/720-r.png',"")
+	str=str.replace('http://rublacklist.net/media/2015/12/openrunet_h_long_bl_468.jpg',"")
+	str=str.replace('http://rublacklist.net/media/2015/12/zarunet_h_1_468.png',"")
+	str=str.replace('http://rublacklist.net/media/2015/08/RKS-468_2.jpg',"")
+	str=str.replace('http://i73.fastpic.ru/big/2016/0125/df/77a21c7f36c003ae40f03e89adfba7df.png',"")
+	str=str.replace('http://i72.fastpic.ru/big/2015/0531/46/68ef8a2783b58e5344cc30bbd3f1b046.png',"")
+	str=str.replace('http://i67.fastpic.ru/big/2015/1117/ae/087b3176001adbb9866c7f42e6b3e1ae.png',"")
+	str=str.replace('http://hq-video.org/images/avc-r.png',"")
+	str=str.replace('http://i75.fastpic.ru/big/2016/0214/54/9910bb5d0364d826975070c85d8a9a54.png',"")
+	str=str.replace('http://i74.fastpic.ru/big/2015/1117/ac/85415e7be75a0204b6540f7f0f5f9cac.png',"")
+	#str=str.replace('',"")
 	
 	str=str.replace('Год выхода:',chr(10)+"Год выхода:")
 	str=str.replace('Год выпуска',chr(10)+"Год выхода:")
@@ -1150,12 +1173,18 @@ def get_qual(ntor):
 	
 
 def get_minfo(ntor):
-			
-			try: dict=eval(xt(get_inf_db(ntor)[0][0]))#dbi = move_info_db[ntor]
-			except: #dbi = None
-			
-			#if dbi == None:
-				hp = GET(httpSiteUrl+'/torrent/'+ntor, httpSiteUrl, None)
+		KPoisk = __settings__.getSetting("KP")
+		try: dict=eval(xt(get_inf_db(ntor)[0][0]))
+		except: 
+			import kpi
+			hp = GET(httpSiteUrl+'/torrent/'+ntor, httpSiteUrl, None)
+			id=kp_id(hp)
+			#print ntor+" - "+id
+			if id <>"" and KPoisk == 'true':
+				dict = kpi.info(id)
+				#print dict
+			else: dict={}
+			if dict=={} or dict==None:
 				hp=clearinfo(hp)
 				LI=hp.splitlines()
 				dict={}
@@ -1186,21 +1215,12 @@ def get_minfo(ntor):
 						dict['plot']=ru(formating(itm[nc+1:].strip())[:1000])
 						
 				#move_info_db[ntor]=dict
-				try:add_to_db(ntor, repr(dict))
-				except:
+			try:add_to_db(ntor, repr(dict))
+			except:
 					try:add_to_db(ntor, repr(dict).replace('"',"'"))
 					except: pass
 
-				if 1==0:
-					
-					fl = open(os.path.join( ru(dbDir), ntor+".py"), "w")
-					fl.write('move_info_db['+ntor+']='+str(dict))
-					fl.close()
-				
-			#else:
-				#dict=move_info_db[ntor]
-			#print eval(get_inf_db(ntor)[0][0])
-			return dict
+		return dict
 
 
 def SearchN(category, sort, text, filtr, url='0'):
@@ -1217,6 +1237,7 @@ def SearchN(category, sort, text, filtr, url='0'):
 	RootList=format(RL)
 	k=0
 	TLD=[]
+	
 	defekt=0
 	for tTitle in RootList:
 		if len(tTitle)==9:
@@ -1299,6 +1320,7 @@ def SearchN(category, sort, text, filtr, url='0'):
 			nc2=tTitle5.find("/ ")
 			if nc2<nc and nc2 >0: nc=nc2
 			CT=rulower(tTitle5[:nc]).strip()
+
 			#Title=CT
 			if Sflt==3 and nH<0 and sH<0 and (CT not in TLD):
 				
@@ -1322,7 +1344,6 @@ def SearchN(category, sort, text, filtr, url='0'):
 				Tresh=["Repack"," PC ","XBOX","RePack","FB2","TXT","DOC"," MP3"," JPG"," PNG"," SCR"]
 				for TRi in Tresh:
 					if tTitle[5].find(TRi)>=0:UF+=1
-				
 				if UF==0:
 					TLD.append(CT)
 					row_url = tTitle[1]
@@ -1331,8 +1352,12 @@ def SearchN(category, sort, text, filtr, url='0'):
 					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 					try:listitem.setInfo(type = "Video", infoLabels = dict)
 					except: pass
-					listitem.setProperty('fanart_image', cover)
-					purl = sys.argv[0] + '?mode=OpenCat'\
+					
+					try:fanart=dict['fanart']
+					except:fanart=cover
+					
+					listitem.setProperty('fanart_image', fanart)
+					purl = sys.argv[0] + '?mode=OpenCat2'\
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(str(sids+"|"+size+"| "+tTitle[5]))\
 						+ '&info=' + urllib.quote_plus(repr(dict))
@@ -1382,34 +1407,35 @@ def Search(category, sort, text, url='0'):
 				+ '&text=' + urllib.quote_plus('1')
 			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 			
-#			Title = "[Новые]"
-#			row_url = url
-#			listitem = xbmcgui.ListItem(Title)
-#			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-#			purl = sys.argv[0] + '?mode=Search'\
-#				+ '&url=' + urllib.quote_plus('0')\
-#				+ '&title=' + urllib.quote_plus(Title)\
-#				+ '&category=' + urllib.quote_plus(category)\
-#				+ '&sort=' + urllib.quote_plus(sort_data)\
-#				+ '&text=' + urllib.quote_plus('0')
-#			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-			
-			Title = "[Далее >]"
+			Title = "[Новые]"
 			row_url = url
-			try: n=str(int(row_url)+1)
-			except: n="1"
 			listitem = xbmcgui.ListItem(Title)
 			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
 			purl = sys.argv[0] + '?mode=Search'\
-				+ '&url=' + urllib.quote_plus(n)\
+				+ '&url=' + urllib.quote_plus('0')\
 				+ '&title=' + urllib.quote_plus(Title)\
 				+ '&category=' + urllib.quote_plus(category)\
-				+ '&sort=' + urllib.quote_plus(sort)\
+				+ '&sort=' + urllib.quote_plus(sort_data)\
 				+ '&text=' + urllib.quote_plus('0')
 			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			
+#			Title = "[Далее >]"
+#			row_url = url
+#			try: n=str(int(row_url)+1)
+#			except: n="1"
+#			listitem = xbmcgui.ListItem(Title)
+#			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+#			purl = sys.argv[0] + '?mode=Search'\
+#				+ '&url=' + urllib.quote_plus(n)\
+#				+ '&title=' + urllib.quote_plus(Title)\
+#				+ '&category=' + urllib.quote_plus(category)\
+#				+ '&sort=' + urllib.quote_plus(sort)\
+#				+ '&text=' + urllib.quote_plus('0')
+#			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 
 	k=0
 	TLD=[]
+	KLD=[]
 	defekt=0
 	for tTitle in RootList:
 		if len(tTitle)==8:
@@ -1440,11 +1466,9 @@ def Search(category, sort, text, url='0'):
 			ntor=xt(tTitle[4][:nnn])
 			#print ntor
 			if k<210:
-				#nnn=tTitle[1].rfind("/")+1
-				#ntor=xt(tTitle[1][nnn:])
 				dict=get_minfo(ntor)
-				try:dict=get_minfo(ntor)
-				except:dict={}
+				#try:dict=get_minfo(ntor)
+				#except:dict={}
 				try:cover=dict["cover"]
 				except:cover=""
 				
@@ -1501,14 +1525,23 @@ def Search(category, sort, text, url='0'):
 			if nc2<nc and nc2 >0: nc=nc2
 			CT=rulower(tTitle5[:nc].strip())
 			#Title=CT
-			if UF==0 and nH<0 and sH<0 and (CT not in TLD):
+			try:Kid=dict["id"]
+			except:Kid=""
+			
+			if UF==0 and nH<0 and sH<0 and (CT not in TLD) and (Kid not in KLD):
 				TLD.append(CT)
+				if Kid<>"":KLD.append(Kid)
 				row_url = tTitle[1]
 				Title=Title.replace("&quot;",'"')
 				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 				try:listitem.setInfo(type = "Video", infoLabels = dict)
 				except: pass
-				listitem.setProperty('fanart_image', cover)
+				#print Title
+				#print cover
+				try:fanart=dict['fanart']
+				except:fanart=cover
+				
+				listitem.setProperty('fanart_image', fanart)
 				purl = sys.argv[0] + '?mode=OpenCat2'\
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(str(sids+"|"+size+"| "+tTitle[5]))\
@@ -1617,12 +1650,15 @@ def OpenCat2(url, name, dict):
 	L=get_qual(ntor)
 	try:cover=dict["cover"]
 	except:cover=""
+	try:fanart=dict['fanart']
+	except:fanart=cover
+
 	row_url = "/download/"+ntor#url
 	Title=name
 	listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 	try:listitem.setInfo(type = "Video", infoLabels = dict)
 	except: pass
-	listitem.setProperty('fanart_image', cover)
+	listitem.setProperty('fanart_image', fanart)
 	purl = sys.argv[0] + '?mode=OpenCat'\
 		+ '&url=' + urllib.quote_plus(row_url)\
 		+ '&title=' + urllib.quote_plus(Title)\
@@ -1654,7 +1690,8 @@ def OpenCat2(url, name, dict):
 				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
 				try:listitem.setInfo(type = "Video", infoLabels = dict)
 				except: pass
-				listitem.setProperty('fanart_image', cover)
+				
+				listitem.setProperty('fanart_image', fanart)
 				purl = sys.argv[0] + '?mode=OpenCat'\
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(Title)\
