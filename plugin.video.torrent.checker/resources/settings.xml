@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <setting_off id="Engine" type="enum" label="Engine" default="0" values="ACE engine|T2Http"/>
+    <setting_off id="DownloadDirectory" type="folder" label="Кэш" default=""/>
+    <setting id="SaveDirectory" type="folder" label="Путь сохранения STRM" default=""/>
+</settings>

@@ -2414,6 +2414,7 @@ def Search(category, sort, text, pr):
 						+ '&info=' + urllib.quote_plus(repr(dict))
 					if text=='10': total=500
 					else: total=200
+					
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 
 	Title = "[COLOR FFFFFF00][ Далее> ][/COLOR]"
@@ -2777,6 +2778,7 @@ def OpenList(url, name, dict,title):
 				+ '&fanart_image=' + urllib.quote_plus(cover)\
 				+ '&title=' + urllib.quote_plus(Title)\
 				+ '&info=' + urllib.quote_plus(repr(dict))
+			listitem.addContextMenuItems([('[B]Отслеживать сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=add&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(dict['title'])+'")'),])
 			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 		else:
 			print "YATP"
