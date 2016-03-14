@@ -272,7 +272,7 @@ def dir(path, cover=None):
 			nart=os.path.join(path, i, "funart.png")
 			if os.path.exists(nart): funart=nart
 			else: funart=None
-		ecover=os.path.splitext(i)[1]+".png"
+		ecover=os.path.join(path, os.path.splitext(i)[0]+".png")
 		if os.path.exists(ecover):cover=ecover
 		ext=os.path.splitext(i)[1]
 		cl_name=i.replace(ext,"")
@@ -354,7 +354,9 @@ def run(path):
 	else:
 		if ext in MedList:
 			gameplay(path)
-		else:os.system(path)
+		else:
+			if os.name=="nt":os.system('"'+path+'"')
+			else:os.system(tolnx(path))
 
 def gameplay(path):
 	if Mpath.find("mednafen")>0:
