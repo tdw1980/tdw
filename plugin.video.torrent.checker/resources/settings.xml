@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-    <setting_off id="Engine" type="enum" label="Engine" default="0" values="ACE engine|T2Http"/>
-    <setting_off id="DownloadDirectory" type="folder" label="Кэш" default=""/>
+    <setting id="Interval" type="enum" label="Интервал проверки" default="3" values="1 ч.|2 ч.|4 ч.|6 ч.|8 ч.|10 ч.|12 ч."/>
+    <setting id="Engine" type="enum" label="Engine" default="0" values="ACE engine|T2Http|YATP"/>
+    <setting id="DownloadDirectory" type="folder" label="Кэш T2Http" default=""/>
     <setting id="SaveDirectory" type="folder" label="Путь сохранения STRM" default=""/>
 </settings>

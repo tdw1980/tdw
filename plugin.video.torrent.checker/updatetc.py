@@ -18,10 +18,6 @@ try:
 except:
 	print "Error import t2http"
 
-def play(url, id=0):
-	#tthp.play(url, handle, id, __settings__.getSetting("DownloadDirectory"))
-	play_ace(url, id)
-
 
 def t2h_list(url):
 	L=tthp.list(url)

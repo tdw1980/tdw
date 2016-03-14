@@ -19,6 +19,9 @@ try:
 except:
 	print "Error import t2http"
 
+
+
+
 def inputbox(t):
 	skbd = xbmc.Keyboard(t, 'Название:')
 	skbd.doModal()
@@ -30,9 +33,24 @@ def inputbox(t):
 
 #---------asengine----by-nuismons-----
 
-from ASCore import TSengine,_TSPlayer
+def play(url, id=0):
+	engine=__settings__.getSetting("Engine")
+	if engine=="0":
+		play_ace(url, id)
+		
+	if engine=="1":
+		item = xbmcgui.ListItem()#path=url
+		xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+		tthp.play(url, handle, id, __settings__.getSetting("DownloadDirectory"))
+		
+	if engine=="2":
+		purl ="plugin://plugin.video.yatp/?action=play&torrent="+ urllib.quote_plus(url)+"&file_index="+str(id)
+		item = xbmcgui.ListItem()#path=purl
+		xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+		xbmc.Player().play(purl)
 
 def play_ace(url, ind):
+    from ASCore import TSengine,_TSPlayer
     #print 'play'
     torr_link=url
         
@@ -182,7 +200,7 @@ except:ind ="0"
 
 if mode==""         : root()
 if mode=="add"      : add(name, url)
-if mode=="play"     : play_ace(url, int(ind))#updatetc.play(url, int(ind))
+if mode=="play"     : play(url, int(ind))#updatetc.play(url, int(ind))
 if mode=="rename"   : updatetc.rename_list(int(ind))
 if mode=="epd_lst"  : epd_lst(name, url, ind)
 if mode=="add_filtr": add_filtr(url, ind)

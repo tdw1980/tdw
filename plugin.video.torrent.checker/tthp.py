@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys, os
-import xbmc, xbmcgui
+import xbmc, xbmcgui, xbmcplugin
 
 sys.path.append(os.path.join(xbmc.translatePath("special://home/"),"addons","script.module.torrent2http","lib"))
 from torrent2http import State, Engine, MediaType
@@ -30,7 +30,6 @@ def list(uri):
   return files
 
 def play(uri, handle, file_id=0, DDir=""):
-  print DDir
   if DDir=="": DDir=os.path.join(xbmc.translatePath("special://home/"),"userdata")
   progressBar.create('Torrent2Http', 'Запуск')
   # XBMC addon handle
@@ -100,8 +99,7 @@ def play(uri, handle, file_id=0, DDir=""):
     progressBar.close()
     if ready:
         # Resolve URL to XBMC
-        #listitem = xbmcgui.ListItem()
-        #listitem.SetPath(file_status.url)
+        #listitem = xbmcgui.ListItem(path=file_status.url)
         #xbmcplugin.SetResolvedUrl(handle, True, listitem)
         xbmc.Player().play(file_status.url)
         # Wait until playing finished or abort requested

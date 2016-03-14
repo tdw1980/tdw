@@ -3,10 +3,11 @@
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
 
 import sys
-import xbmc
+import xbmc, xbmcgui, xbmcaddon
 import updatetc
 import time
 import xbmcgui
+__settings__ = xbmcaddon.Addon(id='plugin.video.torrent.checker')
 icon=None
 
 time.sleep(2.0)
@@ -16,13 +17,15 @@ n=0
 while not xbmc.abortRequested:
 		if start_trigger:
 			print('----- Torrent Checker started -----')
-			xbmcgui.Dialog().notification('Torrent Checker', 'Запущен', icon, 1000, False)
+			#xbmcgui.Dialog().notification('Torrent Checker', 'Запущен', icon, 1000, False)
 			start_trigger = False
 			updatetc.update()
 		# ---------------------------------
 		time.sleep(1)
 		n+=1
-		upint=6*360
+		iv = 2*int(__settings__.getSetting("Interval"))
+		if iv==0: iv=1
+		upint=iv*60*360
 		if n>= upint:
 			n=0
 			updatetc.update()
