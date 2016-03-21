@@ -146,9 +146,10 @@ def update():
 	L=get_list()
 	for i in L:
 		name  = i[0].decode('utf-8')
-		url   = urllib.unquote_plus(i[1])
+		url   = i[1]
+		url2   = urllib.unquote_plus(i[1])
 		if url[:4]=='plug':
-			xbmc.executebuiltin('RunPlugin("'+url+'")')
+			xbmc.executebuiltin('RunPlugin("'+url2+'")')
 		else:
 			if len(i)>2: f = i[2]
 			else: f=[]

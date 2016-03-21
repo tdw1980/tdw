@@ -34,6 +34,9 @@ def inputbox(t):
 #---------asengine----by-nuismons-----
 
 def play(url, id=0):
+	print"-=-=-=-=-=-=-=-=-"
+	#url=urllib.quote_plus(url)
+	print url
 	engine=__settings__.getSetting("Engine")
 	if engine=="0":
 		play_ace(url, id)
@@ -137,6 +140,8 @@ def root():
 	xbmcplugin.endOfDirectory(handle)
 
 def epd_lst(name, url, ind):
+	print "-=-=-=-=-=-=-=-=-=-"
+	print url
 	f=updatetc.get_filtr(int(ind))
 	L=tthp.list(url)#updatetc.file_list(name)
 	
@@ -169,10 +174,11 @@ def add_filtr(name, ind):
 		updatetc.filtr_list(int(ind), (n, k))
 	xbmc.executebuiltin("Container.Refresh")
 
-
 def add(name, url):
-	updatetc.add_list([name, urllib.quote_plus(url),[]])
-	#xbmcplugin.endOfDirectory(handle)
+	if url[:4]=='plug':
+		updatetc.add_list([name, urllib.quote_plus(url),[]])
+	else:
+		updatetc.add_list([name, url,[]])
 
 def get_params():
 	param=[]
