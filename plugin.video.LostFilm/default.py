@@ -392,7 +392,7 @@ def GETimg(target, referer=None, post=None):
 
 def GETtorr(target, referer=None, post=None):
 	lfimg=os.listdir(ru(LstDir))
-	print target
+	#print target
 	nmi =target.replace('http://tracktor.in/td.php?s=','')
 
 	if nmi in lfimg and os.path.getsize(os.path.join(ru(LstDir),nmi))>0:
@@ -821,6 +821,26 @@ def GET_R(cse):
 		#debug(http)
 		return Allrelis(LL)
 
+def GET_R2(cse):
+	#print cse
+	c,s,e=eval(cse)
+	categoryUrl = xt(httpSiteUrl + '/nrdr.php?c='+c+'&s='+s+'&e='+e)
+	url = get_HTML(url = categoryUrl, get_redirect = True) #-- do not redirect
+	http = get_HTML(url)
+	if http == None:
+		showMessage('lostfilm:', 'Сервер не отвечает', 1000)
+		return None
+	else:
+		H=__settings__.getSetting("History")
+		if H=='': HL=[]
+		else: HL=eval(H)
+		if cse not in HL: HL.append(cse)
+		__settings__.setSetting("History", repr(HL))
+		LL=Allre(http)
+		#debug(http)
+		return LL
+
+
 def AllList(L):
 		for i in L:
 			#nm=i[2].lower()
@@ -842,7 +862,79 @@ def AllList(L):
 				+ '&url=' + urllib.quote_plus(row_url)\
 				+ '&title=' + urllib.quote_plus(Title)\
 				+ '&text=' + urllib.quote_plus('0')
+			#listitem.addContextMenuItems([('Следить', 'Container.Update("plugin://plugin.video.LostFilm/?mode=Getlist&url='+urllib.quote_plus(row_url)+'&title='+urllib.quote_plus(dict['title'])+'")'),])
+			lf_name=mfindal(dict['title'],'(',')')[0][1:]
+			lf_url='plugin://plugin.video.LostFilm/?mode=Getlist&url='+urllib.quote_plus(row_url)+'&title='+urllib.quote_plus(lf_name)
+			listitem.addContextMenuItems([('[B]Отслеживать в ТС[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=add&url='+urllib.quote_plus(lf_url)+'&name='+lf_name+'")'),])
 			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+
+
+def Getlist(url, name):
+	url1 = 'http://login1.bogi.ru/login.php?referer=http%3A%2F%2Fwww.lostfilm.tv%2F'
+	login = __settings__.getSetting("login")
+	passw = __settings__.getSetting("password")
+	if login =="" or passw == '': showMessage('lostfilm', "Проверьте логин и пароль", times = 50000)
+
+	values = {
+				'login'     : login,
+				'password'  : passw,
+				'module'    : 1,
+				'target'    : 'http://lostfilm.tv/',
+				'repage'    : 'user',
+				'act'       : 'login'
+		}
+	post = urllib.urlencode(values)
+	html = get_HTML(url1, post, 'http://www.lostfilm.tv/')
+	soup = BeautifulSoup(html, fromEncoding="utf-8")
+	#-- step 2
+	ref = url1
+	url1 = soup.find('form')['action']
+	values={}
+	for rec in soup.findAll('input'):
+		try:values[rec['name'].encode('utf-8')] = rec['value'].encode('utf-8')
+		except:print "err: value"
+	post = urllib.urlencode(values)
+	html = get_HTML(url1, post, ref)
+	#-- ok
+
+	#name=mfindal(title,'(',')')[0][1:]
+	categoryUrl = xt(httpSiteUrl + '/browse.php?cat='+url)
+	http =  get_HTML(categoryUrl)
+	if http == None:
+		showMessage('lostfilm:', 'Сервер не отвечает', 1000)
+		return None
+	else:
+		#debug(http)
+		L=Allsr(http)
+		
+		for i in L:
+			if i[0].find(" \xf1\xe5\xf0\xe8\xff")>-1:
+				nm=xt(name.replace(" ",".")+'.s'+i[0].replace(" \xf1\xe5\xe7\xee\xed ","e").replace(" \xf1\xe5\xf0\xe8\xff"," ").replace("\xf1\xe5\xe7\xee\xed","_").replace(" _","").replace(" ","")+'.strm')
+				for n in range(1,10):
+					nm=nm.replace("s"+str(n)+"e","s0"+str(n)+"e")
+					nm=nm.replace("e"+str(n)+".","e0"+str(n)+".")
+				#print nm
+				sys.path.append(os.path.join(xbmc.translatePath("special://home/"),"addons","plugin.video.torrent.checker"))
+				import updatetc
+				LD=updatetc.file_list(name)
+				if  nm not in LD:
+					r=GET_R2(i[1])
+					if r:
+						q=int(__settings__.getSetting("Quality"))
+						LQ=["9#$%^^&8","720","1080",": WEB"]
+						url2=""
+						for r2 in r:
+							qnm=r2[0]
+							if qnm.find(LQ[q])>0:
+								#print qnm
+								url2=r2[1]
+						if url2=="":
+							#print "-auto-"
+							url2=r[0][1]
+						updatetc.save_strm(name, nm, url2, 0)
+	xbmc.executebuiltin('UpdateLibrary("video")')
+
+
 
 def AllListN(L):
 		if 1==1:
@@ -1278,6 +1370,11 @@ except:
 	pass
 
 try:
+	dir  = urllib.unquote_plus(params["dir"])
+except:
+	dir = "."
+
+try:
 	title  = urllib.unquote_plus(params["title"])
 except:
 	pass
@@ -1401,5 +1498,9 @@ elif mode == 'playTorrent':
 elif mode == 't2http_play':
 	DDir = __settings__.getSetting("DownloadDirectory")
 	tthp.play(url, handle, num, DDir)
+
+
+elif mode == 'Getlist':
+	Getlist(url,title)
 
 c.close()

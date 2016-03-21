@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.LostFilm"
-       name="LostFilm"
-       version="0.7.1"
+<addon id="plugin.video.newstudio.tv"
+       name="NewStudio.tv"
+       version="0.2.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.torrent.ts"/>
-    <import addon="script.module.torrent2http"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
             library="default.py">
         <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary>LostFilm</summary>
-    <description>LostFilm for AceStreem, YATP or Libtorrent</description>
+    <summary>NewStudio.tv</summary>
+    <description>NewStudio.tv for AceStreem, YATP, T2Http</description>
     <platform>all</platform>
   </extension>
 </addon>
