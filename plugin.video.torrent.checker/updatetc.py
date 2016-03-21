@@ -146,25 +146,28 @@ def update():
 	L=get_list()
 	for i in L:
 		name  = i[0].decode('utf-8')
-		url   = i[1]
-		if len(i)>2: f = i[2]
-		else: f=[]
-		new_ep_lst = tthp.list(url)
-		try:old_ep_lst = file_list(name)
-		except:old_ep_lst = []
-		for j in new_ep_lst:
-			epd = j.name
-			epd = epd.replace('\\'," ")+".strm"
-			epd_f=""
-			for k in f:
-				opid=k[0]
-				if opid=="t":epd_f+=k[1]
-				else:epd_f+=epd[k[0]:k[1]+1]
-			epd_f+=".strm"
-			if f==[]:epd_f=epd
-			ind = j.index
-			if epd not in old_ep_lst: save_strm(name, epd_f, url, ind)
-			#print old_ep_lst
+		url   = urllib.unquote_plus(i[1])
+		if url[:4]=='plug':
+			xbmc.executebuiltin('RunPlugin("'+url+'")')
+		else:
+			if len(i)>2: f = i[2]
+			else: f=[]
+			new_ep_lst = tthp.list(url)
+			try:old_ep_lst = file_list(name)
+			except:old_ep_lst = []
+			for j in new_ep_lst:
+				epd = j.name
+				epd = epd.replace('\\'," ")+".strm"
+				epd_f=""
+				for k in f:
+					opid=k[0]
+					if opid=="t":epd_f+=k[1]
+					else:epd_f+=epd[k[0]:k[1]+1]
+				epd_f+=".strm"
+				if f==[]:epd_f=epd
+				ind = j.index
+				if epd not in old_ep_lst: save_strm(name, epd_f, url, ind)
+				#print old_ep_lst
 	xbmc.executebuiltin('UpdateLibrary("video")')
 	print "----- Torrent Checker update end -----"
 

@@ -90,8 +90,13 @@ def play_ace(url, ind):
 
 
 def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
-	if cover==None:	listitem = xbmcgui.ListItem(name)
-	else:			listitem = xbmcgui.ListItem(name, iconImage=cover)
+	if path[:4]=='plug':
+		comment=urllib.unquote_plus(path).replace("plugin://","").replace("plugin.video.","")
+		comment=comment[:comment.find('/')]
+		comment="  [COLOR 60F0F0F0][ "+comment+" ][/COLOR]"
+	else: comment=""
+	if cover==None:	listitem = xbmcgui.ListItem(name+comment)
+	else:			listitem = xbmcgui.ListItem(name+comment, iconImage=cover)
 	listitem.setProperty('fanart_image', funart)
 	uri = sys.argv[0] + '?mode='+mode
 	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))
@@ -166,7 +171,7 @@ def add_filtr(name, ind):
 
 
 def add(name, url):
-	updatetc.add_list([name, url,[]])
+	updatetc.add_list([name, urllib.quote_plus(url),[]])
 	#xbmcplugin.endOfDirectory(handle)
 
 def get_params():
@@ -202,7 +207,8 @@ if mode==""         : root()
 if mode=="add"      : add(name, url)
 if mode=="play"     : play(url, int(ind))#updatetc.play(url, int(ind))
 if mode=="rename"   : updatetc.rename_list(int(ind))
-if mode=="epd_lst"  : epd_lst(name, url, ind)
+if mode=="epd_lst"  : 
+	if url[:4]!='plug':epd_lst(name, url, ind)
 if mode=="add_filtr": add_filtr(url, ind)
 if mode=="rem_filtr": 
 	updatetc.rem_filtr(int(ind))
