@@ -223,6 +223,7 @@ def play_url(params):
 	if out=='Ok':
 		j=0
 		for k,v in TSplayer.files.iteritems():
+			print v
 			j+=1
 			li = xbmcgui.ListItem(urllib.unquote(k))
 			uri = construct_request({
@@ -244,7 +245,7 @@ def play_url(params):
 	if j<2:
 		xbmcplugin.endOfDirectory(handle, False, False)
 		#play_url2({'torr_url': torr_link,'title': k,'ind':v,'img':img,'mode': 'play_url2'})
-		TSplayer.play_url_ind(1,k, icon, img)
+		TSplayer.play_url_ind(0,k, icon, img)
 		TSplayer.end()
 		return j
 
