@@ -223,7 +223,6 @@ def play_url(params):
 	if out=='Ok':
 		j=0
 		for k,v in TSplayer.files.iteritems():
-			print v
 			j+=1
 			li = xbmcgui.ListItem(urllib.unquote(k))
 			uri = construct_request({
