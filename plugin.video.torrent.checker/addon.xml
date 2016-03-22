@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.torrent.checker"
-version="0.3.1"
+version="0.3.2"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>

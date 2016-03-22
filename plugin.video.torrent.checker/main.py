@@ -175,7 +175,7 @@ def add_filtr(name, ind):
 	xbmc.executebuiltin("Container.Refresh")
 
 def add(name, url):
-	if url[:4]=='plug':
+	if url[:4]=='plug_off':
 		updatetc.add_list([name, urllib.quote_plus(url),[]])
 	else:
 		updatetc.add_list([name, url,[]])
