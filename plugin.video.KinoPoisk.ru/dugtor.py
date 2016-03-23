@@ -93,16 +93,102 @@ def GET(target, referer, post=None):
 	except Exception, e:
 		print e
 
+def formatKP(str):
+	str=str.strip()
+	str=str.replace('%','%25')
+	str=str.replace('&','%26')
+	str=str.replace('?','%3F')
+	str=str.replace('&','%26')
+	str=str.replace('!','%21')
+	str=str.replace(':','%3A')
+	str=str.replace('#','%23')
+	str=str.replace(',','%2C')
+	str=str.replace(';','%3B')
+	str=str.replace('@','%40')
+	str=str.replace('(','%28')
+	str=str.replace(')','%29')
+	str=str.replace('"','%22')
+	
+	str=str.replace('а','%E0')
+	str=str.replace('б','%E1')
+	str=str.replace('в','%E2')
+	str=str.replace('г','%E3')
+	str=str.replace('д','%E4')
+	str=str.replace('е','%E5')
+	str=str.replace('ё','%b8')
+	str=str.replace('ж','%E6')
+	str=str.replace('з','%E7')
+	str=str.replace('и','%E8')
+	str=str.replace('й','%E9')
+	str=str.replace('к','%EA')
+	str=str.replace('л','%EB')
+	str=str.replace('м','%EC')
+	str=str.replace('н','%ED')
+	str=str.replace('о','%EE')
+	str=str.replace('п','%EF')
+	str=str.replace('р','%F0')
+	str=str.replace('с','%F1')
+	str=str.replace('т','%F2')
+	str=str.replace('у','%F3')
+	str=str.replace('ф','%F4')
+	str=str.replace('х','%F5')
+	str=str.replace('ц','%F6')
+	str=str.replace('ч','%F7')
+	str=str.replace('ш','%F8')
+	str=str.replace('щ','%F9')
+	str=str.replace('ъ','%FA')
+	str=str.replace('ы','%FB')
+	str=str.replace('ь','%FC')
+	str=str.replace('э','%FD')
+	str=str.replace('ю','%FE')
+	str=str.replace('я','%FF')
+	
+	str=str.replace('А','%C0')
+	str=str.replace('Б','%C1')
+	str=str.replace('В','%C2')
+	str=str.replace('Г','%C3')
+	str=str.replace('Д','%C4')
+	str=str.replace('Е','%C5')
+	str=str.replace('Ё','%A8')
+	str=str.replace('Ж','%C6')
+	str=str.replace('З','%C7')
+	str=str.replace('И','%C8')
+	str=str.replace('Й','%C9')
+	str=str.replace('К','%CA')
+	str=str.replace('Л','%CB')
+	str=str.replace('М','%CC')
+	str=str.replace('Н','%CD')
+	str=str.replace('О','%CE')
+	str=str.replace('П','%CF')
+	str=str.replace('Р','%D0')
+	str=str.replace('С','%D1')
+	str=str.replace('Т','%D2')
+	str=str.replace('У','%D3')
+	str=str.replace('Ф','%D4')
+	str=str.replace('Х','%D5')
+	str=str.replace('Ц','%D6')
+	str=str.replace('Ч','%D7')
+	str=str.replace('Ш','%D8')
+	str=str.replace('Щ','%D9')
+	str=str.replace('Ь','%DA')
+	str=str.replace('Ы','%DB')
+	str=str.replace('Ъ','%DC')
+	str=str.replace('Э','%DD')
+	str=str.replace('Ю','%DE')
+	str=str.replace('Я','%DF')
 
+	str=str.replace(' ','+')
+	return str
 
 def upd(text):
-	SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
-	Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
-	
-	http = GET(SUrl, httpSiteUrl, Post)
+	#SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
+	#Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
+	SUrl='http://dugtor.ru/index.php?do=search&subaction=search&story='+formatKP(text)#'%D2%E5%F0%EC%E8%ED%E0%F2%EE%F0'
+	print SUrl
+	http = GET(SUrl, httpSiteUrl)#, Post)
 	if http == None:
 		print'dugtor.ru: Сервер не отвечает'
-		return None
+		return []
 	else:
 		LL=formtext(http)
 		return LL
@@ -122,31 +208,38 @@ def mid1 (x):
 	return r
 
 def formtext(http):
+	#print http
 	http=http.replace(chr(10),"").replace(chr(13),"").replace("\t","")
-	ss="<td><b>"
-	es="</tr><tr>"
+	ss='<div class="blog_brief_news">'
+	es="mini_magnet.png"
 	L=mfindal(http, ss, es)
+	
 	LL=[]
 	for i in L:
 		#print i
-		ss="<td><b>"
-		es="</b></td>"
+		ss="<strong>"
+		es="</strong>"
 		title=mfindal(i, ss, es)[0][len(ss):]
-		#print title
+		print title
 		
-		ss='</b></td><td style="text-align:center;">'
-		es='<a href="/search-torrents'
-		tmp=mfindal(i, ss, es)[0][len(ss):]
+		ss='</strong></a></div><div class="center col px65">'
+		es='</div><div class="center col px65"><b style="color: #4C872B'
+		size=mfindal(i, ss, es)[0][len(ss):]
+		size=size.strip().center(11)
 		
-		tmp=tmp.replace('</td><td style="text-align:center;">', '","')
-		l2=eval('["'+tmp+'0"]')
-		size=l2[0].strip().center(11)
-		sids=l2[1].strip().center(8-len(l2[1].strip()))
+		ss='#4C872B;">'
+		es='</b></div><div class'
+		sids=mfindal(i, ss, es)[0][len(ss):].strip()
+		sids=sids.center(8-len(sids))
+		#tmp=tmp.replace('</td><td style="text-align:center;">', '","')
+		#l2=eval('["'+tmp+'0"]')
+		#size='l2[0].strip().center(11)'
+		#sids='l2[1].strip().center(8-len(l2[1].strip()))'
 		
-		ss='href="/search-torrents/download/'
-		es='"><img src="/templates/primary/search-torrents/images/download'
-		url='http://dugtor.ru/search-torrents/download/'+mfindal(i, ss, es)[0][len(ss):]+"/start"
-		#print url
+		ss='/engine/download'
+		es='"><img src="/templates/primary/images/mini_download'
+		url='http://dugtor.ru/engine/download'+mfindal(i, ss, es)[0][len(ss):]#+"/start"
+		print url
 		try:LL.append([sids,size,title.decode('cp1251'),url])
 		except:LL.append([sids,size,cp1251(title),url])
 	return LL

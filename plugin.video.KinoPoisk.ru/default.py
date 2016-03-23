@@ -1060,9 +1060,9 @@ def formatKP(str):
 	str=str.replace('ч','%F7')
 	str=str.replace('ш','%F8')
 	str=str.replace('щ','%F9')
-	str=str.replace('ь','%FA')
+	str=str.replace('ъ','%FA')
 	str=str.replace('ы','%FB')
-	str=str.replace('ъ','%FC')
+	str=str.replace('ь','%FC')
 	str=str.replace('э','%FD')
 	str=str.replace('ю','%FE')
 	str=str.replace('я','%FF')
@@ -1778,6 +1778,7 @@ def Root():
 	AddItem("Недавние премьеры", "New")
 	AddItem("Самые ожидаемые", "Future")
 	AddItem("Персоны", "PersonList")
+	#AddItem("Параметры", "Par")
 
 def Search():
 	SrcNavi(inputbox())
@@ -2043,12 +2044,14 @@ if mode == "Torrents2":
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
 	text=rt(text)
+	
 	ttl=rutor(text, info)
 	if ttl<1: ttl=rutoris(text, info)
 	if ttl<1: rutor(rus.replace("a","а"), info)
 	
-	ttl4=dugtor(text, info)
-	if ttl4<1: dugtor(rus.replace("a","а"), info)
+	#ttl4=dugtor(text, info)
+	try:dugtor(rus.replace("a","а"), info)
+	except: pass
 	
 	ttl3=fileek(text, info)
 	ttl2=s2kp(rus.replace("a","а"), info)
@@ -2071,7 +2074,48 @@ if mode == "Torrents2":
 	xbmcplugin.endOfDirectory(handle)
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
+	
+if mode == "Par":
+	text='Predator'
+	text=u'хищник'
+	#import rutors
+	#rtr=rutors.Tracker()
+	import dugtor
+	rtr=dugtor.Tracker()
 
+	try:
+		L=rtr.Search(text, "0")
+	except: 
+		L=[]
+
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+	BL=['Трейлер', "Тизер"]
+	WL=["DVDRip","bdrip","720р"]#
+	for itm in L:
+		b=0
+		w1=0
+		for i in BL:
+			if itm[2].find(i)>0:b+=1
+		for i in WL:
+			if itm[2].lower().find(i)>0:w1+=1
+		
+		w=w1
+
+		if xt(itm[2]).find(text)>=0 and b == 0 and w > 0:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				listitem = xbmcgui.ListItem(Title)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + itm[2]
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
+	
+	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+	xbmcplugin.endOfDirectory(handle)
+	xbmc.sleep(300)
+	xbmc.executebuiltin("Container.SetViewMode(51)")
 
 if mode == "OpenTorrent":
 	url = urllib.unquote_plus(get_params()["url"])
