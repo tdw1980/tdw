@@ -236,17 +236,15 @@ def play_url(params):
 				if k in eval(__settings__.getSetting("History")): li.select(True)
 			except:
 				pass
-			li.addContextMenuItems([('Hайти на KrasFS', 'XBMC.ActivateWindow(10025,"plugin://plugin.video.LostFilm/?mode=KFS&text='+k+'")', 'XBMC.ActivateWindow(10025,"plugin://plugin.video.LostFilm/?mode=OpenCat&text=0&file='+url+'&img='+img+'")')])
-			#crt=construct_request({'mode': 'KFS','text': k})
-			#li.addContextMenuItems([('Hайти на KrasFS', 'XBMC.RunPlugin("plugin://plugin.video.LostFilm/?mode=KFS&text='+k+'")')])
+			#li.addContextMenuItems([('Hайти на KrasFS', 'XBMC.ActivateWindow(10025,"plugin://plugin.video.LostFilm/?mode=KFS&text='+k+'")', 'XBMC.ActivateWindow(10025,"plugin://plugin.video.LostFilm/?mode=OpenCat&text=0&file='+url+'&img='+img+'")')])
 			xbmcplugin.addDirectoryItem(handle, uri, li, False)
 
-	if j<2:
-		xbmcplugin.endOfDirectory(handle, False, False)
-		#play_url2({'torr_url': torr_link,'title': k,'ind':v,'img':img,'mode': 'play_url2'})
-		TSplayer.play_url_ind(0,k, icon, img)
-		TSplayer.end()
-		return j
+		if j<2:
+			xbmcplugin.endOfDirectory(handle, False, False)
+			#play_url2({'torr_url': torr_link,'title': k,'ind':v,'img':img,'mode': 'play_url2'})
+			TSplayer.play_url_ind(0,k, icon, img)
+			TSplayer.end()
+			return j
 
 	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
 	xbmcplugin.endOfDirectory(handle)
