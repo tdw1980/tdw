@@ -43,6 +43,7 @@ def inputbox(t):
 
 
 def play(url, id=0):
+	print url
 	engine=__settings__.getSetting("Engine")
 	if engine=="0":
 		play_ace(url, id)
@@ -119,7 +120,7 @@ def pars_rss(rss):
 		try: cover=mfindal(i, 'src=&quot;', '&quot; title=&quot;')[0][10:]
 		except: cover=""
 		content=mfindal(i, '<content:encoded>', '</content:encoded>')[0][17:]
-		Lt=mfindal(i, 'http://coldfilm.ru/torrent24', '.torrent')
+		Lt=mfindal(i, 'http://coldfilm.ru/torrent', '.torrent')
 		for t in Lt:
 			dict={'title':title.replace('[Смотреть Онлайн]',''), 'url':t+'.torrent', 'cover':cover}
 			L2.append(dict)
