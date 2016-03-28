@@ -58,7 +58,7 @@ def save_strm(name, epd, url, ind):
 		fl.close()
 
 
-def get_list():
+def get_list():# получить список заданий
 	try:
 		H=__settings__.getSetting("History")
 		if H=='': HL=[]
@@ -68,7 +68,7 @@ def get_list():
 		__settings__.setSetting("History", repr(HL))
 	return HL
 
-def add_list(c):
+def add_list(c):# --- добавить задание по (имя, url)
 		HL=get_list()
 		if c not in HL:
 			name=c[0]
@@ -91,22 +91,40 @@ def rename_list(i):# --- переименовать задание по номе
 		if oldname<>newname:
 			HL[i][0]=newname
 			__settings__.setSetting("History", repr(HL))
-			rem(oldname)
+			try: rem(oldname)
+			except: pass
 			update()
 		#xbmc.executebuiltin("Container.Update()")
 
-def filtr_list(i, p):# --- добавить правило автопереименования епизодов по номеру задания
+def add_comment(i): # --- добавить комментарий
+		HL=get_list()
+		n=len(HL[i])
+		if n==4:
+			old=HL[i][3]
+		elif n==3:
+			old=""
+			HL[i].append("")
+		else: 
+			old=""
+			HL[i].append([])
+			HL[i].append("")
+		new=inputbox(old)
+		if old<>new:
+			HL[i][3]=new
+			__settings__.setSetting("History", repr(HL))
+
+def filtr_list(i, p):# --- добавить правило автопереименования эпизодов по номеру задания
 		HL=get_list()
 		if len(HL[i])<3: HL[i].append([p,])
 		else:HL[i][2].append(p)
 		__settings__.setSetting("History", repr(HL))
 
-def get_filtr(i):# --- получить правила автопереименования епизодов по номеру задания
+def get_filtr(i):# --- получить правила автопереименования эпизодов по номеру задания
 		HL=get_list()
 		if len(HL[i])<3: return []
 		else: return HL[i][2]
 
-def rem_filtr(i):# --- удалить правила автопереименования епизодов по номеру задания
+def rem_filtr(i):# --- удалить правила автопереименования эпизодов по номеру задания
 		HL=get_list()
 		if len(HL[i])<3: HL[i].append([])
 		else:HL[i][2]=[]
@@ -169,6 +187,8 @@ def update():
 				ind = j.index
 				if epd not in old_ep_lst: save_strm(name, epd_f, url, ind)
 				#print old_ep_lst
+	at=time.strftime('Обновлено: %d.%m.%Y - %H:%M')
+	__settings__.setSetting("AT", at)
 	xbmc.executebuiltin('UpdateLibrary("video")')
 	print "----- Torrent Checker update end -----"
 

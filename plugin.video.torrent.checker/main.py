@@ -92,12 +92,12 @@ def play_ace(url, ind):
     xbmc.Player().stop
 
 
-def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
+def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None, com=""):
 	if path[:4]=='plug':
 		comment=urllib.unquote_plus(path).replace("plugin://","").replace("plugin.video.","")
 		comment=comment[:comment.find('/')]
-		comment="  [COLOR 60F0F0F0][ "+comment+" ][/COLOR]"
-	else: comment=""
+		comment=" "+com+" [COLOR 60F0F0F0][ "+comment+" ][/COLOR]"
+	else: comment=" "+com
 	if cover==None:	listitem = xbmcgui.ListItem(name+comment)
 	else:			listitem = xbmcgui.ListItem(name+comment, iconImage=cover)
 	listitem.setProperty('fanart_image', funart)
@@ -107,7 +107,6 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	uri += '&ind='  + urllib.quote_plus(ind)
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
 	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
-	
 	
 	urr = sys.argv[0] + '?mode=rem'
 	urr += '&path='  + urllib.quote_plus(path.encode('utf-8'))
@@ -124,24 +123,38 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	urr3 += '&name='  + urllib.quote_plus(xt(name))
 	urr3 += '&ind='  + urllib.quote_plus(ind)
 
-	if mode=="epd_lst":listitem.addContextMenuItems([('[COLOR F050F050] Удалить задание[/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr+'")'),('[COLOR F050F050] Переименовать [/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr2+'")'),('[COLOR F050F050] Обновить файлы [/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr3+'")')])
+	urr4 = sys.argv[0] + '?mode=add_comment'
+	urr4 += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	urr4 += '&name='  + urllib.quote_plus(xt(name))
+	urr4 += '&ind='  + urllib.quote_plus(ind)
+
+	if mode=="epd_lst":listitem.addContextMenuItems([('[COLOR F050F050] Удалить задание[/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr+'")'),('[COLOR F050F050] Переименовать [/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr2+'")'),('[COLOR F050F050] Комментарий [/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr4+'")'),('[COLOR F050F050] Обновить файлы [/COLOR]', 'Container.Update("plugin://plugin.video.torrent.checker/'+urr3+'")')])
 
 	xbmcplugin.addDirectoryItem(handle, uri, listitem, True)
 
 
 def root():
+	try:
+		at = __settings__.getSetting("AT")
+		#at = time.ctime(att)
+	except: at = 'Необновлялось'
+	add_item (at, ' ', 'url', '0')
 	L=updatetc.get_list()
 	ind=0
 	for i in L:
 		name  = i[0]
 		url   = i[1]
-		add_item (name, 'epd_lst', url, str(ind))
+		if len(i)>3: 
+			if i[3]!="":com = "- "+i[3]
+			else: com = ""
+		else: com = ""
+		add_item (name, 'epd_lst', url, str(ind),com=com)
 		ind+=1
 	xbmcplugin.endOfDirectory(handle)
 
 def epd_lst(name, url, ind):
-	print "-=-=-=-=-=-=-=-=-=-"
-	print url
+	#print "-=-=-=-=-=-=-=-=-=-"
+	#print url
 	f=updatetc.get_filtr(int(ind))
 	L=tthp.list(url)#updatetc.file_list(name)
 	
@@ -220,9 +233,11 @@ if mode=="rem_filtr":
 	updatetc.rem_filtr(int(ind))
 	xbmc.executebuiltin("Container.Refresh")
 if mode=="rem_files": 
-	updatetc.rem(name)
+	try:updatetc.rem(name)
+	except: print "-=-==-=-=- неудалось удалить файлы -=-=-=-=-=-"
 	updatetc.update()
 if mode=="rem": 
 	updatetc.rem_list(int(ind))
 	xbmc.executebuiltin("Container.Refresh")
-
+if mode=="add_comment":
+	updatetc.add_comment(int(ind))
