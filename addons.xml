@@ -298,7 +298,7 @@
 </addon>
 
 <addon id="plugin.video.torrent.checker"
-version="0.3.3"
+version="0.3.4"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>
@@ -307,6 +307,7 @@ provider-name="TDW1980">
     <import addon="script.module.torrent.ts"/>
     <import addon="script.module.torrent2http"/>
 </requires>
+<extension point="xbmc.python.module" library="lib"/>
 <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
 </extension>
