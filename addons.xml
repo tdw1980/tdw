@@ -339,19 +339,18 @@ provider-name="TDW1980">
 	</extension>
 </addon>
 
-<addon id='script.module.torrent.ts' version='0.6.0.28a' name='AceStream Client' provider-name='NuisMons'>
+<addon id='script.module.torrent.ts' version='0.7.1.1' name='AceStream client' provider-name='1orgar'>
   <requires>
-    <import addon='xbmc.python' version='2.1.0'/>
+    <import addon='xbmc.python' version='2.7.10'/>
   </requires>
-  <extension point="xbmc.python.script" library="tsserv.py">
-    <provides>executable</provides>
-  </extension>
+    <extension point="xbmc.python.script" library="default.py">
+    	<provides>executable</provides>
+    </extension>
+    <extension point="xbmc.python.module" library="lib"/>
   <extension point='xbmc.addon.metadata'>
     <platform>all</platform>
-    <summary>AceStream Engine support</summary>
+    <summary>AceStream client</summary>
   </extension>
-  <extension library="default.py" point="xbmc.service" />
-  <extension point='xbmc.python.module'/>
 </addon>
 
 <addon id="script.module.torrent2http" name="torrent2http" version="0.1.3" provider-name="anteo">

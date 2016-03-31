@@ -1,21 +1,12 @@
-﻿[B]V 0.5.2[/B]
--auto create advancedsettings.xml
+﻿[B]0.7.1[/B]
+- Krypton full support
 
-[B]Version 0.5.1[/B]
--Now supports AS 2.1
+[B]0.7.0[/B]
+- v6 protocol
+- reStreamer
 
-[B]Version 0.5.0.11[/B]
--fix cyrillic 
-
-[B]Version 0.5.0.10[/B]
-- notifications fix
-- pre-autosave to disk fix
-
-[B]Version 0.5.0.8[/B]
-- save to disk fix
-
-[B]Version 0.4.7[/B]
-- save to disk and play
-- autoconfig popup
-[B]Version 0.3.8[/B]
-- Fix for Cyrillic usernames (windows)
+[B]0.6.5[/B]
+- v3 protocol
+- Full code rewrite
+- ResolvedUrl support
+- OSD
