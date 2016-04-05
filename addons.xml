@@ -146,7 +146,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.5.6"
+       version="1.5.7"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -204,7 +204,7 @@
 
 <addon id="plugin.video.btdigg.org"
        name="BTDigg.org"
-       version="1.1.1"
+       version="1.1.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

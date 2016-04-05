@@ -85,13 +85,6 @@ def play_url(torr_link,img, info={}):
         for k,v in TSplayer.files.iteritems():
             li = xbmcgui.ListItem(urllib.unquote(k))
             #fokus(urllib.unquote(k))# -----------------========================:::::::::::::::::: ТУТ
-            uri = construct_request({
-                't': torr_link,
-                'tt': k.encode('utf-8'),
-                'i':v,
-                'ii':urllib.quote(img),
-                'mode': 'addplist'
-            })
             li.setProperty('IsPlayable', 'true')
             
             #li.addContextMenuItems([('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri),])
@@ -99,11 +92,9 @@ def play_url(torr_link,img, info={}):
             except:
                 try:title=info['namef']
                 except:title="error"
-                print "----------title------------"
-                print title
             uri2 = construct_request({
                 't': torr_link,
-                'tt': k.encode('utf-8'),
+                'tt': k,#.encode('utf-8')
                 'title': title,
                 'i':v,
                 'ii':img,
@@ -118,7 +109,6 @@ def play_url(torr_link,img, info={}):
                 'func': 'play_url2',
                 'mode': 'play_url2'
             })
-            #li.addContextMenuItems([('Добавить в плейлист', 'XBMC.RunPlugin(%s?func=addplist&torr_url=%s&title=%s&ind=%s&img=%s&func=play_url2)' % (sys.argv[0],urllib.quote(torr_link),k,v,img  )),])
             xbmcplugin.addDirectoryItem(int(sys.argv[1]), uri, li)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')

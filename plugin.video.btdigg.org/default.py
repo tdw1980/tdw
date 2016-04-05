@@ -28,6 +28,7 @@ def debug(s):
 def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
+
 def inputbox():
 	skbd = xbmc.Keyboard()
 	skbd.setHeading('Поиск:')
@@ -216,6 +217,213 @@ def get_file_list(torrent):
 		if check_torrent_added(): return get_last_added_torrent()
 	return False
 	
+
+def find_se(txt):
+	txt=txt.lower()
+	for i in range (2000,2020):
+		txt=txt.replace(str(i),"")
+
+	F=["480","720","1080",".mp4",".ts","5.1","264"]
+	for i in F:
+		txt=txt.replace(i,"")
+
+	SL=['.sezon','.Сезон','.сезон',  'sezon','Сезон','сезон']
+	for i in SL:
+		try:txt=txt.replace(i,"^")
+		except: pass
+
+	EL=['seriya','serija','Серия','серия','vypusk']
+	for i in EL:
+		try:txt=txt.replace(i,"#")
+		except: pass
+			
+	EL2=['.e',' e','e','x']
+	for i in EL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"@"+str(j))
+			except: pass
+
+	SL2=['.s',' s','s']
+	for i in SL2:
+		for j in range (0,9):
+			r=i+str(j)
+			try:txt=txt.replace(r,"*"+str(j))
+			except: pass
+
+
+	T=["0","1","2","3","4","5","6","7","8","9",".","-","\\",  "#","@","^","*"]#,"x","s","e"
+	L=tuple(txt)
+	nst=""
+	for i in L:
+		if i in T: nst+=i
+			
+	nst=nst.replace("-",".")
+	nst=nst.replace("#.","#").replace(".#","#")
+	nst=nst.replace("@.","@").replace(".@","@")
+	nst=nst.replace("^.","^").replace(".^","^")
+	nst=nst.replace("*.","*").replace(".*","*")
+	nst=nst.replace("......",".").replace(".....",".").replace("....",".").replace("...",".").replace("..",".")
+	if nst[:1]==".": nst=nst[1:]
+	if nst[-1:]==".": nst=nst[:-1]
+	nc=nst.find("\\")
+	if nc>0: 
+		nst1=nst[:nc]
+		nst2=nst[nc+1:]
+		n1=nst2.find("*")
+		n2=nst2.find("^")
+		if n1>-1 or n2>-1:nst=nst2
+		else:
+			#print nst1
+			try:nst1="^"+str(int(nst1.replace(".","").replace("^","").replace("*","")))
+			except:
+				nss=nst1.find("^")
+				if nss>-1:nst1=nst1[:nss+2]
+				else:nst1=""
+			try:nst2="@"+str(int(nst2))
+			except:nst2=">"+nst2
+			nst=nst1+nst2
+	sez="!?!"
+	if 1==1:
+		ns=nst.find("*")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns+1:ns+3]))
+			except:
+				try:sez="s"+str(int(nst[ns+1:ns+2]))
+				except:sez="!*!"
+			#print sez
+			
+	if sez=="!?!" or sez=="!*!":
+		ns=nst.find("^")
+		if ns>-1:
+			try: sez="s"+str(int(nst[ns-2:ns]))
+			except:
+				try:sez="s"+str(int(nst[ns-1:ns]))
+				except:
+					try: sez="s"+str(int(nst[ns+1:ns+3]))
+					except:
+						try:sez="s"+str(int(nst[ns+1:ns+2]))
+						except:sez="!^!"
+
+	epd="!?!"
+	if 1==1:
+		ns=nst.find("@")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns+1:ns+4]))
+			except:
+				try:epd="e"+str(int(nst[ns+1:ns+3]))
+				except:
+					try:epd="e"+str(int(nst[ns+1:ns+2]))
+					except:epd="!@!"
+			
+			if sez=="!?!":
+					try: sez="s"+str(int(nst[ns-2:ns]))
+					except:
+						try:sez="s"+str(int(nst[ns-1:ns]))
+						except:sez=="!?@!"
+			#print sez
+			
+	if epd=="!?!" or epd=="!@!":
+		
+		ns=nst.find("#")
+		if ns>-1:
+			try: epd="e"+str(int(nst[ns-3:ns]))
+			except:
+				try:epd="e"+str(int(nst[ns-2:ns]))
+				except:
+					try:epd="e"+str(int(nst[ns-1:ns]))
+					except:epd=="!?!"
+
+		if ns>-1 and ns<len(nst)-2:
+				pb=0
+				try:
+					epd="e"+str(int(nst[ns+1:ns+4]))
+					pb=1
+				except:
+							try:
+								epd="e"+str(int(nst[ns+1:ns+3]))
+								pb=1
+							except:
+								try:
+									epd="e"+str(int(nst[ns+1:ns+2]))
+									pb=1
+								except:epd="!#!"
+	
+				if sez=="!?!" and epd!="!?!" and pb==1:
+					try:sez="s"+str(int(nst[ns-2:ns]))
+					except:
+						try:sez="s"+str(int(nst[ns-1:ns]))
+						except:pass
+
+	if sez=="!?!" and epd!="!?!":
+		if ns>3:
+					try: sez="s"+str(int(nst[:2]))
+					except:
+						try:sez="s"+str(int(nst[:1]))
+						except:sez=="!?!"
+
+	if sez=="!?!" and epd=="!?!":
+					try:epd="e"+str(int(nst))
+					except:
+						try:
+							tmp=float(nst)
+							sez="s"+str(int(tmp))
+							sss,eee=divmod(tmp, 1)
+							epd="e"+str(eee*100).replace(".0","")
+						except: pass
+
+	if sez!="!?!" and epd=="!?!":
+			ns=nst.find(">")
+			if ns>0:
+					try:epd="e"+str(int(nst[ns+1:].replace(".","")))
+					except:epd=="!?!"
+
+	print sez+"\t:\t"+epd+"\t:\t"+nst
+	return (sez,epd)
+
+
+def save_nfo(tts, img, name, SaveDirectory):
+		sts,ste=find_se(xt(tts))
+		try: s=int(sts.replace("s",""))
+		except: s=0
+		try: e=int(ste.replace("e",""))
+		except: e=0
+		
+		title="season "+str(s)+" episode "+str(e)
+		cn=name.find(" (")
+
+		if cn>0:
+			name=name[:cn]
+
+		plot=xt(tts)
+		if s>0:
+			if s<10: ss=".S0"+str(s)
+			else:ss=".S"+str(s)
+		else: ss=".0"
+		
+		if e>0:
+			if e<10: es=".E0"+str(e)
+			else:es=".E"+str(e)
+		else: es=""
+
+		if es!="":tts=name+ss+es
+		
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		if SaveDirectory=="":SaveDirectory=LstDir
+		nfo="<episodedetails>"+chr(10)
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<season>"+str(s)+"</season>"+chr(10)
+		nfo+="	<episode>"+str(e)+"</episode>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+="</episodedetails>"+chr(10)
+		
+		nfowr="ok"
+		if nfowr=="ok":
+			fl = open(os.path.join(SaveDirectory, tts+".nfo"), "w")
+			fl.write(nfo)
+			fl.close()
+		return tts
+
 def save_all(torrent):
 	dict= get_file_list(torrent)
 	if dict==False:
@@ -226,13 +434,15 @@ def save_all(torrent):
 		info_hash=dict["info_hash"]
 		name=dict["name"]
 		nv=0
-		vlist=["mkv","avi","mp4","mov","m4v"]
+		vlist=["mkv","avi","mp4","mov","m4v",".ts"]
 		for j in L:
 			title=j[0]
 			ext=title.lower()[-3:]
 			if ext in vlist: nv+=1
 		
 		ind=-1
+		inf = xbmcgui.Dialog().yesno("Сохранение", "Создавать информационные файлы?")
+		m=0
 		for i in L:
 			ind+=1
 			title=i[0]
@@ -247,18 +457,27 @@ def save_all(torrent):
 			#vlist=["mkv","avi","mp4","mov","m4v"]
 			ext=title.lower()[-3:]
 			if ext in vlist:
-				tts=title
+				n=title.find("\\")
+				if n<0: n=0
+				tts=title[n:]#eval("'"++"'")
 				tts=tts.replace("\\",' ')
+				
 				#try:tts=ru(os.path.basename(tts))#[nf+1:]
 				#except: tts=xt(os.path.basename(tts))
+				if inf: tts=save_nfo(tts,img, name, SaveDirectory)
+				#import chardet
+				#print chardet.detect(tts)
+				#print chardet.detect(SaveDirectory)
 				try:
-					fl = open(os.path.join(SaveDirectory, tts+".strm"), "w")
+					fl = open(os.path.join(SaveDirectory, tts.decode("utf-8")+".strm"), "w")
 					fl.write(uri)
 					fl.close()
 				except:
+					m+=1
 					pass
 		remove_torrent(info_hash, True)
-		showMessage("BTDigg", "Сохранено", times = 3000)
+		if m==0: showMessage("BTDigg", "Сохранено", times = 3000)
+		else: showMessage("BTDigg", "Пропущено: "+str(m), times = 3000)
 
 def mfindal(http, ss, es):
 	L=[]
