@@ -100,7 +100,7 @@ def Root():
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
-def Title():
+def Title_off():
 	q=inputbox().replace(" ","+")
 	Lt=[]
 	for n in range (1,5):
@@ -142,8 +142,53 @@ def Title():
 					Lt.append(url)
 				
 	xbmcplugin.endOfDirectory(pluginhandle)
+#	xbmc.executebuiltin('Container.Update("plugin://plugin.audio.zaycev.net/?mode=find&name='+q+'")')
 
+def Title():
+	q=inputbox().replace(" ","+")
+	xbmc.executebuiltin('Container.Update("plugin://plugin.audio.zaycev.net/?mode=find&name='+q+'")')
 
+def Find(q):
+	Lt=[]
+	for n in range (1,5):
+		url='http://zaycev.net/search.html?query_search='+q
+		if n>0: url=url+"&page="+str(n)
+		http=getURL(url)
+		try:
+			ss='<div data-dkey='
+			es='</i></span></a></div>'
+			L=mfindal(http, ss, es)
+		except:
+			L=[]
+		for i in L:
+				ss='<div data-dkey="'
+				es='.mp3" data-duration="'
+				url="http://dl.zaycev.net"+mfindal(i, ss, es)[0][len(ss):]+"/play.mp3"
+				
+				ss='href="/artist/'
+				es='</a></div><div class="musicset-track__track-dash'
+				artist=mfindal(i, ss, es)[0]
+				artist=artist[artist.find('">')+2:]
+				
+				ss='target="_blank" >'
+				es='</a></div></div><div class="musicset-track__duration'
+				title=mfindal(i, ss, es)[0][len(ss):]
+				
+				title2 = artist+" - "+title
+				
+				img=thumb
+				uri = sys.argv[0] + '?mode=serch'
+				uri += '&url='  + urllib.quote_plus(url)
+				uri += '&name='  + urllib.quote_plus(title2)
+				uri += '&img='  + urllib.quote_plus(img)
+				item = xbmcgui.ListItem(title2, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"Title": title, 'artist':artist})
+				item.addContextMenuItems([('[COLOR F050F050] Сохранить [/COLOR]', 'Container.Update("plugin://plugin.audio.zaycev.net/?mode=save&url='+url+'&name='+title2+'")'),])
+				if url not in Lt:
+					xbmcplugin.addDirectoryItem(pluginhandle, url, item, False)
+					Lt.append(url)
+				
+	xbmcplugin.endOfDirectory(pluginhandle)
 
 def Genres():
 		L=[('pop', 'Поп'), ("rock", "Рок"), ("rap", "Рэп"), ("alternative", "Альтернатива"), ("electronic", "Электроника"), ("shanson", "Шансон"), ("soundtrack", "Саундтреки"), ("metal", "Метал"), ("classical", "Классика"), ("dance", "Танцевальная"), ("easy", "Легкая"), ("rnb", "R’n’B"), ("jazz", "Джаз"), ("reggae", "Регги"), ("other", "Другое")]
@@ -307,6 +352,7 @@ except: pass
 
 if   mode == None:		Root()
 elif mode == 'title':	Title()
+elif mode == 'find':	Find(name)
 elif mode == 'genres':	Genres()
 elif mode == 'plot':	Plot()
 elif mode == 'scene':	Scene()
