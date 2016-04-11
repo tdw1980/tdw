@@ -100,7 +100,7 @@ def play_url(torr_link,img, info={}):
                 'ii':img,
                 'mode': 'save_strm'
             })
-            li.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri)])
+            li.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),])
             uri = construct_request({
                 'torr_url': torr_link,
                 'title': k,
@@ -1157,7 +1157,7 @@ def s2kp(id, info):
 				+ '&url=' + urllib.quote_plus(row_url)\
 				+ '&title=' + urllib.quote_plus(Title)\
 				+ '&text=' + urllib.quote_plus('0')
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 			
 			for itm in RL:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
@@ -1173,7 +1173,7 @@ def s2kp(id, info):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, False, len(RL))
 		return len(RL)
 	except:
 		return 0
@@ -1194,7 +1194,7 @@ def fileek(qury, info):
 				+ '&url=' + urllib.quote_plus(row_url)\
 				+ '&title=' + urllib.quote_plus(Title)\
 				+ '&text=' + urllib.quote_plus('0')
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 			
 			for itm in RL:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
@@ -1269,14 +1269,55 @@ def rutor(text, info={}):
 			+ '&url=' + urllib.quote_plus(row_url)\
 			+ '&title=' + urllib.quote_plus(Title)\
 			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 		
 	for y in range (1970, 2018):
 		sy=" "+str(y)
 		text=text.replace(sy,"")
-
+	tt=0
 	for itm in RL:
 		if itm[2].find(text)>=0:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + urllib.quote_plus(info['title'])\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				tt+=1
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+	return tt
+
+
+def rutor_id(text, info={}):
+	#try:
+	import rutor2
+	rtr=rutor2.Tracker()
+	#except: pass
+	
+	RL=rtr.Search('film '+text+":", "0")
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Rutor»  id"+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=Search'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+	
+	try:en=info["originaltitle"].encode('utf8')[:3]
+	except:en=info["originaltitle"][:3]
+
+	for itm in RL:
+		if itm[2].find(en)>=0:
 				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
 				cover=""
@@ -1329,14 +1370,16 @@ def rutoris(text, info={}):
 	return len(RL)
 
 
-def dugtor(text, info={}):
+def dugtors(text, info={}):
+	
 	#try:
+	print "import dugtor"
 	import dugtor
 	rtr=dugtor.Tracker()
 	#except: pass
-	
-	try:RL=rtr.Search(text, "0")
-	except: RL=[]
+	RL=rtr.Search(text, "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
 	if len(RL)>0:
 		Title = "[COLOR F050F050]"+"[------- «Dugtor.ru»  "+text+" ---------]"+"[/COLOR]"
 		row_url = Title
@@ -1346,7 +1389,7 @@ def dugtor(text, info={}):
 			+ '&url=' + urllib.quote_plus(row_url)\
 			+ '&title=' + urllib.quote_plus(Title)\
 			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
 		
 	for y in range (1970, 2018):
 		sy=" "+str(y)
@@ -1410,8 +1453,6 @@ def stft(text, info={}):
 		return 0
 
 
-
-
 def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			params["mode"] = mode
 			params["info"] = info
@@ -1429,7 +1470,7 @@ def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			if mode=="Torrents": 
 				#listitem.addContextMenuItems([('Hайти похожие', 'SrcNavi("Navigator:'+id+'")')])
 				listitem.addContextMenuItems([('Hайти похожие', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")')])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, False, total)
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 			elif mode=="PersonFilm":
 				listitem.addContextMenuItems([('Добавить в Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('Удалить из Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
@@ -2035,12 +2076,13 @@ if mode == "Torrents2":
 	#if n>0: text = text[:n-1]
 	text=rt(text)
 	
+	
 	ttl=rutor(text, info)
 	if ttl<1: ttl=rutoris(text, info)
 	if ttl<1: rutor(rus.replace("a","а"), info)
+	if ttl<4: ttl=rutor_id(id, info)
 	
-	#ttl4=dugtor(text, info)
-	try:dugtor(rus.replace("a","а"), info)
+	try:dugtors(rus.replace("a","а"), info)
 	except: pass
 	
 	ttl3=fileek(text, info)
@@ -2049,7 +2091,7 @@ if mode == "Torrents2":
 	#ttl=srr(text, info)+ttl
 #	if ttl<15:
 #		ttl=stft(text, info)
-#	if ttl<6: 
+#	if ttl<6:
 #		n=en.find("(")
 #		if n>0: text = en[:n-1]
 #		else: text = en

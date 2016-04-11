@@ -184,7 +184,6 @@ def upd(text):
 	#SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
 	#Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
 	SUrl='http://dugtor.ru/index.php?do=search&subaction=search&story='+formatKP(text)#'%D2%E5%F0%EC%E8%ED%E0%F2%EE%F0'
-	print SUrl
 	http = GET(SUrl, httpSiteUrl)#, Post)
 	if http == None:
 		print'dugtor.ru: Сервер не отвечает'
