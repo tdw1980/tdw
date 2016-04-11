@@ -102,29 +102,29 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None, com=
 	else:			listitem = xbmcgui.ListItem(name+comment, iconImage=cover)
 	listitem.setProperty('fanart_image', funart)
 	uri = sys.argv[0] + '?mode='+mode
-	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))#
 	uri += '&name='  + urllib.quote_plus(xt(name))
 	uri += '&ind='  + urllib.quote_plus(ind)
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
 	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
 	
 	urr = sys.argv[0] + '?mode=rem'
-	urr += '&path='  + urllib.quote_plus(path.encode('utf-8'))
+	urr += '&path='  + urllib.quote_plus(path.encode('utf-8'))#
 	urr += '&name='  + urllib.quote_plus(xt(name))
 	urr += '&ind='  + urllib.quote_plus(ind)
 
 	urr2 = sys.argv[0] + '?mode=rename'
-	urr2 += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	urr2 += '&url='  + urllib.quote_plus(path.encode('utf-8'))#
 	urr2 += '&name='  + urllib.quote_plus(xt(name))
 	urr2 += '&ind='  + urllib.quote_plus(ind)
 	
 	urr3 = sys.argv[0] + '?mode=rem_files'
-	urr3 += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	urr3 += '&url='  + urllib.quote_plus(path.encode('utf-8'))#
 	urr3 += '&name='  + urllib.quote_plus(xt(name))
 	urr3 += '&ind='  + urllib.quote_plus(ind)
 
 	urr4 = sys.argv[0] + '?mode=add_comment'
-	urr4 += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	urr4 += '&url='  + urllib.quote_plus(path.encode('utf-8'))#
 	urr4 += '&name='  + urllib.quote_plus(xt(name))
 	urr4 += '&ind='  + urllib.quote_plus(ind)
 
@@ -172,6 +172,44 @@ def epd_lst(name, url, ind):
 		if f==[]:epd_name_f=epd_name+".strm"
 		add_item (epd_name+chr(10)+epd_name_f, 'none', url, str(ind))
 	xbmcplugin.endOfDirectory(handle)
+
+
+def save_episodes(name, url):
+	ind=len(updatetc.get_list())
+	updatetc.add_list([name, url,[]])
+	xbmc.executebuiltin('Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_r&url='+urllib.quote_plus(url)+'&ind='+str(ind)+'&name='+name+'")')
+	
+def save_episodes_r(name, url, ind):
+	try:updatetc.rem(name)
+	except: pass
+	
+	print "-=-=-=-= save_episodes =-=-=-=-=-"
+	#print url
+	f=updatetc.get_filtr(int(ind))
+	L=tthp.list(url)#updatetc.file_list(name)
+	
+	add_item ('[B][ - ] Удалить правила переименования[/B] ', 'rem_filtr', url, str(ind))
+	add_item ('[B][+] Добавить правило переименования: '+str(len(f))+'[/B]: ', 'add_filtr', L[0].name.replace('\\'," "), str(ind))
+	add_item ('[B][ СОХРАНИТЬ ][/B]', 'save_episodes2', L[0].name.replace('\\'," "), str(ind))
+	for i in L:
+		epd_name=i.name.replace('\\'," ")
+		epd_name_f=""
+		for j in f:
+			opid=j[0]
+			if opid=="t":epd_name_f+=j[1]
+			else:epd_name_f+=epd_name[j[0]:j[1]+1]
+		epd_name_f+=".strm"
+		if f==[]:epd_name_f=epd_name+".strm"
+		add_item (epd_name+chr(10)+epd_name_f, 'none', url, str(ind))
+	xbmcplugin.endOfDirectory(handle)
+
+
+def save_episodes2(name, ind):
+	try:
+		updatetc.update_last()
+		updatetc.rem_list(ind)
+	except: pass
+
 
 def add_filtr(name, ind):
 	sel = xbmcgui.Dialog()
@@ -241,3 +279,9 @@ if mode=="rem":
 	xbmc.executebuiltin("Container.Refresh")
 if mode=="add_comment":
 	updatetc.add_comment(int(ind))
+if mode=="save_episodes":
+	save_episodes(name, url)
+if mode=="save_episodes2":
+	save_episodes2(name, int(ind))
+if mode=="save_episodes_r":
+	save_episodes_r(name, url, int(ind))

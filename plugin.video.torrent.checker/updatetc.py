@@ -68,11 +68,12 @@ def get_list():# получить список заданий
 		__settings__.setSetting("History", repr(HL))
 	return HL
 
-def add_list(c):# --- добавить задание по (имя, url)
+def add_list(c, manual=True):# --- добавить задание по (имя, url)
 		HL=get_list()
 		if c not in HL:
 			name=c[0]
-			t=inputbox(name)
+			if manual: t=inputbox(name)
+			else: t=name
 			if t<>"": name=t
 			c[0]=name
 			HL.append(c)
@@ -131,7 +132,7 @@ def rem_filtr(i):# --- удалить правила автопереимено�
 		__settings__.setSetting("History", repr(HL))
 		#xbmc.executebuiltin("Container.Refrch()")
 
-def rem(name):
+def rem(name):# --- удалить ранее сохраненные STRM по имени задания
 		LD=[]
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
@@ -192,3 +193,30 @@ def update():
 	xbmc.executebuiltin('UpdateLibrary("video")')
 	print "----- Torrent Checker update end -----"
 
+def update_last():
+	print "----- update start -----"
+	L=get_list()
+	i=L[-1]
+	#for i in L:
+	if True:
+			name  = i[0].decode('utf-8')
+			url   = i[1]
+			if len(i)>2: f = i[2]
+			else: f=[]
+			new_ep_lst = tthp.list(url)
+			try:old_ep_lst = file_list(name)
+			except:old_ep_lst = []
+			for j in new_ep_lst:
+				epd = j.name
+				epd = epd.replace('\\'," ")+".strm"
+				epd_f=""
+				for k in f:
+					opid=k[0]
+					if opid=="t":epd_f+=k[1]
+					else:epd_f+=epd[k[0]:k[1]+1]
+				epd_f+=".strm"
+				if f==[]:epd_f=epd
+				ind = j.index
+				if epd not in old_ep_lst: save_strm(name, epd_f, url, ind)
+				#print old_ep_lst
+	print "----- update end -----"
