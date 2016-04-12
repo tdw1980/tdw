@@ -1453,6 +1453,48 @@ def torrentom(text, info={}):
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
+def tfile(text, info={}):
+	#try:
+	import tfile
+	rtr=tfile.Tracker()
+	#except: pass
+	RL=rtr.Search(text, "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Tfile.org»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=Search'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
+
+	for itm in RL:
+		#if xt(itm[2]).find(text)>=0:
+				print itm
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + info['title']\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+	return len(RL)
+
 
 def stft(text, info={}):
 	try:
@@ -2126,6 +2168,10 @@ if mode == "Torrents2":
 	try:torrentom(rus.replace("a","а"), info)
 	except: pass
 	
+	#tfile(rus.replace("a","а"), info)
+	try:tfile(text, info)
+	except: pass
+
 	ttl3=fileek(text, info)
 	ttl2=s2kp(rus.replace("a","а"), info)
 	ttl=ttl+ttl2
