@@ -25,7 +25,7 @@ while not xbmc.abortRequested:
 		n+=1
 		iv = 2*int(__settings__.getSetting("Interval"))
 		if iv==0: iv=1
-		upint=iv*60*360
+		upint=iv*3600
 		if n>= upint:
 			n=0
 			updatetc.update()
