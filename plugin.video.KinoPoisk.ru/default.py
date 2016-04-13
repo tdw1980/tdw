@@ -2199,42 +2199,37 @@ if mode == "Torrents2":
 	#if n>0: text = text[:n-1]
 	text=rt(text)
 	
-	ttl=rutor(text, info)
-	if ttl<1: ttl=rutoris(text, info)
-	if ttl<1: rutor(rus.replace("a","а"), info)
-	if ttl<4: ttl=rutor_id(id, info)
+	if __settings__.getSetting("rutor")=="true":
+		ttl=rutor(text, info)
+		if ttl<1: ttl=rutoris(text, info)
+		if ttl<1: rutor(rus.replace("a","а"), info)
+		if ttl<4: ttl=rutor_id(id, info)
 	
-	try:dugtors(rus.replace("a","а"), info)
-	except: pass
-
-	try:torrentom(rus.replace("a","а"), info)
-	except: pass
+	if __settings__.getSetting("dugtor")=="true":
+		try:dugtors(rus.replace("a","а"), info)
+		except: pass
 	
-	ttl4=tfile(text, info)
+	if __settings__.getSetting("torrentom")=="true":
+		try:torrentom(rus.replace("a","а"), info)
+		except: pass
 	
-	try:
-		if ttl4<1:tfile(rus.replace("a","а"), info)
-	except: pass
-
-	try:xtreme(text, info)
-	except: pass
+	if __settings__.getSetting("tfile")=="true":
+		ttl4=tfile(text, info)
+		try:
+			if ttl4<1:tfile(rus.replace("a","а"), info)
+		except: pass
 	
-	ttl3=fileek(text, info)
-	ttl2=s2kp(rus.replace("a","а"), info)
-	ttl=ttl+ttl2
-	#ttl=srr(text, info)+ttl
-#	if ttl<15:
-#		ttl=stft(text, info)
-#	if ttl<6:
-#		n=en.find("(")
-#		if n>0: text = en[:n-1]
-#		else: text = en
-#		ttl=stft(text, info)
-#	if ttl<6: 
-#		n=rus.find("(")
-#		if n>0: text = rus.replace("a","а")[:n-1]
-#		else: text = rus.replace("a","а")
-#		ttl=stft(text, info)
+	if __settings__.getSetting("xtreme")=="true":
+		try:xtreme(text, info)
+		except: pass
+	
+	if __settings__.getSetting("fileek")=="true":
+		fileek(text, info)
+	
+	if __settings__.getSetting("tracker")=="true":
+		s2kp(rus.replace("a","а"), info)
+	
+#	ttl=stft(text, info)
 
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)

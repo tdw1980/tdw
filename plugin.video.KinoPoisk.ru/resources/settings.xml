@@ -1,8 +1,19 @@
 <settings>
-    <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru/En|Ru"/>
-    <setting id="Engine" type="enum" label="30005" default="0" values="ACE engine|Libtorrents|T2Http"/>
-    <setting id="DownloadDirectory" type="folder" label="30008" default=""/>
-    <setting id="SaveDirectory" type="folder" label="30009" default=""/>
-    <setting id="SaveDirectory2" type="folder" label="30010" default=""/>
-    <setting id="NFO" type="enum" label="30011" default="0" values="Русских|Всех|Нет"/>
+    <category label="Настройки">
+        <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru/En|Ru"/>
+        <setting id="Engine" type="enum" label="30005" default="0" values="ACE engine|Libtorrents|T2Http"/>
+        <setting id="DownloadDirectory" type="folder" label="30008" default=""/>
+        <setting id="SaveDirectory" type="folder" label="30009" default=""/>
+        <setting id="SaveDirectory2" type="folder" label="30010" default=""/>
+        <setting id="NFO" type="enum" label="30011" default="0" values="Русских|Всех|Нет"/>
+    </category>
+    <category label="Поиск">
+        <setting id="rutor" type="bool" label="rutor.org" default="true"/>
+        <setting id="dugtor" type="bool" label="dugtor.ru" default="true"/>
+        <setting id="torrentom" type="bool" label="torrentom.com" default="true"/>
+        <setting id="tfile" type="bool" label="new-tfile.org" default="true"/>
+        <setting id="xtreme" type="bool" label="xtreme.ws" default="true"/>
+        <setting id="fileek" type="bool" label="fileek.com" default="true"/>
+        <setting id="tracker" type="bool" label="tracker.ru" default="true"/>
+    </category>
 </settings>
