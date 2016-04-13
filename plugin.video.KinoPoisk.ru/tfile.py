@@ -184,10 +184,10 @@ def upd(text):
 	#SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
 	#Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
 	SUrl='http://new-tfile.org/rss/?q='+formatKP(text)#'%D2%E5%F0%EC%E8%ED%E0%F2%EE%F0'
-	print SUrl
+	#print SUrl
 	http = GET(SUrl, httpSiteUrl)#, Post)
 	if http == None:
-		print'dugtor.ru: Сервер не отвечает'
+		print'tfile: Сервер не отвечает'
 		return []
 	else:
 		L=formtext(http)
@@ -221,7 +221,7 @@ def formtext(http):
 		ss='<title>'
 		es='</title>'
 		title=mfindal(i, ss, es)[0][len(ss):].replace('&lt;/i&gt;','').replace('&lt;i&gt;','')
-		print title
+		#print title
 		
 		#ss=''
 		#es=''
@@ -237,7 +237,7 @@ def formtext(http):
 		ss='<enclosure url="'
 		es='" length="'
 		url=mfindal(i, ss, es)[0][len(ss):]
-		print url
+		#print url
 		LL.append([sids,size,title,url])
 	return LL
 

@@ -21,9 +21,9 @@ socket.setdefaulttimeout(50)
 
 
 icon = ""
-siteUrl = 'torrentom.com'
+siteUrl = 'xtreme.ws'
 httpSiteUrl = 'http://' + siteUrl
-sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'dugtor.cookies.sid')
+sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'xtreme.cookies.sid')
  
 cj = cookielib.FileCookieJar(sid_file) 
 hr  = urllib2.HTTPCookieProcessor(cj) 
@@ -181,22 +181,16 @@ def formatKP(str):
 	return str
 
 def upd(text):
-	#SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
-	#Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
-	SUrl='http://torrentom.com/torrentz/search/'+formatKP(text)+"/"#'%D2%E5%F0%EC%E8%ED%E0%F2%EE%F0'
+	SUrl='http://xtreme.ws/engine/modules/search-torrents/search.php'
 	#print SUrl
-	http = GET(SUrl, httpSiteUrl)#, Post)
+	Post='search_ok=go_search&static=off&fraza='+text
+	http = GET(SUrl, httpSiteUrl, Post)
 	if http == None:
-		print 'torrentom: Сервер не отвечает'
+		print'xtreme.ws: Сервер не отвечает'
 		return []
 	else:
 		L=formtext(http)
-		i=L[0]
-		#for i in L:
-		http2 = GET(i[1], httpSiteUrl)
-		LL=formtext2(http2, i[0])
-		#print LL
-		return LL
+		return L
 
 def cp1251(x):
 	L=list(x)
@@ -212,61 +206,40 @@ def mid1 (x):
 	r= p+ x +p
 	return r
 
+
 def formtext(http):
 	#print http
-	http=http.replace(chr(10),"").replace(chr(13),"").replace("\t","")
-	ss='<td class="colhead" colspan="2" align="center">'
-	es='class="rate_widget">'
+	#http=http.replace(chr(10),"").replace(chr(13),"").replace("\t","")
+	ss='<td><span class="site_tor'
+	es='torrents/images/download.png'
 	L=mfindal(http, ss, es)
 	
 	LL=[]
 	for i in L:
 		#print i
-		ss='<a target="_blank" href="'
-		es='.htm" alt="'
-		url='http://torrentom.com'+mfindal(i, ss, es)[0][len(ss):]+".htm"
-		#print url
-		
 		ss='"><b>'
-		es='</b></a>'
-		title=mfindal(i, ss, es)[0][len(ss):]
-		#print title
-		LL.append([title.decode('cp1251'),url])
-	return LL
-
-def formtext2(http, title):
-	#print http
-	http=http.replace(chr(10),"").replace(chr(13),"").replace("\t","")
-	ss='width=12 height=12 align=absmiddle src="/pic/arrow_right.png"'
-	es='border="0" align=center cellspacing=0 cellpadding=6>'
-	L=mfindal(http, ss, es)
-	
-	LL=[]
-	for i in L:
-		#print i
-		#ss="<strong>"
-		#es="</strong>"
-		#title=mfindal(i, ss, es)[0][len(ss):]
+		es='</b></a></td>'
+		title=mfindal(i, ss, es)[0][len(ss):].decode('cp1251')#.replace('&lt;/i&gt;','').replace('&lt;i&gt;','')
 		#print title
 		
-		ss='<td>'
-		es='<td align=center>'
-		size=mfindal(i, ss, es)[0][len(ss):].replace('</td>','')
-		size=size.strip().center(11)
 		
-		ss='" />'
-		es='</span><br>'
-		sids=mfindal(i, ss, es)[0][len(ss):].strip()
+		ss='</b></a></td>'
+		es='GreeN_FashioN'
+		s=mfindal(i, ss, es)[0][len(ss):]
+		
+		ss='text-align:center;">'
+		es='</td>'+chr(10)
+		
+		size=mfindal(s, ss, es)[0][len(ss):].decode('cp1251')#.replace('</td>','')
+		size=size.strip().center(18-len(size))
+		
+		sids=mfindal(s, ss, es)[1][len(ss):]#.strip()
 		sids=sids.decode('cp1251')
-		sids=sids.center(18-len(sids))
-		#tmp=tmp.replace('</td><td style="text-align:center;">', '","')
-		#l2=eval('["'+tmp+'0"]')
-		#size='l2[0].strip().center(11)'
-		#sids='l2[1].strip().center(8-len(l2[1].strip()))'
+		sids=sids.center(8-len(sids))
 		
-		ss='<a rel="nofollow" href="'
-		es='"><img align=absmiddle border=0'
-		url='http://torrentom.com'+mfindal(i, ss, es)[0][len(ss):]#+"/start"
+		ss='<td style="text-align:center;"><a href="'
+		es='"><img src="/templates/GreeN_FashioN/search'
+		url='http://xtreme.ws/'+mfindal(i, ss, es)[0][len(ss):]
 		#print url
 		LL.append([sids,size,title,url])
 	return LL
