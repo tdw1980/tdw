@@ -314,7 +314,7 @@ def get_params():
 
 
 
-def getURL(url,Referer = 'https://myzuka.org/'):
+def getURL(url,Referer = 'https://myzuka.fm/'):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
 	req.add_header('Accept', 'text/html, application/xml, application/xhtml+xml, */*')
@@ -382,17 +382,142 @@ def Root():
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
-				Serch_in_album("https://myzuka.org/Hits/Top100Monthly")
+				Serch_in_album("https://myzuka.fm/Hits/Top100Monthly")
 				
 				xbmcplugin.endOfDirectory(pluginhandle)
 
+AZ=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+az=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+AR=['А','Б','В','Г','Д','Е','Ж','З','И','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я']
+ar=['а','б','в','г','д','е','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я']
+
+def abc():
+	uri = sys.argv[0] + '?mode=artist_abc'
+	uri += '&url='  + urllib.quote_plus("0")
+	item = xbmcgui.ListItem(" 0...9", iconImage = thumb, thumbnailImage = thumb)
+	xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+	
+	for i in AZ:
+		uri = sys.argv[0] + '?mode=abc2e'
+		uri += '&url='  + urllib.quote_plus(i)
+		item = xbmcgui.ListItem("  [B]"+i+"[/B]", iconImage = thumb, thumbnailImage = thumb)
+		xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+		for j in az:
+			uri = sys.argv[0] + '?mode=artist_abc'
+			uri += '&url='  + urllib.quote_plus(i+j)
+			item = xbmcgui.ListItem(" "+i+j, iconImage = thumb, thumbnailImage = thumb)
+		#	xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+	
+	for i in AR:
+		uri = sys.argv[0] + '?mode=abc2r'
+		uri += '&url='  + urllib.quote_plus(i)
+		item = xbmcgui.ListItem("  [B]"+i+"[/B]", iconImage = thumb, thumbnailImage = thumb)
+		xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+		for j in ar:
+			uri = sys.argv[0] + '?mode=artist_abc'
+			uri += '&url='  + urllib.quote_plus(i+j)
+			item = xbmcgui.ListItem(" "+i+j, iconImage = thumb, thumbnailImage = thumb)
+		#	xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+	xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def abc2e(i):
+		uri = sys.argv[0] + '?mode=artist_abc'
+		uri += '&url='  + urllib.quote_plus(i)
+		item = xbmcgui.ListItem(" "+i, iconImage = thumb, thumbnailImage = thumb)
+		xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		for j in az:
+			uri = sys.argv[0] + '?mode=artist_abc'
+			uri += '&url='  + urllib.quote_plus(i+j)
+			item = xbmcgui.ListItem(" "+i+j, iconImage = thumb, thumbnailImage = thumb)
+			xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		xbmcplugin.endOfDirectory(pluginhandle)
+
+def abc2r(i):
+	
+		uri = sys.argv[0] + '?mode=artist_abc'
+		uri += '&url='  + urllib.quote_plus(i)
+		item = xbmcgui.ListItem(" "+i, iconImage = thumb, thumbnailImage = thumb)
+		xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		for j in ar:
+			uri = sys.argv[0] + '?mode=artist_abc'
+			uri += '&url='  + urllib.quote_plus(i+j)
+			item = xbmcgui.ListItem(" "+i+j, iconImage = thumb, thumbnailImage = thumb)
+			xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		xbmcplugin.endOfDirectory(pluginhandle)
+
+
+def artist_abc(q):
+		#q=urllib.quote_plus(inputbox())#[:2]
+		#print q
+		#if q.find('%'): q=q[0:2]
+		#else:q=q[:2]
+		url='https://myzuka.fm/Letter/'+urllib.quote_plus(q)#+xt(q)
+		print url
+		http=getURL(url)
+		ss='<td height="30">'
+		es='</a>'
+		L=mfindal(http, ss, es)
+		AL=[]
+		for i in L:
+			try:
+				i=i.replace(ss,"")
+				ss2='<a href="'
+				es2='">'
+				url=mfindal(i, ss2, es2)[0][len(ss2):]
+				#print url
+				n=i.find(es2)
+				ttl=i[n+2:]
+				AL.append((url, ttl))
+			except: pass
+
+
+		for i in AL:
+				url, title=i
+				url='https://myzuka.fm'+url#+'/Albums'
+				img=thumb
+				#print url
+				#uri = sys.argv[0] + '?mode=serchartists'
+				uri = sys.argv[0] + '?mode=serchalbums'
+				uri += '&url='  + urllib.quote_plus(url)
+				uri += '&name='  + urllib.quote_plus(title)
+				uri += '&img='  + urllib.quote_plus(img)
+				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"Title": title})
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+		xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchTitle():
 		q=inputbox().replace(" ","%20")
-		url='https://myzuka.org/Search?searchText='+q
-		Serch(url, Lt=[])
+		url='https://myzuka.fm/Search?searchText='+q
+		L=Serch(url, Lt=[])
+		#if len (L)>1: vrt(q)#[:3]
 		xbmcplugin.endOfDirectory(pluginhandle)
 
+def vrt(q):
+	url='https://myzuka.fm/Search/Suggestions?term='+q
+	http=getURL(url)
+	L=eval(http.replace('\\u0026','&'))
+	for i in L:
+		title=i["label"].replace('\\u0027',"'")
+		img=i["image"]
+		url=""
+		
+		uri = sys.argv[0] + '?mode=play'
+		uri += '&url='  + urllib.quote_plus(url)
+		uri += '&name='  + urllib.quote_plus(title)
+		uri += '&img='  + urllib.quote_plus(img)
+
+		item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+		xbmcplugin.addDirectoryItem(pluginhandle, uri, item, False,500)
+		
+	print http
 
 def SrcArtist(q=""):
 		if q=="": q=inputbox()
@@ -416,7 +541,7 @@ def Genres():
 		for i in GenreList:
 			#for n in range (1,10):
 				id, title=i
-				url="https://myzuka.org"+id
+				url="https://myzuka.fm"+id
 				img=thumb
 				uri = sys.argv[0] + '?mode=serchgenres'
 				uri += '&url='  + urllib.quote_plus(url)
@@ -501,12 +626,25 @@ def Artist(L=[]):
 				item.setInfo(type="Music", infoLabels={"Title": title})
 				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 
+				title="[COLOR F0E0E067][B][ По алфавиту ][/B][/COLOR]"
+				url=""
+				img=thumb
+				uri = sys.argv[0] + '?mode=abc'
+				uri += '&url='  + urllib.quote_plus(url)
+				uri += '&name='  + urllib.quote_plus(title)
+				uri += '&img='  + urllib.quote_plus(img)
+				item = xbmcgui.ListItem(title, iconImage = img, thumbnailImage = img)
+				item.setInfo(type="Music", infoLabels={"Title": title})
+				xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
+
+
+
 		if L==[]:AL=ArtistList
 		else: AL=L
 			
 		for i in AL:
 				url, title=i
-				url='https://myzuka.org'+url
+				url='https://myzuka.fm'+url
 				img=thumb
 				#uri = sys.argv[0] + '?mode=serchartists'
 				uri = sys.argv[0] + '?mode=serchalbums'
@@ -530,6 +668,7 @@ def SerchArtists(url):
 				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 				
 				Lt=[]
+				print url
 				for n in range (1,20):
 					if n>1: url2=url+"?page="+str(n)
 					else: url2=url
@@ -548,18 +687,20 @@ def SerchAlbums(url):
 				#xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True)
 				
 				Lt=[]
+				
 				url2=url+'/Albums'
 				Lt=Album(url2, Lt)
+				if len(Lt)<1:Serch_in_album(url)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def SerchTracs(url):
-				if url.find("ttps://myzuka")<0: url='https://myzuka.org'+url
+				if url.find("ttps://myzuka")<0: url='https://myzuka.fm'+url
 				#print url
 				Lt=Serch_in_album(url)
 				xbmcplugin.endOfDirectory(pluginhandle)
 
 def Serch_in_album(url, Lt=[], S=0):
-	if url.find("ttps://myzuka")<0: url='https://myzuka.org'+url
+	if url.find("ttps://myzuka")<0: url='https://myzuka.fm'+url
 	#print url
 	http=getURL(url)
 	try:
@@ -698,7 +839,7 @@ def Serch(url, Lt=[]):
 			except: pass
 		return Lt
 
-def Album(url, Lt=[]):
+def Album(url, Lt=[], tp="2"):
 		#print url
 		http=getURL(url)
 		http=http.replace('  ','')
@@ -712,6 +853,7 @@ def Album(url, Lt=[]):
 		#print L
 		for i in L:
 			try:
+			#if i !="":
 				#print i
 				it=i.replace('<div data-type=' ,'{"type":')
 				it=it.replace(' class="item "><div class="vis"><a href=',' ,"url":')
@@ -767,7 +909,7 @@ def Album(url, Lt=[]):
 				uri += '&name='  + urllib.quote_plus(title)
 				uri += '&img='  + urllib.quote_plus(img)
 
-				if title not in Lt and type=="2":
+				if title not in Lt and type==tp:
 					xbmcplugin.addDirectoryItem(pluginhandle, uri, item, True,len(L))
 					Lt.append(title)
 			except:pass
@@ -821,12 +963,12 @@ def Play(url):
 	http=getURL(url)
 	ss='data-url="/Song/Play/'
 	es='" data-position = "'
-	purl=mfindal(http, ss, es)[0].replace(ss,"https://myzuka.org/Song/Download/").replace('amp;','')
+	purl=mfindal(http, ss, es)[0].replace(ss,"https://myzuka.fm/Song/Download/").replace('amp;','')
 	xbmc.Player(xbmc.PLAYER_CORE_AUTO).play(purl)
 
 
 params = get_params()
-url  =	'https://myzuka.org'
+url  =	'https://myzuka.fm'
 mode =	None
 name =	''
 img =	' '
@@ -861,3 +1003,7 @@ elif mode == 'save_all':	Serch_in_album(url, S=1)
 elif mode == 'srcartist':	SrcArtist()
 elif mode == 'srcartist_q':	SrcArtist(name)
 elif mode == 'play':	Play(url)
+elif mode == 'artist_abc': artist_abc(url)
+elif mode == 'abc': abc()
+elif mode == 'abc2e': abc2e(url)
+elif mode == 'abc2r': abc2r(url)
