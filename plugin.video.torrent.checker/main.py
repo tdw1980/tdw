@@ -31,11 +31,25 @@ def inputbox(t):
 	else:
 		return t
 
-#---------asengine----by-nuismons-----
+from kodidb import*
+
+def chek_in():
+	k_db = KodiDB(xbmc.getInfoLabel('ListItem.FileName').decode('utf-8'), xbmc.getInfoLabel('ListItem.Path').decode('utf-8'), sys.argv[0] + sys.argv[2])
+	k_db.PlayerPreProccessing()
+	return k_db
+	
+def chek_out(k_db):
+	k_db.PlayerPostProccessing()
+	xbmc.sleep(300)
+	xbmc.executebuiltin('Container.Refresh')
+	xbmc.sleep(200)
+	if not xbmc.getCondVisibility('Library.IsScanningVideo'):
+		xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
+
 
 def play(url, id=0):
-	print"-=-=-=-=-=-=-=-=-"
-	#url=urllib.quote_plus(url)
+	k_db=chek_in()
+	
 	print url
 	engine=__settings__.getSetting("Engine")
 	if engine=="0":
@@ -51,12 +65,16 @@ def play(url, id=0):
 		item = xbmcgui.ListItem()#path=purl
 		xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
 		xbmc.Player().play(purl)
+	
+	chek_out(k_db)
+
 
 def play_ace(url, ind):
+
     from ASCore import TSengine,_TSPlayer
     #print 'play'
     torr_link=url
-        
+
     img=""
     title=""
     #showMessage('heading', torr_link, 10000)
@@ -65,18 +83,20 @@ def play_ace(url, ind):
     if out=='Ok':
         lnk=TSplayer.get_link(ind,title, img, img)
         if lnk:
-           
+            
             item = xbmcgui.ListItem(path=lnk, thumbnailImage=img, iconImage=img)
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)  
 
             while not xbmc.Player().isPlaying:
                 xbmc.sleep(300)
+
             while TSplayer.player.active and not TSplayer.local: 
                 TSplayer.loop()
                 xbmc.sleep(300)
                 if xbmc.abortRequested:
                     TSplayer.log.out("XBMC is shutting down")
                     break
+
             if TSplayer.local and xbmc.Player().isPlaying: 
                 try: time1=TSplayer.player.getTime()
                 except: time1=0
@@ -84,10 +104,8 @@ def play_ace(url, ind):
                 i = xbmcgui.ListItem("***%s"%title)
                 i.setProperty('StartOffset', str(time1))
                 xbmc.Player().play(TSplayer.filename.decode('utf-8'),i)
-
         else:
-            item = xbmcgui.ListItem(path='')
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
+            pass
     TSplayer.end()
     xbmc.Player().stop
 
