@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<setting id="DownloadDirectory" type="folder" label="Download Directory" default=""/>
+	<setting id="CL" type="enum" label="Стиль списков" default="1" values="не менять|информация"/>
 </settings>
