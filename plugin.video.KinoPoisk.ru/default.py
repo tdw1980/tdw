@@ -1745,7 +1745,7 @@ def SrcNavi(md="Navigator"):
 	else: 
 		link='http://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+formatKP(md)
 		ss="/level/1/film/"
-		se='/sr/1/">'
+		se='/sr/1/"'
 	
 	http = GET (link, httpSiteUrl)
 	#debug (http)
