@@ -13,7 +13,7 @@ icon=None
 time.sleep(2.0)
 print('----- Starting Torrent Checker -----')
 start_trigger = True
-n=0
+#n=0
 while not xbmc.abortRequested:
 		if start_trigger:
 			print('----- Torrent Checker started -----')
@@ -22,13 +22,20 @@ while not xbmc.abortRequested:
 			updatetc.update()
 		# ---------------------------------
 		time.sleep(1)
-		n+=1
+		#n+=1
 		iv = 2*int(__settings__.getSetting("Interval"))
 		if iv==0: iv=1
 		upint=iv*3600
+		try:
+			lu=eval(__settings__.getSetting("LU"))
+		except:
+			__settings__.setSetting("LU", repr(time.time()))
+			lu=time.time()
+		n=time.time()-lu
 		if n>= upint:
 			n=0
 			updatetc.update()
+			__settings__.setSetting("LU", repr(time.time()))
 
 print('----- Torrent Checker stopped -----')
 
