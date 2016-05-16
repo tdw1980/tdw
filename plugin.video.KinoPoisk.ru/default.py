@@ -1141,6 +1141,19 @@ def get_inf_db(n):
 		info=Linfo[0][0].replace("XXCC","'").replace("XXDD",'"')
 		return info
 
+def get_name(info):
+	id=params["info"]["id"]
+	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
+	except: rus=params["info"]["title"]
+	try:en=params["info"]["originaltitle"].encode('utf8')
+	except: en=params["info"]["originaltitle"]
+	if rus == en:text = rus.replace("a","а")
+	else:text = params["info"]["originaltitle"]
+	#n=text.find("(")
+	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+	#rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
+	return text
+
 
 def s2kp(id, info):
 	try:
@@ -1212,7 +1225,7 @@ def fileek(qury, info):
 					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
 				
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
 	except:
@@ -1289,7 +1302,8 @@ def rutor(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				tt+=1
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return tt
@@ -1330,7 +1344,8 @@ def rutor_id(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1365,7 +1380,8 @@ def rutoris(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(info['title'])\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1407,7 +1423,8 @@ def dugtors(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + info['title']\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1449,7 +1466,8 @@ def torrentom(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + info['title']\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1491,7 +1509,8 @@ def tfile(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + info['title']\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1533,7 +1552,8 @@ def xtreme(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + info['title']\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
@@ -1569,7 +1589,8 @@ def stft(text, info={}):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + urllib.quote_plus(Title)\
 					+ '&info=' + urllib.quote_plus(repr(info))
-				listitem.addContextMenuItems([('Сохранить все', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+itm[3]+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				#listitem.addContextMenuItems([('Сохранить все', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+itm[3]+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 		return len(RL)
 	except:
@@ -2189,7 +2210,7 @@ if mode == "Torrents":
 if mode == "Torrents2":
 	info=params["info"]
 	id=params["info"]["id"]
-	try:rus=params["info"]["title"].encode('utf8')
+	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
 	except: rus=params["info"]["title"]
 	try:en=params["info"]["originaltitle"].encode('utf8')
 	except: en=params["info"]["originaltitle"]
@@ -2197,13 +2218,14 @@ if mode == "Torrents2":
 	else:text = params["info"]["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
-	text=rt(text)
+	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+	rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
 	
 	if __settings__.getSetting("rutor")=="true":
 		ttl=rutor(text, info)
 		if ttl<1: ttl=rutoris(text, info)
 		if ttl<1: rutor(rus.replace("a","а"), info)
-		if ttl<4: ttl=rutor_id(id, info)
+		if ttl<14: ttl=rutor_id(id, info)
 	
 	if __settings__.getSetting("dugtor")=="true":
 		try:dugtors(rus.replace("a","а"), info)

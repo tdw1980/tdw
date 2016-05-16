@@ -10,7 +10,7 @@ import xbmcgui
 __settings__ = xbmcaddon.Addon(id='plugin.video.torrent.checker')
 icon=None
 
-time.sleep(2.0)
+time.sleep(5)
 print('----- Starting Torrent Checker -----')
 start_trigger = True
 #n=0
@@ -35,6 +35,8 @@ while not xbmc.abortRequested:
 		if n>= upint:
 			n=0
 			updatetc.update()
+			at=time.strftime('Обновлено: %d.%m.%Y - %H:%M')
+			__settings__.setSetting("AT", at)
 			__settings__.setSetting("LU", repr(time.time()))
 
 print('----- Torrent Checker stopped -----')

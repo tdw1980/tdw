@@ -146,7 +146,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.6.4"
+       version="1.7.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -298,7 +298,7 @@
 </addon>
 
 <addon id="plugin.video.torrent.checker"
-version="0.4.1"
+version="0.5.0"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>
@@ -317,6 +317,24 @@ provider-name="TDW1980">
       <description lang="en">Torrent Checker - Проверяет наличие новых серий в раздаче.</description>
       <platform>all</platform>
 </extension>
+</addon>
+
+<addon id="plugin.video.viks.tv"
+       name="Viks.tv"
+       version="1.1.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Viks.tv</summary>
+    <description>Телевидение</description>
+    <platform>all</platform>
+  </extension>
 </addon>
 
 <addon id="repository.tdw1980"

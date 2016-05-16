@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <setting id="fanart" type="bool" label="Фанарт" default="true"/>
+    <setting id="icons" type="bool" label="Логотип" default="true"/>
+    <setting id="epgon" type="bool" label="Программа" default="true"/>
+</settings>

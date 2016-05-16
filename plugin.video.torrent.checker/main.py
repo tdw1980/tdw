@@ -20,6 +20,8 @@ except:
 	print "Error import t2http"
 
 
+def showMessage(heading, message, times = 3000):
+	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
 
 def inputbox(t):
@@ -156,7 +158,7 @@ def root():
 		at = __settings__.getSetting("AT")
 		#at = time.ctime(att)
 	except: at = 'Необновлялось'
-	add_item (at, ' ', 'url', '0')
+	add_item (at, 'up', 'url', '0')
 	L=updatetc.get_list()
 	ind=0
 	for i in L:
@@ -228,6 +230,24 @@ def save_episodes2(name, ind):
 		updatetc.rem_list(ind)
 	except: pass
 
+def save_episodes_ext(name, url, L2, s, e, nf, info={}):
+	name=name.decode('utf-8')
+	L=tthp.list(url)
+	n=0
+	if len (L)>0 and nf==1: 
+		if info=={}: updatetc.save_tvshow_nfo(name, info={'title':name})
+		else: updatetc.save_tvshow_nfo(name, info)
+	for i in L:
+		ind = i.index
+		epd=L2[n]
+		updatetc.save_strm(name, epd, url, ind)
+		if nf==1:
+			#if info=={}: info={'title':epd}
+			updatetc.save_nfo(name, epd.replace(".strm","") ,s[n] , e[n], info)
+		n+=1
+	showMessage("Сохранено:", str(len(L))+' файлов', 2000)
+	xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
+
 
 def add_filtr(name, ind):
 	sel = xbmcgui.Dialog()
@@ -276,9 +296,19 @@ try:url = urllib.unquote_plus(params["url"])
 except:url =""
 try:ind = urllib.unquote_plus(params["ind"])
 except:ind ="0"
-
+try:L = eval(urllib.unquote_plus(params["L"]))
+except:L =[]
+try:ss = eval(urllib.unquote_plus(params["s"]))
+except:ss = []
+try:ee = eval(urllib.unquote_plus(params["e"]))
+except:ee = []
+try:nf = int(urllib.unquote_plus(params["nf"]))
+except:nf = 0
+try:info = eval(urllib.unquote_plus(params["info"]))
+except:info = {}
 
 if mode==""         : root()
+if mode=="up"       : updatetc.update()
 if mode=="add"      : add(name, url)
 if mode=="play"     : play(url, int(ind))#updatetc.play(url, int(ind))
 if mode=="rename"   : updatetc.rename_list(int(ind))
@@ -303,3 +333,21 @@ if mode=="save_episodes2":
 	save_episodes2(name, int(ind))
 if mode=="save_episodes_r":
 	save_episodes_r(name, url, int(ind))
+if mode=="save_episodes_ext":
+	info=eval(__settings__.getSetting("info"))
+	save_episodes_ext(name, url, L, ss, ee, nf, info)
+
+if mode=="save_episodes_api":
+	import RenameBox
+	L=tthp.list(url)
+	L1=[]
+	L2=[]
+	for i in L:
+		L1.append(i.name.replace('\\'," "))
+		L2.append(i.name.replace('\\'," ")+".strm")
+	L3=[['t',name],[0,0],[0,0],L1,L2,0,url]
+	__settings__.setSetting(id="RenameBox", value=repr(L3))
+	__settings__.setSetting(id="info", value=repr(info))
+	RenameBox.run("RenameBox")
+	
+	

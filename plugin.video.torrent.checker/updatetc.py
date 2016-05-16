@@ -38,7 +38,9 @@ def file_list(name):
 		except: return []
 
 def save_strm(name, epd, url, ind):
-		#name=name.encode("cp1251")
+		#print '-==-==-=-=--=-==-=-=-=-=--==-=----kjlklj;lkjkjl=-==--=-=-=-=-=-==-=-=-=-=-=--==-=-=-=-=-=-=-=-=-'
+		#print repr(name)
+		#name=name.decode('utf-8')
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
@@ -55,6 +57,79 @@ def save_strm(name, epd, url, ind):
 		
 		fl = open(os.path.join(SaveDirectory, epd), "w")#.encode('utf-8')
 		fl.write(uri)
+		fl.close()
+
+def save_tvshow_nfo(name, info={}):
+		title=name.encode('utf-8')#info['title']#
+		#cn=title.find(" (")
+		#if cn>0: title=title[:cn]
+		
+		try:year=info['year']
+		except:year=0
+		try:plot=info['plot']
+		except:plot=''
+		try:cover=info['cover']
+		except:cover=''
+		try:fanart=info['fanart']
+		except:fanart=''
+
+		try:Directory= __settings__.getSetting("SaveDirectory")
+		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		try:SaveDirectory = os.path.join(ru(Directory), name)
+		except:SaveDirectory = os.path.join(Directory, name)
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+			
+		nfo='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+chr(10)
+		nfo='<tvshow>'+chr(10)
+		
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<showtitle>"+title+"</showtitle>"+chr(10)
+		nfo+="	<year>"+str(year)+"</year>"+chr(10)
+		nfo+="	<season>-1</season>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
+		nfo+="</tvshow>"+chr(10)
+		
+		fl = open(os.path.join(SaveDirectory, "tvshow.nfo"), "w")
+		fl.write(nfo)
+		fl.close()
+
+
+def save_nfo(name, epd ,s , e, info={}):
+		
+		title="season "+s+" episode "+e
+		title=title.encode('utf-8')
+		#name=ru(info['title'])
+		cn=name.find(" (")
+		if cn>0: name=name[:cn]
+		
+		try:plot=info['plot']
+		except:plot=''
+		try:cover=info['cover']
+		except:cover=''
+		try:fanart=info['fanart']
+		except:fanart=''
+
+		try:Directory= __settings__.getSetting("SaveDirectory")
+		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		try:SaveDirectory = os.path.join(ru(Directory), name)
+		except:SaveDirectory = os.path.join(Directory, name)
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		
+		nfo="<episodedetails>"+chr(10)
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<season>"+str(s)+"</season>"+chr(10)
+		nfo+="	<episode>"+str(e)+"</episode>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
+		nfo+="</episodedetails>"+chr(10)
+		
+		fl = open(os.path.join(SaveDirectory, epd+".nfo"), "w")
+		fl.write(nfo)
 		fl.close()
 
 
@@ -172,7 +247,8 @@ def update():
 		else:
 			if len(i)>2: f = i[2]
 			else: f=[]
-			new_ep_lst = tthp.list(url)
+			try:new_ep_lst = tthp.list(url)
+			except:new_ep_lst =[]
 			try:old_ep_lst = file_list(name)
 			except:old_ep_lst = []
 			for j in new_ep_lst:
@@ -190,7 +266,7 @@ def update():
 				#print old_ep_lst
 	at=time.strftime('Обновлено: %d.%m.%Y - %H:%M')
 	__settings__.setSetting("AT", at)
-	xbmc.executebuiltin('UpdateLibrary("video")')
+	xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
 	print "----- Torrent Checker update end -----"
 
 def update_last():
