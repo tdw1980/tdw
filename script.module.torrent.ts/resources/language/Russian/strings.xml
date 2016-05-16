@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<strings>
+    <string id="30000">RU</string>
+    <string id="30001">IP адрес сервера</string>
+    <string id="30002">Порт сервера</string>
+    <string id="30003">Сохранять скаченное на диск</string>
+    <string id="30004">Путь для сохранения</string>
+    <string id="30005">Переключаться на локальный файл</string>
+    <string id="30006">Автопауза для буферизации</string>
+    <string id="30007">Использовать рестример</string>
+    <string id="30008">Режим отладки</string>
+    <string id="30009">Настройки</string>
+    <string id="30010">Инициализация</string>
+    <string id="30011">Ждем ответа</string>
+    <string id="30012">Авторизация</string>
+    <string id="30013">Пробуем подключиться</string>
+    <string id="30014">AceStream не найден</string>
+    <string id="30015">Запуск AceStream</string>
+    <string id="30016">Сохраняем файл на диск</string>
+    <string id="30017">Загрузка</string>
+    <string id="30018">Ожидание воспроизведения</string>
+    <string id="30019">Запускается воспроизведение</string>
+    <string id="30020">Ошибка соединения</string>
+    <string id="30021">Ошибка инициализации</string>
+    <string id="30022">Загрузка торрента</string>
+    <string id="30023">Загрузка файлов</string>
+    <string id="30024">Загрузка данных завершена</string>
+    <string id="30025">Ошибка загрузки файлов</string>
+    <string id="30026">Простаивание</string>
+    <string id="30027">Запуск</string>
+    <string id="30028">Проверка</string>
+    <string id="30029">Предварительная буферизация</string>
+    <string id="30030">Загрузка файла</string>
+    <string id="30031">Буферизация</string>
+    <string id="30032">Ожидание сидов</string>
+    <string id="30033">Нет достаточной скорости</string>
+    <string id="30034">Сиды: [B]%s[/B], скорость: [B]%sKb/s[/B]</string>
+    <string id="30035">Загрузка завершена</string>
+    <string id="30036">Пауза</string>
+    <string id="30037">Завершено:</string>
+
+</strings>

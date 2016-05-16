@@ -357,9 +357,9 @@ provider-name="TDW1980">
 	</extension>
 </addon>
 
-<addon id='script.module.torrent.ts' version='0.7.1.1' name='AceStream client' provider-name='1orgar'>
+<addon id='script.module.torrent.ts' version='0.7.3.2' name='AceStream client' provider-name='1orgar'>
   <requires>
-    <import addon='xbmc.python' version='2.7.10'/>
+    <import addon='xbmc.python' version='2.7.8'/>
   </requires>
     <extension point="xbmc.python.script" library="default.py">
     	<provides>executable</provides>

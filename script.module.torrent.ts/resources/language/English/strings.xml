@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<strings>
+    <string id="30000">EN</string>
+    <string id="30001">Server IP address</string>
+    <string id="30002">Server port</string>
+    <string id="30003">Save completed files</string>
+    <string id="30004">Saving path</string>
+    <string id="30005">Switch playback to local file after saving</string>
+    <string id="30006">Buffering pause</string>
+    <string id="30007">Use reStreamer</string>
+    <string id="30008">Debug mode</string>
+    <string id="30009">Settings</string>
+    <string id="30010">Initialization</string>
+    <string id="30011">Waiting for answer</string>
+    <string id="30012">Authorization</string>
+    <string id="30013">Trying to connect</string>
+    <string id="30014">AceStream not found</string>
+    <string id="30015">Starting AceStream</string>
+    <string id="30016">Saving file</string>
+    <string id="30017">Loading</string>
+    <string id="30018">Waiting for playback</string>
+    <string id="30019">Starting playback</string>
+    <string id="30020">Connection fail</string>
+    <string id="30021">Initialization fail</string>
+    <string id="30022">Loading torrent</string>
+    <string id="30023">Loading files</string>
+    <string id="30024">Data loading complete</string>
+    <string id="30025">Error loading files</string>
+    <string id="30026">Idle</string>
+    <string id="30027">Starting</string>
+    <string id="30028">Checking</string>
+    <string id="30029">Prebuffering</string>
+    <string id="30030">Downloading file</string>
+    <string id="30031">Buffering</string>
+    <string id="30032">Waiting for seeders</string>
+    <string id="30033">Not enough speed</string>
+    <string id="30034">Seeders: [B]%s[/B], speed: [B]%sKb/s[/B]</string>
+    <string id="30035">Downloading complete</string>
+    <string id="30036">Paused</string>
+    <string id="30037">Complete:</string>
+</strings>
