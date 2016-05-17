@@ -51,7 +51,7 @@ def inputbox(t):
 
 
 
-def play(url, cover):
+def play(url, name ,cover):
 		http=getURL(url)
 		ss='//m3u8'
 		es='//m3u8 names'
@@ -61,9 +61,22 @@ def play(url, cover):
 		es="';"
 		purl=mfindal(tmp,ss,es)[0][len(ss):]
 		#print purl
-		item = xbmcgui.ListItem(path=purl, thumbnailImage=cover, iconImage=cover)
-		xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-		#xbmc.Player().play(purl)
+		item = xbmcgui.ListItem(name, path=purl, thumbnailImage=cover, iconImage=cover)
+		#item.setProperty('IsPlayable', 'true')
+		#xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+		xbmc.Player().play(purl, item)
+		xbmc.sleep(10000)
+		
+		#print "======================== isPlaying ======================"
+		#print xbmc.Player().isPlaying()
+		
+		while  xbmc.Player().isPlaying():#not
+			xbmc.sleep(1000)
+			print "========================  playing ======================"
+		xbmc.sleep(1000)
+		print "========================  Refresh ======================"
+		xbmc.executebuiltin("Container.Refresh")
+
 
 def get_cepg(id):
 	import time
@@ -96,20 +109,33 @@ def get_cepg(id):
 		#L=EPG[id]
 		itm=''
 		n=0
+		stt=int(__settings__.getSetting('shift'))-6
+		#print stt
 		for i in L:
 			n+=1
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
 			name=eval("u'"+i['name']+"'")
-			stm =i['start_at'][11:-3]
 			try:
-				h2 = int(L[n]['start_at'][11:13])
+				h3 = int(i['start_at'][11:13])-stt
+				m3 = int(i['start_at'][14:15])
+			except:
+				h3=h
+				m3=m
+			try:
+				h2 = int(L[n]['start_at'][11:13])-stt
 				m2 = int(L[n]['start_at'][14:15])
 			except:
 				h2=h
 				m2=m
 			t1=h*60+m
 			t2=h2*60+m2
+			if h3>9:hh=str(h3)
+			else:   hh="0"+str(h3)
+			if m3>9:mm=str(m3)
+			else:   mm="0"+str(m3)
+
+			stm =hh+":"+mm
 			if t2>=t1: itm+= stm+' '+name+'\n'
 		return itm
 	except:
@@ -144,7 +170,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 		except: pass
 
 		fld=False
-		listitem.setProperty('IsPlayable', 'true')
+		#listitem.setProperty('IsPlayable', 'true')
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+name+'")'),
 			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),
@@ -422,6 +448,6 @@ if mode=="addgr"    : add_gr()
 if mode=="remgr"    : rem_gr()
 if mode=="update"   : upd_canals_db()
 if mode=="select_gr": select_gr()
-if mode=="play"     : play(url, cover)
+if mode=="play"     : play(url, name, cover)
 if mode=="rename"   : updatetc.rename_list(int(ind))
 #xbmc.executebuiltin("Container.Refresh")

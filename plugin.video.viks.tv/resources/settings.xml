@@ -3,4 +3,5 @@
     <setting id="fanart" type="bool" label="Фанарт" default="true"/>
     <setting id="icons" type="bool" label="Логотип" default="true"/>
     <setting id="epgon" type="bool" label="Программа" default="true"/>
+    <setting id="shift" type="enum" label="Смещение программы:" default="3" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
 </settings>

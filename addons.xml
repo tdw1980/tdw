@@ -321,7 +321,7 @@ provider-name="TDW1980">
 
 <addon id="plugin.video.viks.tv"
        name="Viks.tv"
-       version="1.1.0"
+       version="1.2.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
