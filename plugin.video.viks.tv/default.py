@@ -15,6 +15,9 @@ xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
+	
+def showMessage(heading, message, times = 3000):
+	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
 def getURL(url,Referer = 'http://viks.tv/'):
 	req = urllib2.Request(url)
@@ -52,15 +55,21 @@ def inputbox(t):
 
 
 def play(url, name ,cover):
-		http=getURL(url)
-		ss='//m3u8'
-		es='//m3u8 names'
-		tmp=mfindal(http,ss,es)[0]
+		#http=getURL(url)
+		#ss='//m3u8'
+		#es='//m3u8 names'
+		#tmp=mfindal(http,ss,es)[0]
 		
-		ss="]='"
-		es="';"
-		purl=mfindal(tmp,ss,es)[0][len(ss):]
-		#print purl
+		#ss="]='"
+		#es="';"
+		#purl=mfindal(tmp,ss,es)[0][len(ss):]
+		try: purl=get_stream(url)
+		except:
+			purl=""
+			showMessage('viks.tv', 'Канал недоступен')
+		
+		print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
+		print purl
 		item = xbmcgui.ListItem(name, path=purl, thumbnailImage=cover, iconImage=cover)
 		#item.setProperty('IsPlayable', 'true')
 		#xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
@@ -77,12 +86,42 @@ def play(url, name ,cover):
 		print "========================  Refresh ======================"
 		xbmc.executebuiltin("Container.Refresh")
 
+def get_stream(url):
+	if 'viks.tv' in url:
+		http=getURL(url)
+		ss='//m3u8'
+		es='//m3u8 names'
+		tmp=mfindal(http,ss,es)[0]
+		
+		ss="]='"
+		es="';"
+		purl=mfindal(tmp,ss,es)[0][len(ss):]
+		return purl
+	else:
+		http=getURL(url)
+		ss='&file='
+		es='&st='
+		tmp=mfindal(http,ss,es)[0][len(ss):]
+		if 'm3u8' in tmp:
+			print "M3U8"
+			return tmp
+		else:
+			print "RTMP"
+			purl = tmp
+			purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
+			purl += " pageURL=http://tivix.net"
+			purl += " swfVfy=true live=true"
+			return purl
 
-def get_cepg(id):
+
+
+
+def get_cepg(id, serv):
 	import time
-	url='http://schedule.tivix.net/channels/viks/program/'+id+'/today/'
+	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
 	udd = int(time.strftime('%Y%m%d'))
 	#if 1==1:
+	if serv=='tivix': id='t'+id
 	try:
 		E=__settings__.getSetting(id)
 		EPG=eval(E)
@@ -157,14 +196,16 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	uri = sys.argv[0] + '?mode='+mode
 	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))
 	uri += '&name='  + urllib.quote_plus(xt(name))
-	uri += '&ind='  + urllib.quote_plus(ind)
+	uri += '&ind='  + urllib.quote_plus(str(ind))
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
 	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
 	
 	
-	
 	if mode=="play":
-		if __settings__.getSetting("epgon")=='true':dict={"plot":get_cepg(ind)}
+		id = get_id(path)
+		if __settings__.getSetting("epgon")=='true':
+			if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
+			else:                dict={"plot":get_cepg(id,'tivix')}
 		else: dict={}
 		try:listitem.setInfo(type = "Video", infoLabels = dict)
 		except: pass
@@ -174,10 +215,12 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+name+'")'),
 			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),
-			('[COLOR FFFFFF55][B]v Группа [/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
+			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=set_num&name='+name+'")'),
+			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
 			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),])
 		
 	else: 
+		ind=1
 		fld=True
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Создать группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=addgr")'),
@@ -188,9 +231,9 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	#	('[B]- Удалить группу[/B]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=remgr")'),
 	#	('[B]+ Добавить в группу[/B]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+name+'")'),
 	#	('[B]- Удалить из группы[/B]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),])
-	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)
+	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld, ind)
 
-def get_canals(url):
+def get_canals_off(url):
 	try:SG=__settings__.getSetting("Sel_gr")
 	except:
 		SG='Все каналы'
@@ -219,6 +262,32 @@ def get_canals(url):
 			LL.append({'url':url, 'img':img, 'title':title})
 	return LL
 
+def set_num_cn(name):
+	try:L=eval(__settings__.getSetting("Groups"))
+	except:
+		L=Ldf
+		__settings__.setSetting("Groups",repr(L))
+
+	try:SG=__settings__.getSetting("Sel_gr")
+	except:SG=''
+	if SG=='':SG='Все каналы'
+	
+	if SG!='Все каналы':
+		CL=get_gr()
+		n=CL.index(name)
+		sel = xbmcgui.Dialog()
+		CL.append(' - В конец списка - ')
+		r = sel.select("Перед каналом:", CL)
+		CL=get_gr()
+		if r>=0 :#and r<len(CL)
+			CL.remove(name)
+			CL.insert(r, name)
+			k=0
+			for i in L:
+				if i[0]==SG:
+					L[k][1]=CL
+					__settings__.setSetting("Groups",repr(L))
+				k+=1
 
 def upd_canals_db():
 	LL=[]
@@ -247,6 +316,35 @@ def upd_canals_db():
 			LL.append({'url':url, 'img':img, 'title':title})
 			
 	__settings__.setSetting("Channels",repr(LL))
+	return LL
+
+def upd_canals_db2():
+	LL=[]
+	for pg in range(1,5):
+		url='http://tivix.net/page/'+str(pg)
+		http=getURL(url)
+		
+		ss='<div class="all_tv"'
+		es='style="f"> <br><b>'
+		L=mfindal(http,ss,es)
+		
+		CL=get_gr()
+		for i in L:
+			ss='http://tivix.net/'
+			es='.html">'
+			url=mfindal(i,ss,es)[0]+'.html'
+		
+			ss='uploads/posts'
+			es='" alt="'
+			img='http://tivix.net/'+mfindal(i,ss,es)[0]
+
+			ss='title="'
+			es='">'
+			title=mfindal(i,ss,es)[0][len(ss):]
+			
+			LL.append({'url':url, 'img':img, 'title':title})
+			
+	__settings__.setSetting("Channels2",repr(LL))
 	return LL
 
 def upd_EPG():
@@ -278,9 +376,7 @@ def select_gr():
 	if r>=0:
 		SG=Lg[r]
 		__settings__.setSetting("Sel_gr",SG)
-	xbmc.executebuiltin("Container.Refresh")
-		#try:SG=__settings__.getSetting("Sel_gr")
-		#except:SG=''
+	if __settings__.getSetting("frsup")=='true': xbmc.executebuiltin("Container.Refresh")
 	
 def get_gr():
 	try:SG=__settings__.getSetting("Sel_gr")
@@ -373,42 +469,52 @@ def root():
 		__settings__.setSetting("Sel_gr",SG)
 	add_item ('[COLOR FF55FF55]Группа: '+SG+'[/COLOR]', 'select_gr')
 	
-	try:L=eval(__settings__.getSetting("Channels"))
-	except:L=[]
-	if L==[]: L=upd_canals_db()
-		
-	#try:EPG=eval(__settings__.getSetting("EPG"))
-	#except:EPG={}
-	#if EPG=={}: 
-	#EPG=upd_EPG()
-
-	#for pg in range(1,5):
-		#curl=httpSiteUrl+'/page/'+str(pg)
-		#L=get_canals(curl)
-		#ind=0
 	CL=get_gr()
-	ttt=""
-	for i in L:
-			name  = i['title']
-			url   = i['url']
-			cover = i['img']
-			id    = get_id(url)
-			
-			if SG=='Все каналы' or name in CL:
-				#ttt+="'"+name+"',"
-				#print ttt
-				add_item (name, 'play', url, id, cover)
-			#ind+=1
-			
-			
+	ttl=len(CL)
+	if ttl==0:ttl=250
+	Lnm=[]
+	
+	if __settings__.getSetting("serv1")=='true':
+		try:L1=eval(__settings__.getSetting("Channels"))
+		except:L1=[]
+		if L1==[]: L1=upd_canals_db()
+	else: L1=[]
+	
+	if __settings__.getSetting("serv2")=='true':
+		try:L2=eval(__settings__.getSetting("Channels2"))
+		except:L2=[]
+		if L2==[]: L2=upd_canals_db2()
+	else: L2=[]
+
+	L1.extend(L2)
+	L=L1
+	if SG=='Все каналы':
+			for i in L:
+				name  = i['title']
+				url   = i['url']
+				cover = i['img']
+				
+				#if SG=='Все каналы' or name in CL:
+				add_item (name, 'play', url, ttl, cover)
+				Lnm.append(name)
+	else:
+			for k in CL:
+				for i in L:
+					name  = i['title']
+					if k==name and name not in Lnm:
+						url   = i['url']
+						cover = i['img']
+						add_item (name, 'play', url, ttl, cover)
+						Lnm.append(name)
+	
 	xbmcplugin.endOfDirectory(handle)
 
 def get_id(url):
-			ss='viks.tv/'
+			if 'viks.tv' in url:ss='viks.tv/'
+			else:               ss='tivix.net/'
 			es='-'
 			id=mfindal(url,ss,es)[0][len(ss):]
 			return id
-
 
 def get_params():
 	param=[]
@@ -446,6 +552,7 @@ if mode=="add"      : add(name)
 if mode=="rem"      : rem(name)
 if mode=="addgr"    : add_gr()
 if mode=="remgr"    : rem_gr()
+if mode=="set_num"  : set_num_cn(name)
 if mode=="update"   : upd_canals_db()
 if mode=="select_gr": select_gr()
 if mode=="play"     : play(url, name, cover)
