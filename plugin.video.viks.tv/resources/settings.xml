@@ -11,4 +11,5 @@
     <setting id="serv1" type="bool" label="Viks.tv" default="true"/>
     <setting id="serv2" type="bool" label="Tivix.net" default="true"/>
   </category>
+  <setting id="udata" default="0"/>
 </settings>

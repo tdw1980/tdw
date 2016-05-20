@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, sys, urllib2
+import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, sys, urllib2, time
 
 PLUGIN_NAME   = 'plugin.video.viks.tv'
 handle = int(sys.argv[1])
@@ -116,7 +116,7 @@ def get_stream(url):
 
 
 
-def get_cepg(id, serv):
+def get_cepg_old(id, serv):
 	import time
 	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
 	udd = int(time.strftime('%Y%m%d'))
@@ -179,6 +179,97 @@ def get_cepg(id, serv):
 		return itm
 	except:
 		return ''
+
+def get_cepg(id, serv):
+#	try:updlst=eval(__settings__.getSetting('updlst'))
+#	except:updlst=[]
+	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
+	udd = int(time.strftime('%Y%m%d'))
+	#if 1==1:
+	if serv=='tivix': id='t'+id
+	#try:
+		#E=__settings__.getSetting(id)
+		#E=get_inf_db(id)
+		#EPG=eval(E)
+#		udata = int(EPG[0]['start_at'][:11].replace('-',''))
+#		cdata = int(time.strftime('%Y%m%d'))
+		#print str(udata)+" - "+str(cdata)
+#		if cdata>udata:
+#			E=[]#getURL(url)
+			#__settings__.setSetting(id,E)
+			#add_to_db(id, E)
+#			updlst.append([id,url])
+#			print 'обновлена устаревшая программа: '+id
+	#except:
+#		try:
+#			E=[]#getURL(url)
+			#add_to_db(id, E)
+#			updlst.append([id,url])
+#			#__settings__.setSetting(id,E)
+#			print 'обновлена отсутствующая программа: '+id
+#		except:
+			#E='[{"name":"", "start_at": "'+time.strftime('%Y-%m-%d')+' --:--:--"}]'
+#			add_to_db(id, E)
+			#__settings__.setSetting(id,E)
+#			print 'неудалось загрузить программу: '+id
+	
+	#__settings__.setSetting('updlst',repr(updlst))
+	
+	try:
+		#E=getURL(url)
+		E=get_inf_db(id)
+		L=eval(E)
+		#L=EPG[id]
+		itm=''
+		n=0
+		stt=int(__settings__.getSetting('shift'))-6
+		#print stt
+		for i in L:
+			n+=1
+			h=int(time.strftime('%H'))
+			m=int(time.strftime('%M'))
+			name=eval("u'"+i['name']+"'")
+			try:
+				h3 = int(i['start_at'][11:13])-stt
+				m3 = int(i['start_at'][14:15])
+			except:
+				h3=h
+				m3=m
+			try:
+				h2 = int(L[n]['start_at'][11:13])-stt
+				m2 = int(L[n]['start_at'][14:15])
+			except:
+				h2=h
+				m2=m
+			t1=h*60+m
+			t2=h2*60+m2
+			if h3>9:hh=str(h3)
+			else:   hh="0"+str(h3)
+			if m3>9:mm=str(m3)
+			else:   mm="0"+str(m3)
+
+			stm =hh+":"+mm
+			if t2>=t1: itm+= stm+' '+name+'\n'
+		return itm
+	except:
+		return ""
+
+
+def get_epg(id, serv):
+	import time
+	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
+	udd = int(time.strftime('%Y%m%d'))
+	#if 1==1:
+	if serv=='tivix': id='t'+id
+	try:
+			E=getURL(url)
+			add_to_db(id, E)
+			print 'обновлена устаревшая программа: '+id
+	except:
+			E='[{"name":"", "start_at": "'+time.strftime('%Y-%m-%d')+' --:--:--"}]'
+			add_to_db(id, E)
+			print 'неудалось загрузить программу: '+id
+
 
 def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	#print name
@@ -285,7 +376,8 @@ def set_num_cn(name):
 			k=0
 			for i in L:
 				if i[0]==SG:
-					L[k][1]=CL
+					#L[k][1]=CL
+					L[k]=(SG,CL)
 					__settings__.setSetting("Groups",repr(L))
 				k+=1
 
@@ -348,10 +440,34 @@ def upd_canals_db2():
 	return LL
 
 def upd_EPG():
-	url='http://schedule.tivix.net/channels/viks/program/nearest/'
-	EPG=getURL(url)
-	__settings__.setSetting("EPG",EPG)
-	return eval(EPG)
+	if __settings__.getSetting("serv1")=='true' :
+		try:L1=eval(__settings__.getSetting("Channels"))
+		except:L1=[]
+		if L1==[]: L1=upd_canals_db()
+	else: L1=[]
+	
+	if __settings__.getSetting("serv2")=='true':
+		try:L2=eval(__settings__.getSetting("Channels2"))
+		except:L2=[]
+		if L2==[]: L2=upd_canals_db2()
+	else: L2=[]
+
+	L1.extend(L2)
+	L=L1
+
+	for i in L:
+				name  = i['title']
+				url   = i['url']
+				id = get_id(url)
+				if 'viks.tv' in url: serv = 'viks'
+				else:                serv = 'tivix'
+				get_epg(id, serv)
+
+
+#	url='http://schedule.tivix.net/channels/viks/program/nearest/'
+#	EPG=getURL(url)
+#	__settings__.setSetting("EPG",EPG)
+#	return eval(EPG)
 
 Ldf=[('Основные',['РТР Планета','5 Канал','НТВ','Пятница!','Че ТВ','Звезда','СТС','ТВЦ','Рен ТВ','ТВ3','Россия 1','Пятый','Первый канал','Домашний','Культура','Россия 24','ТНТ']),
 	('Детские',['СоюзМультфильм','Nick Jr','Том и Джерри','Ginger','Nickelodeon','Cartoon Network','2х2','Disney','Карусель']),
@@ -376,7 +492,9 @@ def select_gr():
 	if r>=0:
 		SG=Lg[r]
 		__settings__.setSetting("Sel_gr",SG)
-	if __settings__.getSetting("frsup")=='true': xbmc.executebuiltin("Container.Refresh")
+	if __settings__.getSetting("frsup")=='true': 
+		xbmc.sleep(500)
+		xbmc.executebuiltin("Container.Refresh")
 	
 def get_gr():
 	try:SG=__settings__.getSetting("Sel_gr")
@@ -474,11 +592,17 @@ def root():
 	if ttl==0:ttl=250
 	Lnm=[]
 	
-	if __settings__.getSetting("serv1")=='true':
+	#try: 
+	#	getURL('http://viks.tv/new/logggas.png')
+	#	serv1den=1
+	#except:serv1den=0
+	
+	if __settings__.getSetting("serv1")=='true' :
 		try:L1=eval(__settings__.getSetting("Channels"))
 		except:L1=[]
 		if L1==[]: L1=upd_canals_db()
 	else: L1=[]
+	
 	
 	if __settings__.getSetting("serv2")=='true':
 		try:L2=eval(__settings__.getSetting("Channels2"))
@@ -508,6 +632,25 @@ def root():
 						Lnm.append(name)
 	
 	xbmcplugin.endOfDirectory(handle)
+	#upe()
+
+
+def upe():
+	updlst=eval(__settings__.getSetting('updlst'))
+	for i in updlst:
+		id=i[0]
+		url=i[1]
+		try:
+			E=getURL(url)
+			add_to_db(id, E)
+			print 'загружена в фоне программа: '+id
+		except:
+			print 'неудалось загрузить в фоне программу: '+id
+			
+	if updlst!=[]:
+		__settings__.setSetting('updlst',repr([]))
+		#xbmc.executebuiltin("Container.Refresh")
+
 
 def get_id(url):
 			if 'viks.tv' in url:ss='viks.tv/'
@@ -515,6 +658,42 @@ def get_id(url):
 			es='-'
 			id=mfindal(url,ss,es)[0][len(ss):]
 			return id
+
+
+import sqlite3 as db
+db_name = os.path.join( addon.getAddonInfo('path'), "epg.db" )
+c = db.connect(database=db_name)
+cu = c.cursor()
+def add_to_db(n, item):
+		item=item.replace("'","XXCC").replace('"',"XXDD")
+		err=0
+		tor_id="n"+n
+		litm=str(len(item))
+		try:
+			cu.execute("DROP TABLE "+tor_id+";")
+			c.commit()
+		except: pass
+		try:
+			cu.execute("CREATE TABLE "+tor_id+" (db_item VARCHAR("+litm+"), i VARCHAR(1));")
+			c.commit()
+		except: 
+			err=1
+			print "Ошибка БД"
+		if err==0:
+			cu.execute('INSERT INTO '+tor_id+' (db_item, i) VALUES ("'+item+'", "1");')
+			c.commit()
+			#c.close()
+
+def get_inf_db(n):
+		tor_id="n"+n
+		cu.execute(str('SELECT db_item FROM '+tor_id+';'))
+		c.commit()
+		Linfo = cu.fetchall()
+		info=Linfo[0][0].replace("XXCC","'").replace("XXDD",'"')
+		return info
+
+
+
 
 def get_params():
 	param=[]
@@ -547,7 +726,15 @@ try:ind = urllib.unquote_plus(params["ind"])
 except:ind ="0"
 
 
-if mode==""         : root()
+if mode==""         : #root
+	root()
+	cdata = int(time.strftime('%Y%m%d'))
+	try:udata = int(__settings__.getSetting('udata'))
+	except: udata = 0
+	if cdata>udata:
+		__settings__.setSetting("udata",str(cdata))
+		upd_EPG()
+
 if mode=="add"      : add(name)
 if mode=="rem"      : rem(name)
 if mode=="addgr"    : add_gr()
@@ -558,3 +745,5 @@ if mode=="select_gr": select_gr()
 if mode=="play"     : play(url, name, cover)
 if mode=="rename"   : updatetc.rename_list(int(ind))
 #xbmc.executebuiltin("Container.Refresh")
+
+c.close()
