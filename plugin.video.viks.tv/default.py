@@ -63,17 +63,26 @@ def play(url, name ,cover):
 		#ss="]='"
 		#es="';"
 		#purl=mfindal(tmp,ss,es)[0][len(ss):]
-		try: purl=get_stream(url)
+		try: Lpurl=get_stream(url)
 		except:
-			purl=""
+			Lpurl=[]
 			showMessage('viks.tv', 'Канал недоступен')
 		
 		print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
-		print purl
-		item = xbmcgui.ListItem(name, path=purl, thumbnailImage=cover, iconImage=cover)
+		
+		
+		playlist =xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
+		playlist.clear()
+		#, 
+		k=0
+		for purl in Lpurl:
+			k+=1
+			print purl
+			item = xbmcgui.ListItem(name+" [ "+str(k)+"/"+str(len(Lpurl))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
+			playlist.add(url=purl, listitem=item)
 		#item.setProperty('IsPlayable', 'true')
 		#xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-		xbmc.Player().play(purl, item)
+		xbmc.Player().play(playlist)#, item
 		xbmc.sleep(10000)
 		
 		#print "======================== isPlaying ======================"
@@ -93,25 +102,41 @@ def get_stream(url):
 		es='//m3u8 names'
 		tmp=mfindal(http,ss,es)[0]
 		
+		#ss='//mob srcs'
+		#es='jQuery(document)'
+		#tmp2=mfindal(http,ss,es)[0]
+
+		#tmp=tmp2+tmp
 		ss="]='"
 		es="';"
-		purl=mfindal(tmp,ss,es)[0][len(ss):]
-		return purl
+		Lp=[]
+		L=mfindal(tmp,ss,es)
+		L.reverse()
+		for i in L:
+			if i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
+		#n=len(L)-1
+		#purl=L[n][len(ss):]
+		#purl=mfindal(tmp,ss,es)[2][len(ss):]
+		return Lp#purl
 	else:
+		Lp=[]
 		http=getURL(url)
 		ss='&file='
 		es='&st='
-		tmp=mfindal(http,ss,es)[0][len(ss):]
-		if 'm3u8' in tmp:
-			print "M3U8"
-			return tmp
-		else:
-			print "RTMP"
-			purl = tmp
-			purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
-			purl += " pageURL=http://tivix.net"
-			purl += " swfVfy=true live=true"
-			return purl
+		L=mfindal(http,ss,es)
+		for i in L:
+			tmp=i[len(ss):]
+			if 'm3u8' in tmp:
+				#print "M3U8"
+				purl = tmp
+			else:
+				#print "RTMP"
+				purl = tmp
+				purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
+				purl += " pageURL=http://tivix.net"
+				purl += " swfVfy=true live=true"
+			if i not in Lp and 'peers' not in i: Lp.append(purl)
+		return Lp
 
 
 
