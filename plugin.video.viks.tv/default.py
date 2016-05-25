@@ -100,9 +100,12 @@ def get_ttv(url):
 		#debug(http)
 		ss='this.loadPlayer("'
 		es='",{autoplay: true})'
+		srv=__settings__.getSetting("p2p_serv")
+		prt=__settings__.getSetting("p2p_port")
+		
 		try:
 			CID=mfindal(http,ss,es)[0][len(ss):]
-			lnk='http://127.0.0.1:6878/ace/getstream?id='+CID
+			lnk='http://'+srv+':'+prt+'/ace/getstream?id='+CID
 			return lnk
 		except:
 			return ""
@@ -121,6 +124,7 @@ def get_stream(url):
 		#tmp2=mfindal(http,ss,es)[0]
 
 		#tmp=tmp2+tmp
+		
 		ss="]='"
 		es="';"
 		Lp=[]
@@ -130,23 +134,26 @@ def get_stream(url):
 		for i in L:
 			if i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
 		
+		if __settings__.getSetting("p2p")=='true':
+			ss='//torrent codes'
+			es='//mob names'
+			tmp3=mfindal(http,ss,es)[0]
 		
-		ss='//torrent codes'
-		es='//mob names'
-		tmp3=mfindal(http,ss,es)[0]
+			ss='src=\\"'
+			es='\\" width='
+			Lt=mfindal(tmp3,ss,es)
 		
-		ss='src=\\"'
-		es='\\" width='
-		Lt=mfindal(tmp3,ss,es)
+			Lp2=[]
+			for t in Lt:
+				trst=get_ttv(t[len(ss):])
+				Lp2.append(trst)
+			if __settings__.getSetting("p2p_start")=='true':
+				Lp2.extend(Lp)
+				Lp=Lp2
+			else:
+				Lp.extend(Lp2)
 		
-		for t in Lt:
-			trst=get_ttv(t[len(ss):])
-			Lp.append(trst)
-		
-		#n=len(L)-1
-		#purl=L[n][len(ss):]
-		#purl=mfindal(tmp,ss,es)[2][len(ss):]
-		return Lp#purl
+		return Lp
 	else:
 		Lp=[]
 		http=getURL(url)

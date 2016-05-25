@@ -11,5 +11,12 @@
     <setting id="serv1" type="bool" label="Viks.tv" default="true"/>
     <setting id="serv2" type="bool" label="Tivix.net" default="true"/>
   </category>
+  <category label="P2P">
+    <setting id="p2p" type="bool" label="Использовать P2P" default="true"/>
+    <setting id="p2p_start" type="bool" label="Предпочитать P2P потоки" default="false"/>
+    <setting id="p2p_serv" type="text" label="P2P сервер" default="127.0.0.1"/>
+    <setting id="p2p_port" type="text" label="P2P порт" default="6878"/>
+    <setting id="ACEstr" type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
+  </category>
   <setting id="udata" default="0"/>
 </settings>
