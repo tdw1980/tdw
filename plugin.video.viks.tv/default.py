@@ -41,7 +41,10 @@ def mfindal(http, ss, es):
 		http=http[e+2:]
 	return L
 
-
+def debug(s):
+	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "w")
+	fl.write(s)
+	fl.close()
 
 def inputbox(t):
 	skbd = xbmc.Keyboard(t, 'Название:')
@@ -55,14 +58,9 @@ def inputbox(t):
 
 
 def play(url, name ,cover):
-		#http=getURL(url)
-		#ss='//m3u8'
-		#es='//m3u8 names'
-		#tmp=mfindal(http,ss,es)[0]
-		
-		#ss="]='"
-		#es="';"
-		#purl=mfindal(tmp,ss,es)[0][len(ss):]
+		pDialog = xbmcgui.DialogProgressBG()
+		pDialog.create('Viks.tv', 'Поиск потоков ...')
+		#Lpurl=get_stream(url)
 		try: Lpurl=get_stream(url)
 		except:
 			Lpurl=[]
@@ -70,19 +68,20 @@ def play(url, name ,cover):
 		
 		print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
 		
-		
-		playlist =xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
+		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
 		playlist.clear()
-		#, 
+		
 		k=0
+		
 		for purl in Lpurl:
 			k+=1
-			print purl
+			#print purl
 			item = xbmcgui.ListItem(name+" [ "+str(k)+"/"+str(len(Lpurl))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 			playlist.add(url=purl, listitem=item)
-		#item.setProperty('IsPlayable', 'true')
-		#xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+		
+		xbmc.Player().stop()
 		xbmc.Player().play(playlist)#, item
+		pDialog.close()
 		xbmc.sleep(10000)
 		
 		#print "======================== isPlaying ======================"
@@ -95,9 +94,24 @@ def play(url, name ,cover):
 		print "========================  Refresh ======================"
 		xbmc.executebuiltin("Container.Refresh")
 
+def get_ttv(url):
+		print url
+		http=getURL(url)
+		#debug(http)
+		ss='this.loadPlayer("'
+		es='",{autoplay: true})'
+		try:
+			CID=mfindal(http,ss,es)[0][len(ss):]
+			lnk='http://127.0.0.1:6878/ace/getstream?id='+CID
+			return lnk
+		except:
+			return ""
+
 def get_stream(url):
 	if 'viks.tv' in url:
 		http=getURL(url)
+		
+		
 		ss='//m3u8'
 		es='//m3u8 names'
 		tmp=mfindal(http,ss,es)[0]
@@ -110,10 +124,25 @@ def get_stream(url):
 		ss="]='"
 		es="';"
 		Lp=[]
+		
 		L=mfindal(tmp,ss,es)
 		L.reverse()
 		for i in L:
 			if i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
+		
+		
+		ss='//torrent codes'
+		es='//mob names'
+		tmp3=mfindal(http,ss,es)[0]
+		
+		ss='src=\\"'
+		es='\\" width='
+		Lt=mfindal(tmp3,ss,es)
+		
+		for t in Lt:
+			trst=get_ttv(t[len(ss):])
+			Lp.append(trst)
+		
 		#n=len(L)-1
 		#purl=L[n][len(ss):]
 		#purl=mfindal(tmp,ss,es)[2][len(ss):]
@@ -137,7 +166,6 @@ def get_stream(url):
 				purl += " swfVfy=true live=true"
 			if i not in Lp and 'peers' not in i: Lp.append(purl)
 		return Lp
-
 
 
 
