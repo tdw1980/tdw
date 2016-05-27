@@ -3,6 +3,7 @@
   <category label="Вид">
     <setting id="fanart" type="bool" label="Фанарт" default="true"/>
     <setting id="icons" type="bool" label="Логотип" default="true"/>
+    <setting id="grinnm" type="bool" label="Показывать группы в общем списке" default="false"/>
     <setting id="frsup" type="bool" label="Принудительно обновлять список" default="true"/>
   </category>
   <category label="Программа">
@@ -14,6 +15,7 @@
   <category label="Серверы">
     <setting id="serv1" type="bool" label="Viks.tv" default="true"/>
     <setting id="serv2" type="bool" label="Tivix.net" default="true"/>
+    <setting id="serv3" type="bool" label="Torrentstream.tv" default="true"/>
   </category>
   <category label="P2P">
     <setting id="p2p" type="bool" label="Использовать P2P" default="true"/>

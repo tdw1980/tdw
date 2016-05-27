@@ -154,6 +154,19 @@ def get_stream(url):
 				Lp.extend(Lp2)
 		
 		return Lp
+	
+	elif 'torrentstream.tv' in url:
+		
+		if __settings__.getSetting("p2p")=='true':
+				http=getURL(url)
+				#debug(http)
+				ss='<iframe src="'
+				es='" style="width:650'
+				t=mfindal(http,ss,es)[0][len(ss):]
+				trst=get_ttv(t)
+				return [trst,]
+		else:[]
+		
 	else:
 		Lp=[]
 		http=getURL(url)
@@ -329,7 +342,10 @@ def get_cgide(id, serv):
 			n+=1
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
-			name=eval("u'"+i['name']+"'")
+			
+			if serv=='xmltv':name=i['name']
+			else: name=eval("u'"+i['name']+"'")
+			
 			try:
 				h3 = int(i['start_at'][11:13])-stt
 				m3 = int(i['start_at'][14:16])
@@ -406,8 +422,18 @@ def tvgide():
 		except:L2=[]
 		if L2==[]: L2=upd_canals_db2()
 	else: L2=[]
-
+	
+	
+	if __settings__.getSetting("serv3")=='true':
+		try:L3=eval(__settings__.getSetting("Channels3"))
+		except:L3=[]
+		if L3==[]: L3=upd_canals_db3()
+	else: L3=[]
+	
+	
 	L1.extend(L2)
+	L1.extend(L3)
+	
 	L=L1
 	if SG=='Все каналы':
 			for i in L:
@@ -416,10 +442,13 @@ def tvgide():
 				cover = i['img']
 				id = get_id(url)
 				if 'viks.tv' in url: serv = 'viks'
-				else:                serv = 'tivix'
+				elif 'tivix' in url: serv = 'tivix'
+				else:
+						serv = 'xmltv'
+						id = get_idx(namec)
 				name=get_cgide(id, serv)
 				#if SG=='Все каналы' or name in CL:
-				if name!="" and namec not in Lnm: 
+				if name!="" and name!=None and namec not in Lnm: 
 					add_item (name, 'play', url, namec, cover)
 					Lnm.append(namec)
 
@@ -432,9 +461,12 @@ def tvgide():
 						cover = i['img']
 						id = get_id(url)
 						if 'viks.tv' in url: serv = 'viks'
-						else:                serv = 'tivix'
+						elif 'tivix' in url: serv = 'tivix'
+						else:
+											serv = 'xmltv'
+											id = get_idx(namec)
 						name=get_cgide(id, serv)
-						if name!="" and namec not in Lnm: 
+						if name!="" and name!=None and namec not in Lnm: 
 							add_item (name, 'play', url, namec, cover)
 							Lnm.append(namec)
 	
@@ -592,6 +624,38 @@ def upd_canals_db2():
 			LL.append({'url':url, 'img':img, 'title':title})
 			
 	__settings__.setSetting("Channels2",repr(LL))
+	return LL
+def upd_canals_db3():
+	LL=[]
+	url='http://torrentstream.tv/browse-vse-kanali-tv-videos-1-date.html'
+	http=getURL(url)
+		
+	ss='<li>'
+	es='</li>'
+	L=mfindal(http,ss,es)
+	
+	#CL=get_gr()
+	for i in L:
+		try:
+			#debug (i)
+			ss='<h3><a href="'
+			es='" class="pm-title-link'
+			url=mfindal(i,ss,es)[0][len(ss):]
+			print url
+		
+			ss='<img src="'
+			es='" alt="'
+			img=mfindal(i,ss,es)[0][len(ss):]
+
+			ss='pm-title-link " title="'
+			es='</a></h3>'
+			title=mfindal(i,ss,es)[0]#[len(ss):]
+			r=title.find('">')+2
+			title=title[r:]
+			
+			LL.append({'url':url, 'img':img, 'title':title})
+		except: pass
+	__settings__.setSetting("Channels3",repr(LL))
 	return LL
 
 def upd_EPG():
@@ -756,16 +820,26 @@ def root():
 		except:L2=[]
 		if L2==[]: L2=upd_canals_db2()
 	else: L2=[]
-
+	
+	
+	if __settings__.getSetting("serv3")=='true':
+		try:L3=eval(__settings__.getSetting("Channels3"))
+		except:L3=[]
+		if L3==[]: L3=upd_canals_db3()
+	else: L3=[]
+	
+	
 	L1.extend(L2)
+	L1.extend(L3)
 	L=L1
 	if SG=='Все каналы':
 			for i in L:
 				name  = i['title']
 				url   = i['url']
 				cover = i['img']
-				
+				#print name
 				#if SG=='Все каналы' or name in CL:
+				if __settings__.getSetting("grinnm")=='true': name=add_gr(name)
 				if name not in Lnm:
 					add_item (name, 'play', url, name, cover)
 					Lnm.append(name)
@@ -781,13 +855,24 @@ def root():
 	
 	xbmcplugin.endOfDirectory(handle)
 
+def add_gr(name):
+	try:L=eval(__settings__.getSetting("Groups"))
+	except:L=[]
+	for i in L:
+		gr=i[0]
+		if name in i[1]: name=name+"   [COLOR 40FFFFFF]["+gr+"][/COLOR]"
+	return name
+
 
 def get_id(url):
+		try:
 			if 'viks.tv' in url:ss='viks.tv/'
 			else:               ss='tivix.net/'
 			es='-'
 			id=mfindal(url,ss,es)[0][len(ss):]
 			return id
+		except:
+			return '0'
 
 def get_idx(name):
 	try:
@@ -958,7 +1043,15 @@ if mode=="rem"      : rem(name)
 if mode=="addgr"    : add_gr()
 if mode=="remgr"    : rem_gr()
 if mode=="set_num"  : set_num_cn(name)
-if mode=="update"   : upd_canals_db()
+if mode=="update"   : 
+			pDialog = xbmcgui.DialogProgressBG()
+			pDialog.create('Viks.tv', 'Обновление списка каналов ...')
+			upd_canals_db()
+			pDialog.update(33, message='Обновление списка каналов ...')
+			upd_canals_db2()
+			pDialog.update(66, message='Обновление списка каналов ...')
+			upd_canals_db3()
+			pDialog.close()
 if mode=="select_gr": select_gr()
 if mode=="play"     : play(url, name, cover)
 if mode=="rename"   : updatetc.rename_list(int(ind))
