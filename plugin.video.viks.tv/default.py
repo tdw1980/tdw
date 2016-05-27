@@ -13,6 +13,8 @@ Pdir = addon.getAddonInfo('path')
 icon = xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'icon.png'))
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
+from xid import *
+
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
 	
@@ -58,6 +60,7 @@ def inputbox(t):
 
 
 def play(url, name ,cover):
+		xbmc.Player().stop()
 		pDialog = xbmcgui.DialogProgressBG()
 		pDialog.create('Viks.tv', 'Поиск потоков ...')
 		#Lpurl=get_stream(url)
@@ -66,7 +69,7 @@ def play(url, name ,cover):
 			Lpurl=[]
 			showMessage('viks.tv', 'Канал недоступен')
 		
-		print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
+		#print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
 		
 		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
 		playlist.clear()
@@ -78,18 +81,15 @@ def play(url, name ,cover):
 			#print purl
 			item = xbmcgui.ListItem(name+" [ "+str(k)+"/"+str(len(Lpurl))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 			playlist.add(url=purl, listitem=item)
-		
-		xbmc.Player().stop()
-		xbmc.Player().play(playlist)#, item
 		pDialog.close()
-		xbmc.sleep(10000)
+		xbmc.Player().play(playlist)#, item
+		xbmc.sleep(15000)
 		
 		#print "======================== isPlaying ======================"
-		#print xbmc.Player().isPlaying()
 		
 		while  xbmc.Player().isPlaying():#not
 			xbmc.sleep(1000)
-			print "========================  playing ======================"
+			#print "========================  playing ======================"
 		xbmc.sleep(1000)
 		print "========================  Refresh ======================"
 		xbmc.executebuiltin("Container.Refresh")
@@ -243,7 +243,7 @@ def get_cepg_old(id, serv):
 def get_cepg(id, serv):
 	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
 	if serv=='tivix': id='t'+id
-	
+	#elif serv=='xmltv': id='x'+id
 	try:
 		E=get_inf_db(id)
 		L=eval(E)
@@ -252,7 +252,7 @@ def get_cepg(id, serv):
 		n2=0
 		stt=int(__settings__.getSetting('shift'))-6
 		
-		udata = int(L[0]['start_at'][:11].replace('-',''))
+		udata = int(L[10]['start_at'][:11].replace('-',''))
 		cdata = int(time.strftime('%Y%m%d'))
 		if cdata!=udata: L=[]
 		
@@ -260,7 +260,9 @@ def get_cepg(id, serv):
 			n+=1
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
-			name=eval("u'"+i['name']+"'")
+			
+			if serv=='xmltv':name=i['name']
+			else:name=eval("u'"+i['name']+"'")
 			try:
 				h3 = int(i['start_at'][11:13])-stt
 				m3 = int(i['start_at'][14:16])
@@ -418,7 +420,7 @@ def tvgide():
 				name=get_cgide(id, serv)
 				#if SG=='Все каналы' or name in CL:
 				if name!="" and namec not in Lnm: 
-					add_item (name, 'play', url, ttl, cover)
+					add_item (name, 'play', url, namec, cover)
 					Lnm.append(namec)
 
 	else:
@@ -433,7 +435,7 @@ def tvgide():
 						else:                serv = 'tivix'
 						name=get_cgide(id, serv)
 						if name!="" and namec not in Lnm: 
-							add_item (name, 'play', url, ttl, cover)
+							add_item (name, 'play', url, namec, cover)
 							Lnm.append(namec)
 	
 	xbmcplugin.endOfDirectory(handle)
@@ -466,7 +468,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	listitem.setProperty('fanart_image', funart)
 	uri = sys.argv[0] + '?mode='+mode
 	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))
-	uri += '&name='  + urllib.quote_plus(xt(name))
+	uri += '&name='  + urllib.quote_plus(xt(ind))
 	uri += '&ind='  + urllib.quote_plus(str(ind))
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
 	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
@@ -476,6 +478,9 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 		if __settings__.getSetting("epgon")=='true':
 			if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
 			else:                dict={"plot":get_cepg(id,'tivix')}
+			if dict['plot']=='':
+				id = get_idx(ind)
+				dict={"plot":get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")}
 		else: dict={}
 		try:listitem.setInfo(type = "Video", infoLabels = dict)
 		except: pass
@@ -487,17 +492,18 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),
 			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=set_num&name='+name+'")'),
 			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
-			('[COLOR FF55FF55][B]= Передачи[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")'),
-			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),])
-		
+			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")'),
+			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")')])
+
 	else: 
-		ind=1
+		#ind=1
 		fld=True
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Создать группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=addgr")'),
 			('[COLOR FFFF5555][B]- Удалить группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=remgr")'),])
 	
-	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld, ind)
+	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)#, ind)
 
 def set_num_cn(name):
 	try:L=eval(__settings__.getSetting("Groups"))
@@ -603,15 +609,25 @@ def upd_EPG():
 
 	L1.extend(L2)
 	L=L1
-
+	j=0
 	for i in L:
+				j+=1
 				name  = i['title']
 				url   = i['url']
 				id = get_id(url)
 				if 'viks.tv' in url: serv = 'viks'
 				else:                serv = 'tivix'
 				get_epg(id, serv)
+				pDialog.update(j/4, message=name+' ...')
 
+def upd_EPG_xmltv():
+	d=pars_xmltv(dload_epg_xml())
+	j=200
+	for id in d.keys():
+		j+=1
+		#print d[id]
+		add_to_db("x"+id, repr(d[id]))
+		pDialog.update(j/4, message='xmltv ...')
 
 Ldf=[('Основные',['РТР Планета','5 Канал','НТВ','Пятница!','Че ТВ','Звезда','СТС','ТВЦ','Рен ТВ','ТВ3','Россия 1','Пятый','Первый канал','Домашний','Культура','Россия 24','ТНТ']),
 	('Детские',['СоюзМультфильм','Nick Jr','Том и Джерри','Ginger','Nickelodeon','Cartoon Network','2х2','Disney','Карусель']),
@@ -751,7 +767,7 @@ def root():
 				
 				#if SG=='Все каналы' or name in CL:
 				if name not in Lnm:
-					add_item (name, 'play', url, ttl, cover)
+					add_item (name, 'play', url, name, cover)
 					Lnm.append(name)
 	else:
 			for k in CL:
@@ -760,7 +776,7 @@ def root():
 					if k==name and name not in Lnm:
 						url   = i['url']
 						cover = i['img']
-						add_item (name, 'play', url, ttl, cover)
+						add_item (name, 'play', url, name, cover)
 						Lnm.append(name)
 	
 	xbmcplugin.endOfDirectory(handle)
@@ -773,7 +789,12 @@ def get_id(url):
 			id=mfindal(url,ss,es)[0][len(ss):]
 			return id
 
-
+def get_idx(name):
+	try:
+		id="x"+xmlid[name]
+		print id
+	except: id='0'
+	return id
 
 import sqlite3 as db
 db_name = os.path.join( addon.getAddonInfo('path'), "epg.db" )
@@ -807,6 +828,67 @@ def get_inf_db(n):
 		info=Linfo[0][0].replace("XXCC","'").replace("XXDD",'"')
 		return info
 
+
+
+def dload_epg_xml():
+	try:
+			target='http://programtv.ru/xmltv.xml.gz'
+			fp = xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'tmp.zip'))
+			
+			req = urllib2.Request(url = target, data = None)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			fl = open(fp, "wb")
+			fl.write(resp.read())
+			fl.close()
+			
+			xml=ungz(fp)
+			#os.remove(fp)
+			return xml
+	except Exception, e:
+			print 'HTTP ERROR ' + str(e)
+			return ''
+
+
+def ungz(filename):
+	import gzip
+	with gzip.open(filename, 'rb') as f:
+		file_content = f.read()
+		return file_content
+
+def pars_xmltv(xml):
+	ss="<programme "
+	es="</programme>"
+	L=mfindal(xml,ss,es)
+	epg={}
+	for i in L:
+		ss='start="'
+		es=' +0300" stop="'
+		st=mfindal(i,ss,es)[0][len(ss):]
+		
+		ss='stop="'
+		es=' +0300" channel'
+		et=mfindal(i,ss,es)[0][len(ss):]
+		
+		ss=' channel="'
+		es='">'
+		id=mfindal(i,ss,es)[0][len(ss):]
+		
+		ss='<title>'
+		es='</title>'
+		title=mfindal(i,ss,es)[0][len(ss):]
+		
+		try:Le=epg[id]
+		except: Le=[]
+		start_at=st[0:4]+"-"+st[4:6]+"-"+st[6:8]+" "+st[8:10]+":"+st[10:12]+":00"
+		try:
+			Le.append({"name":title, "start_at":start_at})
+			epg[id]=Le
+		except: print id+"  :  "+start_at+"  :  "+title
+		#print id+"  :  "+start_at+"  :  "+title
+		#
+		#[{"name":"", "start_at": "2016-05-26 --:--:--"}]
+	return epg
 
 
 
@@ -848,9 +930,28 @@ if mode==""         : #root
 		try:udata = int(__settings__.getSetting('udata'))
 		except: udata = 0
 		if cdata>udata:
+			pDialog = xbmcgui.DialogProgressBG()
+			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
-			upd_EPG()
+			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			xbmc.executebuiltin("Container.Refresh")
+			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			pDialog.close()
+			xbmc.executebuiltin("Container.Refresh")
+if mode=="updateepg"   :
+			cdata = int(time.strftime('%Y%m%d'))
+			try:udata = int(__settings__.getSetting('udata'))
+			except: udata = 0
+			pDialog = xbmcgui.DialogProgressBG()
+			pDialog.create('Viks.tv', 'Обновление EPG ...')
+			__settings__.setSetting("udata",str(cdata))
+			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
+			#xbmc.executebuiltin("Container.Refresh")
+			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			pDialog.close()
+			#xbmc.executebuiltin("Container.Refresh")
+			#pDialog.close()
+	
 if mode=="tvgide"   : tvgide()
 if mode=="add"      : add(name)
 if mode=="rem"      : rem(name)
