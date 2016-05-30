@@ -95,7 +95,7 @@ def play(url, name ,cover):
 		xbmc.executebuiltin("Container.Refresh")
 
 def get_ttv(url):
-		print url
+		#print url
 		http=getURL(url)
 		#debug(http)
 		ss='this.loadPlayer("'
@@ -258,8 +258,11 @@ def get_cepg(id, serv):
 	if serv=='tivix': id='t'+id
 	#elif serv=='xmltv': id='x'+id
 	try:
+		#print id
 		E=get_inf_db(id)
+		#print E
 		L=eval(E)
+		#print L
 		itm=''
 		n=0
 		n2=0
@@ -267,9 +270,14 @@ def get_cepg(id, serv):
 		
 		udata = int(L[10]['start_at'][:11].replace('-',''))
 		cdata = int(time.strftime('%Y%m%d'))
-		if cdata!=udata: L=[]
+		#if cdata!=udata: L=[]
+		Ln=[]
 		
 		for i in L:
+			#print i['start_at'][:11].replace('-','')
+			if int(i['start_at'][:11].replace('-',''))==cdata: Ln.append(i)
+		#print Ln
+		for i in Ln:
 			n+=1
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
@@ -336,9 +344,14 @@ def get_cgide(id, serv):
 		
 		udata = int(L[0]['start_at'][:11].replace('-',''))
 		cdata = int(time.strftime('%Y%m%d'))
-		if cdata!=udata: L=[]
+		#if cdata!=udata: L=[]
+		Ln=[]
 		
 		for i in L:
+			#print i['start_at'][:11].replace('-','')
+			if int(i['start_at'][:11].replace('-',''))==cdata: Ln.append(i)
+		#print Ln
+		for i in Ln:
 			n+=1
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
@@ -508,10 +521,15 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	if mode=="play":
 		id = get_id(path)
 		if __settings__.getSetting("epgon")=='true':
-			if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
-			else:                dict={"plot":get_cepg(id,'tivix')}
+			if __settings__.getSetting("epgtvx")=='true':
+				if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
+				else:                dict={"plot":get_cepg(id,'tivix')}
+			else:
+				dict={"plot":''}
+				
 			if dict['plot']=='':
 				id = get_idx(ind)
+				#if id=='0': print ind
 				dict={"plot":get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")}
 		else: dict={}
 		try:listitem.setInfo(type = "Video", infoLabels = dict)
@@ -641,7 +659,7 @@ def upd_canals_db3():
 			ss='<h3><a href="'
 			es='" class="pm-title-link'
 			url=mfindal(i,ss,es)[0][len(ss):]
-			print url
+			#print url
 		
 			ss='<img src="'
 			es='" alt="'
@@ -692,6 +710,16 @@ def upd_EPG_xmltv():
 		#print d[id]
 		add_to_db("x"+id, repr(d[id]))
 		pDialog.update(j/4, message='xmltv ...')
+
+def upd_EPG_itv():
+	d=intertv()
+	j=1
+	for id in d.keys():
+		j+=1
+		#print d[id]
+		add_to_db(id, repr(d[id]))
+		pDialog.update(j/3, message='itv ...')
+
 
 Ldf=[('Основные',['РТР Планета','5 Канал','НТВ','Пятница!','Че ТВ','Звезда','СТС','ТВЦ','Рен ТВ','ТВ3','Россия 1','Пятый','Первый канал','Домашний','Культура','Россия 24','ТНТ']),
 	('Детские',['СоюзМультфильм','Nick Jr','Том и Джерри','Ginger','Nickelodeon','Cartoon Network','2х2','Disney','Карусель']),
@@ -839,7 +867,7 @@ def root():
 				cover = i['img']
 				#print name
 				#if SG=='Все каналы' or name in CL:
-				if __settings__.getSetting("grinnm")=='true': name=add_gr(name)
+				if __settings__.getSetting("grinnm")=='true': name=add_grn(name)
 				if name not in Lnm:
 					add_item (name, 'play', url, name, cover)
 					Lnm.append(name)
@@ -855,7 +883,7 @@ def root():
 	
 	xbmcplugin.endOfDirectory(handle)
 
-def add_gr(name):
+def add_grn(name):
 	try:L=eval(__settings__.getSetting("Groups"))
 	except:L=[]
 	for i in L:
@@ -877,7 +905,7 @@ def get_id(url):
 def get_idx(name):
 	try:
 		id="x"+xmlid[name]
-		print id
+		#print id
 	except: id='0'
 	return id
 
@@ -975,7 +1003,75 @@ def pars_xmltv(xml):
 		#[{"name":"", "start_at": "2016-05-26 --:--:--"}]
 	return epg
 
+def dload_epg_inter():
+	try:
+			target='http://www.teleguide.info/download/new3/inter-tv.zip'
+			fp = xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'inter-tv.zip'))
+			
+			req = urllib2.Request(url = target, data = None)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			fl = open(fp, "wb")
+			fl.write(resp.read())
+			fl.close()
+			
+			itv=unzip(fp)
+			#os.remove(fp)
+			return itv
+	except Exception, e:
+			print 'HTTP ERROR ' + str(e)
+			return ''
 
+def unzip(filename):
+	from zipfile import ZipFile
+	fil = ZipFile(filename, 'r')
+	for name in fil.namelist():
+		f=fil.read(name)
+		return f
+
+Lv=['понед', 'вторн', 'среда', 'четве', 'пятни', 'суббо', 'воскре', 'ПОНЕД', 'ВТОРН', 'СРЕДА', 'ЧЕТВЕ', 'ПЯТНИ', 'СУББО', 'ВОСКР']
+
+def intertv():
+	itv=dload_epg_inter()
+	itv=itv.decode('windows-1251')
+	L=itv.splitlines()
+	L2=[]
+	L3={}
+	n=0
+	for i in L:
+		if i[:3]!='   ' and i!='tv.all' and i!='':
+			t=i[:5].encode('utf-8')
+			#print t
+			if t in Lv :
+				n+=1
+				try:
+					try:
+						if idx!='0':
+							Lpr=L3[idx]
+							Lpr.extend(L2)
+					except:
+						L3[idx]=L2
+				except:pass
+				tmp=eval('["'+i.replace('. ','", "')+'"]')
+				#print tmp
+				data=tmp[1].replace(' января', '-01').replace(' февраля', '-02').replace(' марта', '-03').replace(' апреля', '-04').replace(' мая', '-05').replace(' июня', '-06').replace(' июля', '-07').replace(' августа', '-08').replace(' сентября', '-09').replace(' октября', '-10').replace(' ноября', '-11').replace(' декабря', '-12')
+				data=data.replace(' Январь', '-01').replace(' Февраль', '-02').replace(' Март', '-03').replace(' Апрель', '-04').replace(' Май', '-05').replace(' Июнь', '-06').replace(' Июль', '-07').replace(' Август', '-08').replace(' Сентябрь', '-09').replace(' Октябрь', '-10').replace(' Ноябрь', '-11').replace(' Декабрь', '-12')
+
+				fdata=time.strftime('%Y-')+data[3:]+"-"+data[:2]
+				name=tmp[2]
+				idx=get_idx(name)
+				#if idx=='0': print name
+				#if n>5:
+				#	debug(repr(L3))
+				#	return ""
+				L2=[]
+			else:
+				stm = i[:5]
+				pr_nm = i[6:]
+				start_at=fdata+" "+stm+":00"
+				L2.append({"name":pr_nm, "start_at": start_at})
+	#debug (repr(L3['x146']))
+	return L3
 
 def get_params():
 	param=[]
@@ -1033,6 +1129,8 @@ if mode=="updateepg"   :
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			#xbmc.executebuiltin("Container.Refresh")
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			
 			pDialog.close()
 			#xbmc.executebuiltin("Container.Refresh")
 			#pDialog.close()
