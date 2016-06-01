@@ -544,15 +544,15 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
 			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")'),
 			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
-			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")')])
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")')], replaceItems=True)
 
 	else: 
 		#ind=1
 		fld=True
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Создать группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=addgr")'),
-			('[COLOR FFFF5555][B]- Удалить группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=remgr")'),])
-	
+			('[COLOR FFFF5555][B]- Удалить группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=remgr")'),
+			('[COLOR FFFFFF55][B]Управление каналами[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=grman")'),])
 	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)#, ind)
 
 def set_num_cn(name):
@@ -1134,7 +1134,10 @@ if mode=="updateepg"   :
 			pDialog.close()
 			#xbmc.executebuiltin("Container.Refresh")
 			#pDialog.close()
-	
+if mode=="grman"   :
+	import GrBox
+	GrBox.run("GrBox")
+
 if mode=="tvgide"   : tvgide()
 if mode=="add"      : add(name)
 if mode=="rem"      : rem(name)
@@ -1154,5 +1157,7 @@ if mode=="select_gr": select_gr()
 if mode=="play"     : play(url, name, cover)
 if mode=="rename"   : updatetc.rename_list(int(ind))
 #xbmc.executebuiltin("Container.Refresh")
+
+
 
 c.close()
