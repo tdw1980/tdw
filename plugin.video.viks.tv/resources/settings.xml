@@ -4,6 +4,8 @@
     <setting id="fanart" type="bool" label="Фанарт" default="true"/>
     <setting id="icons" type="bool" label="Логотип" default="true"/>
     <setting id="grinnm" type="bool" label="Показывать группы в общем списке" default="false"/>
+    <setting id="grincm" type="bool" label="Список групп в контекстном меню" default="false"/>
+    <setting id="abc" type="bool" label="Общий список по алфавиту" default="false"/>
     <setting id="frsup" type="bool" label="Принудительно обновлять список" default="true"/>
   </category>
   <category label="Программа">

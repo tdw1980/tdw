@@ -274,19 +274,19 @@ def get_cepg(id, serv):
 		Ln=[]
 		
 		for i in L:
-			#print i['start_at'][:11].replace('-','')
 			if int(i['start_at'][:11].replace('-',''))==cdata: Ln.append(i)
-		#print Ln
-		for i in Ln:
-			n+=1
+		#for i in Ln:
+		#	n+=1
+		for n in range (1,len(Ln)):
+			i=Ln[n-1]
 			h=int(time.strftime('%H'))
 			m=int(time.strftime('%M'))
 			
 			if serv=='xmltv':name=i['name']
 			else:name=eval("u'"+i['name']+"'")
 			try:
-				h3 = int(i['start_at'][11:13])-stt
-				m3 = int(i['start_at'][14:16])
+				h3 = int(L[n-1]['start_at'][11:13])-stt
+				m3 = int(L[n-1]['start_at'][14:16])
 			except:
 				h3=h
 				m3=m
@@ -298,7 +298,8 @@ def get_cepg(id, serv):
 				m2=m
 			t1=h*60+m
 			t2=h2*60+m2
-			if h3>9:hh=str(h3)
+			if h3>23:hh=str(h3-24)
+			elif h3>9:hh=str(h3)
 			else:   hh="0"+str(h3)
 			if m3>9:mm=str(m3)
 			else:   mm="0"+str(m3)
@@ -310,10 +311,13 @@ def get_cepg(id, serv):
 				if n2==1:
 					t3=h3*60+m3
 					vv=t2-t3
+					if vv>600:vv=1440-vv
 					vp=t2-t1
+					if vp>600:vp=1440-vp
 					prc=20-(vp*20/vv)
 					
-					if h2>9:hh2=str(h2)
+					if h2>23:hh2=str(h2-24)
+					elif h2>9:hh2=str(h2)
 					else:   hh2="0"+str(h2)
 					if m2>9:mm2=str(m2)
 					else:   mm2="0"+str(m2)
@@ -360,8 +364,8 @@ def get_cgide(id, serv):
 			else: name=eval("u'"+i['name']+"'")
 			
 			try:
-				h3 = int(i['start_at'][11:13])-stt
-				m3 = int(i['start_at'][14:16])
+				h3 = int(L[n-1]['start_at'][11:13])-stt
+				m3 = int(L[n-1]['start_at'][14:16])
 			except:
 				h3=h
 				m3=m
@@ -373,7 +377,8 @@ def get_cgide(id, serv):
 				m2=m
 			t1=h*60+m
 			t2=h2*60+m2
-			if h3>9:hh=str(h3)
+			if h3>23:hh=str(h3-24)
+			elif h3>9:hh=str(h3)
 			else:   hh="0"+str(h3)
 			if m3>9:mm=str(m3)
 			else:   mm="0"+str(m3)
@@ -385,10 +390,13 @@ def get_cgide(id, serv):
 				#if n2==1:
 					t3=h3*60+m3
 					vv=t2-t3
+					if vv>600:vv=1440-vv
 					vp=t2-t1
+					if vp>600:vp=1440-vp
 					prc=20-(vp*20/vv)
 					
-					if h2>9:hh2=str(h2)
+					if h2>23:hh2=str(h2-24)
+					elif h2>9:hh2=str(h2)
 					else:   hh2="0"+str(h2)
 					if m2>9:mm2=str(m2)
 					else:   mm2="0"+str(m2)
@@ -537,21 +545,31 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 
 		fld=False
 		#listitem.setProperty('IsPlayable', 'true')
-		listitem.addContextMenuItems([
+		ContextGr=[('[B]Все каналы[/B]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=context_gr&name=Все каналы")'),]
+		for grn in list_gr():
+			ContextGr.append(('[B]'+grn+'[/B]','Container.Update("plugin://plugin.video.viks.tv/?mode=context_gr&name='+grn+'")'))
+		ContextGr.append(('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")'))
+
+		ContextCmd=[
+			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
 			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+name+'")'),
 			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),
 			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=set_num&name='+name+'")'),
-			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
-			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")'),
-			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
-			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")')], replaceItems=True)
-
+		('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")'),
+			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")')]#, replaceItems=True)
+			
+		#ContextGr.extend(Lcmd)
+		if __settings__.getSetting("grincm")=='true':listitem.addContextMenuItems(ContextGr, replaceItems=True)
+		else:										listitem.addContextMenuItems(ContextCmd, replaceItems=True)
 	else: 
 		#ind=1
 		fld=True
 		listitem.addContextMenuItems([
 			('[COLOR FF55FF55][B]+ Создать группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=addgr")'),
 			('[COLOR FFFF5555][B]- Удалить группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=remgr")'),
+			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")'),
 			('[COLOR FFFFFF55][B]Управление каналами[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=grman")'),])
 	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)#, ind)
 
@@ -718,7 +736,7 @@ def upd_EPG_itv():
 		j+=1
 		#print d[id]
 		add_to_db(id, repr(d[id]))
-		pDialog.update(j/3, message='itv ...')
+		pDialog.update(j/4, message='itv ...')
 
 
 Ldf=[('Основные',['РТР Планета','5 Канал','НТВ','Пятница!','Че ТВ','Звезда','СТС','ТВЦ','Рен ТВ','ТВ3','Россия 1','Пятый','Первый канал','Домашний','Культура','Россия 24','ТНТ']),
@@ -747,7 +765,18 @@ def select_gr():
 	if __settings__.getSetting("frsup")=='true': 
 		xbmc.sleep(500)
 		xbmc.executebuiltin("Container.Refresh")
-	
+
+def list_gr():
+	try:L=eval(__settings__.getSetting("Groups"))
+	except:
+		L=Ldf
+		__settings__.setSetting("Groups",repr(L))
+	Lg=[]
+	for i in L:
+		Lg.append(i[0])
+		
+	return Lg
+
 def get_gr():
 	try:SG=__settings__.getSetting("Sel_gr")
 	except:
@@ -861,6 +890,7 @@ def root():
 	L1.extend(L3)
 	L=L1
 	if SG=='Все каналы':
+		if __settings__.getSetting("abc")=='false':
 			for i in L:
 				name  = i['title']
 				url   = i['url']
@@ -871,6 +901,21 @@ def root():
 				if name not in Lnm:
 					add_item (name, 'play', url, name, cover)
 					Lnm.append(name)
+		else:
+			CL=[]
+			for i in L:
+				CL.append(i['title'])
+			CL.sort()
+			
+			for k in CL:
+				for i in L:
+					name  = i['title']
+					if k==name and name not in Lnm:
+						url   = i['url']
+						cover = i['img']
+						add_item (name, 'play', url, name, cover)
+						Lnm.append(name)
+
 	else:
 			for k in CL:
 				for i in L:
@@ -993,7 +1038,16 @@ def pars_xmltv(xml):
 		
 		try:Le=epg[id]
 		except: Le=[]
-		start_at=st[0:4]+"-"+st[4:6]+"-"+st[6:8]+" "+st[8:10]+":"+st[10:12]+":00"
+		
+		n=len(Le)
+		sc=int(st[8:10])-3
+		if sc<0 and n>8: sc+=24
+		elif sc<0 and n<8: ssc="00"
+		elif sc<10: ssc="0"+str(sc)
+		else:ssc=str(sc)
+
+		start_at=xt(st[0:4]+"-"+st[4:6]+"-"+st[6:8]+" "+ssc+":"+st[10:12]+":00")
+		#print start_at+" "+title
 		try:
 			Le.append({"name":title, "start_at":start_at})
 			epg[id]=Le
@@ -1066,10 +1120,17 @@ def intertv():
 				#	return ""
 				L2=[]
 			else:
-				stm = i[:5]
 				pr_nm = i[6:]
+				#stm = i[:5]
+				sc=int(i[:2])-3
+				if sc<0: sc+=24
+				if sc<10: ssc="0"+str(sc)
+				else:ssc=str(sc)
+				stm=ssc+i[2:5]
+				
 				start_at=fdata+" "+stm+":00"
-				L2.append({"name":pr_nm, "start_at": start_at})
+				#print start_at
+				if sc<24:L2.append({"name":pr_nm, "start_at": start_at})
 	#debug (repr(L3['x146']))
 	return L3
 
@@ -1115,10 +1176,16 @@ if mode==""         : #root
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
-			xbmc.executebuiltin("Container.Refresh")
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
 			pDialog.close()
 			xbmc.executebuiltin("Container.Refresh")
+
+if mode=="context_gr"  :
+		__settings__.setSetting("Sel_gr",name)
+		xbmc.sleep(300)
+		xbmc.executebuiltin("Container.Refresh")
+
 if mode=="updateepg"   :
 			cdata = int(time.strftime('%Y%m%d'))
 			try:udata = int(__settings__.getSetting('udata'))
@@ -1127,13 +1194,10 @@ if mode=="updateepg"   :
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
-			#xbmc.executebuiltin("Container.Refresh")
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
 			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
-			
 			pDialog.close()
-			#xbmc.executebuiltin("Container.Refresh")
-			#pDialog.close()
+
 if mode=="grman"   :
 	import GrBox
 	GrBox.run("GrBox")
