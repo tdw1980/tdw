@@ -21,6 +21,34 @@ def xt(x):return xbmc.translatePath(x)
 def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
+class xPlayer(xbmc.Player):
+
+	def __init__(self):
+		pass
+	
+	def onPlayBackPaused(self):
+		pass
+
+	def onPlayBackStarted(self):
+		pass
+		#xbmc.executebuiltin('XBMC.ActivateWindow(12005)')
+
+	def onPlayBackResumed(self):
+		pass
+
+	def onPlayBackEnded(self):
+		pass
+
+	def onPlayBackStopped(self):
+		pass
+
+	def onPlayBackSeek(self, time, ofs):
+		if ofs>0: #след. канал
+			#next ()
+			pass
+		elif ofs<0: # пред. канал
+			pass
+
 def getURL(url,Referer = 'http://viks.tv/'):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
@@ -57,10 +85,67 @@ def inputbox(t):
 	else:
 		return t
 
+def next ():
+	ccn=__settings__.getSetting("cplayed")
+	try:
+		SG=__settings__.getSetting("Sel_gr")
+	except:
+		SG=''
+	if SG=='':
+		SG='Все каналы'
+		__settings__.setSetting("Sel_gr",SG)
+	add_item ('[COLOR FF55FF55]Группа: '+SG+'[/COLOR]', 'select_gr')
+	
+	CL=get_gr()
+	Lnm=[]
+	Lnu=[]
+	
+	if __settings__.getSetting("serv1")=='true' :
+		try:L1=eval(__settings__.getSetting("Channels"))
+		except:L1=[]
+		if L1==[]: L1=upd_canals_db()
+	else: L1=[]
+	
+	
+	if __settings__.getSetting("serv2")=='true':
+		try:L2=eval(__settings__.getSetting("Channels2"))
+		except:L2=[]
+		if L2==[]: L2=upd_canals_db2()
+	else: L2=[]
+	
+	
+	if __settings__.getSetting("serv3")=='true':
+		try:L3=eval(__settings__.getSetting("Channels3"))
+		except:L3=[]
+		if L3==[]: L3=upd_canals_db3()
+	else: L3=[]
+	
+	L1.extend(L2)
+	L1.extend(L3)
+	L=L1
+
+	for k in CL:
+			for i in L:
+					name  = i['title']
+					if k==name and name not in Lnm:
+						url   = i['url']
+						cover = i['img']
+						#add_item (name, 'play', url, name, cover)
+						Lnm.append(name)
+						Lnu.append([url,name,cover])
+	n=0
+	for p in Lnm:
+		n+=1
+		if p==ccn: 
+			print Lnu[n][1]
+			print Lnu[n][0]
+			play(Lnu[n][0],Lnu[n][1],Lnu[n][2])
+
 
 
 def play(url, name ,cover):
-		xbmc.Player().stop()
+		Player=xbmc.Player()#xPlayer()
+		Player.stop()
 		pDialog = xbmcgui.DialogProgressBG()
 		pDialog.create('Viks.tv', 'Поиск потоков ...')
 		#Lpurl=get_stream(url)
@@ -82,7 +167,10 @@ def play(url, name ,cover):
 			item = xbmcgui.ListItem(name+" [ "+str(k)+"/"+str(len(Lpurl))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 			playlist.add(url=purl, listitem=item)
 		pDialog.close()
-		xbmc.Player().play(playlist)#, item
+		
+		__settings__.setSetting("cplayed",name)
+		Player.play(playlist)
+		#xbmc.Player().play(playlist)#, item
 		xbmc.sleep(15000)
 		
 		#print "======================== isPlaying ======================"
@@ -254,7 +342,7 @@ def get_cepg_old(id, serv):
 		return ''
 
 def get_cepg(id, serv):
-	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
+	#url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
 	if serv=='tivix': id='t'+id
 	#elif serv=='xmltv': id='x'+id
 	try:
@@ -267,8 +355,10 @@ def get_cepg(id, serv):
 		n=0
 		n2=0
 		stt=int(__settings__.getSetting('shift'))-6
+		h=int(time.strftime('%H'))
+		m=int(time.strftime('%M'))
 		
-		udata = int(L[10]['start_at'][:11].replace('-',''))
+		#udata = int(L[10]['start_at'][:11].replace('-',''))
 		cdata = int(time.strftime('%Y%m%d'))
 		#if cdata!=udata: L=[]
 		Ln=[]
@@ -279,11 +369,11 @@ def get_cepg(id, serv):
 		#	n+=1
 		for n in range (1,len(Ln)):
 			i=Ln[n-1]
-			h=int(time.strftime('%H'))
-			m=int(time.strftime('%M'))
 			
-			if serv=='xmltv':name=i['name']
-			else:name=eval("u'"+i['name']+"'")
+			#if serv=='xmltv':name=i['name']
+			#else:name=eval("u'"+i['name']+"'")
+			name=i['name']
+			if '\\u0' in name: name=eval("u'"+i['name']+"'")
 			try:
 				h3 = int(L[n-1]['start_at'][11:13])-stt
 				m3 = int(L[n-1]['start_at'][14:16])
@@ -331,6 +421,7 @@ def get_cepg(id, serv):
 					itm+='[COLOR FFFFFFFF][B]'+name+'[/B][/COLOR]'+'\n'
 				else:
 					itm+= '[COLOR FF888888]'+stm+' '+name+"[/COLOR]"'\n'
+					if n2>3: return itm
 			
 		return itm
 	except:
@@ -338,6 +429,7 @@ def get_cepg(id, serv):
 
 def get_cgide(id, serv):
 	if serv=='tivix': id='t'+id
+	
 	try:
 		E=get_inf_db(id)
 		L=eval(E)
@@ -345,8 +437,12 @@ def get_cgide(id, serv):
 		n=0
 		n2=0
 		stt=int(__settings__.getSetting('shift'))-6
+		h=int(time.strftime('%H'))
+		m=int(time.strftime('%M'))
 		
-		udata = int(L[0]['start_at'][:11].replace('-',''))
+		
+		
+		#udata = int(L[0]['start_at'][:11].replace('-',''))
 		cdata = int(time.strftime('%Y%m%d'))
 		#if cdata!=udata: L=[]
 		Ln=[]
@@ -357,12 +453,11 @@ def get_cgide(id, serv):
 		#print Ln
 		for i in Ln:
 			n+=1
-			h=int(time.strftime('%H'))
-			m=int(time.strftime('%M'))
 			
-			if serv=='xmltv':name=i['name']
-			else: name=eval("u'"+i['name']+"'")
-			
+			#if serv=='xmltv':
+			name=i['name']
+			#else: name=eval("u'"+i['name']+"'")
+			if '\\u0' in name: name=eval("u'"+name+"'")
 			try:
 				h3 = int(L[n-1]['start_at'][11:13])-stt
 				m3 = int(L[n-1]['start_at'][14:16])
@@ -462,11 +557,11 @@ def tvgide():
 				url   = i['url']
 				cover = i['img']
 				id = get_id(url)
-				if 'viks.tv' in url: serv = 'viks'
-				elif 'tivix' in url: serv = 'tivix'
-				else:
-						serv = 'xmltv'
-						id = get_idx(namec)
+				#if 'viks.tv' in url: serv = 'viks'
+				#elif 'tivix' in url: serv = 'tivix'
+				#else:
+				serv = 'xmltv'
+				id = get_idx(namec)
 				name=get_cgide(id, serv)
 				#if SG=='Все каналы' or name in CL:
 				if name!="" and name!=None and namec not in Lnm: 
@@ -481,11 +576,11 @@ def tvgide():
 						url   = i['url']
 						cover = i['img']
 						id = get_id(url)
-						if 'viks.tv' in url: serv = 'viks'
-						elif 'tivix' in url: serv = 'tivix'
-						else:
-											serv = 'xmltv'
-											id = get_idx(namec)
+						#if 'viks.tv' in url: serv = 'viks'
+						#elif 'tivix' in url: serv = 'tivix'
+						#else:
+						serv = 'xmltv'
+						id = get_idx(namec)
 						name=get_cgide(id, serv)
 						if name!="" and name!=None and namec not in Lnm: 
 							add_item (name, 'play', url, namec, cover)
@@ -494,19 +589,21 @@ def tvgide():
 	xbmcplugin.endOfDirectory(handle)
 
 
-def get_epg(id, serv):
+def get_epg(id, serv, name=''):
 	import time
 	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
 	udd = int(time.strftime('%Y%m%d'))
 	#if 1==1:
 	if serv=='tivix': id='t'+id
 	try:
-			E=getURL(url)
-			add_to_db(id, E)
-			print 'обновлена устаревшая программа: '+id
+			E=getURL(url)#.replace('name":"',"u'").replace('", "start_at',"'")
+			#add_to_db(id, E)eval("u'"+i['name']+"'")
+			idx=get_idx(name)
+			add_to_db(idx, E)
+			#print 'обновлена устаревшая программа: '+id
 	except:
 			E='[{"name":"", "start_at": "'+time.strftime('%Y-%m-%d')+' --:--:--"}]'
-			add_to_db(id, E)
+			#add_to_db(id, E)
 			print 'неудалось загрузить программу: '+id
 
 
@@ -529,13 +626,13 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	if mode=="play":
 		id = get_id(path)
 		if __settings__.getSetting("epgon")=='true':
-			if __settings__.getSetting("epgtvx")=='true':
-				if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
-				else:                dict={"plot":get_cepg(id,'tivix')}
-			else:
-				dict={"plot":''}
+			#if __settings__.getSetting("epgtvx")=='true':
+			#	if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
+			#	else:                dict={"plot":get_cepg(id,'tivix')}
+			#else:
+			#	dict={"plot":''}
 				
-			if dict['plot']=='':
+			#if dict['plot']=='':
 				id = get_idx(ind)
 				#if id=='0': print ind
 				dict={"plot":get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")}
@@ -695,21 +792,22 @@ def upd_canals_db3():
 	return LL
 
 def upd_EPG():
-	if __settings__.getSetting("serv1")=='true' :
-		try:L1=eval(__settings__.getSetting("Channels"))
-		except:L1=[]
-		if L1==[]: L1=upd_canals_db()
-	else: L1=[]
+	#if __settings__.getSetting("serv1")=='true' :
+	try:L1=eval(__settings__.getSetting("Channels"))
+	except:L1=[]
+	#	if L1==[]: L1=upd_canals_db()
+	#else: L1=[]
 	
-	if __settings__.getSetting("serv2")=='true':
-		try:L2=eval(__settings__.getSetting("Channels2"))
-		except:L2=[]
-		if L2==[]: L2=upd_canals_db2()
-	else: L2=[]
+	#if __settings__.getSetting("serv2")=='true':
+	try:L2=eval(__settings__.getSetting("Channels2"))
+	except:L2=[]
+	#	if L2==[]: L2=upd_canals_db2()
+	#else: L2=[]
 
 	L1.extend(L2)
 	L=L1
 	j=0
+	t=len(L)
 	for i in L:
 				j+=1
 				name  = i['title']
@@ -717,17 +815,17 @@ def upd_EPG():
 				id = get_id(url)
 				if 'viks.tv' in url: serv = 'viks'
 				else:                serv = 'tivix'
-				get_epg(id, serv)
-				pDialog.update(j/4, message=name+' ...')
+				get_epg(id, serv, name)
+				pDialog.update(int(j*100/t), message=name+' ...')
 
 def upd_EPG_xmltv():
 	d=pars_xmltv(dload_epg_xml())
-	j=200
+	j=0
 	for id in d.keys():
 		j+=1
 		#print d[id]
 		add_to_db("x"+id, repr(d[id]))
-		pDialog.update(j/4, message='xmltv ...')
+		pDialog.update(j/3, message='xmltv ...')
 
 def upd_EPG_itv():
 	d=intertv()
@@ -951,7 +1049,7 @@ def get_idx(name):
 	try:
 		id="x"+xmlid[name]
 		#print id
-	except: id='0'
+	except: id=''
 	return id
 
 import sqlite3 as db
@@ -1175,9 +1273,9 @@ if mode==""         : #root
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
-			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
 			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			pDialog.close()
 			xbmc.executebuiltin("Container.Refresh")
 
@@ -1193,9 +1291,9 @@ if mode=="updateepg"   :
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
-			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
 			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			pDialog.close()
 
 if mode=="grman"   :
@@ -1225,3 +1323,5 @@ if mode=="rename"   : updatetc.rename_list(int(ind))
 
 
 c.close()
+
+
