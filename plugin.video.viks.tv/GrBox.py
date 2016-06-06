@@ -291,21 +291,16 @@ def List_cn():
 	if __settings__.getSetting("serv1")=='true' :
 		try:L1=eval(__settings__.getSetting("Channels"))
 		except:L1=[]
-		if L1==[]: L1=upd_canals_db()
 	else: L1=[]
-	
 	
 	if __settings__.getSetting("serv2")=='true':
 		try:L2=eval(__settings__.getSetting("Channels2"))
 		except:L2=[]
-		if L2==[]: L2=upd_canals_db2()
 	else: L2=[]
-	
 	
 	if __settings__.getSetting("serv3")=='true':
 		try:L3=eval(__settings__.getSetting("Channels3"))
 		except:L3=[]
-		if L3==[]: L3=upd_canals_db3()
 	else: L3=[]
 	Lc=[]
 	Lnm=[]

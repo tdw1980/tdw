@@ -6,14 +6,12 @@
     <setting id="grinnm" type="bool" label="Показывать группы в общем списке" default="false"/>
     <setting id="grincm" type="bool" label="Список групп в контекстном меню" default="false"/>
     <setting id="abc" type="bool" label="Общий список по алфавиту" default="false"/>
-    <setting id="frsup" type="bool" label="Принудительно обновлять список" default="true"/>
   </category>
   <category label="Программа">
     <setting id="epgon" type="bool" label="Показывать программу" default="true"/>
     <setting id="epgtvx" type="bool" label="Обновлять с Tivix.net" default="true"/>
-    <setting id="epgxml" type="bool" label="Обновлять с Programtv.ru" default="true"/>
-    <setting id="epgitv" type="bool" label="Обновлять с Teleguide.info" default="false"/>
-    <setting id="shift" type="enum" label="Смещение программы:" default="3" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
+    <setting id="stv" type="bool" label="Обновлять с S-TV.ru" default="true"/>
+    <setting id="shift" type="enum" label="Смещение программы:" default="6" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
   </category>
   <category label="Серверы">
     <setting id="serv1" type="bool" label="Viks.tv" default="true"/>
@@ -27,5 +25,8 @@
     <setting id="p2p_port" type="text" label="P2P порт" default="6878"/>
     <setting id="ACEstr" type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
   </category>
-  <setting id="udata" default="0"/>
+  <setting id="udata" default="0"/>'
+  <setting id="epgxml" type="bool" label="Обновлять с Programtv.ru" default="false"/>
+  <setting id="epgitv" type="bool" label="Обновлять с Teleguide.info" default="false"/>
+  <setting id="frsup" type="bool" label="Принудительно обновлять список" default="true"/>
 </settings>

@@ -42,12 +42,22 @@ class xPlayer(xbmc.Player):
 	def onPlayBackStopped(self):
 		pass
 
-	def onPlayBackSeek(self, time, ofs):
-		if ofs>0: #след. канал
-			#next ()
-			pass
-		elif ofs<0: # пред. канал
-			pass
+	def onPlayBackSeek(self, ctime, ofs):
+		print ofs
+		ct=int(time.strftime('%Y%m%d%H%M%S'))
+		pt=int(__settings__.getSetting("play_tm"))
+		tt=ct-pt
+		print tt
+		if tt>8:
+			print ">8"
+			if ofs>0: #след. канал
+				print '>>>>>>>>>>>>>>>>>>>>>>'
+				next ('>')
+			elif ofs<0: # пред. канал
+				next ('<')
+				print '<<<<<<<<<<<<<<<<<<<<<<'
+		else:
+			print "<8"
 
 def getURL(url,Referer = 'http://viks.tv/'):
 	req = urllib2.Request(url)
@@ -85,8 +95,9 @@ def inputbox(t):
 	else:
 		return t
 
-def next ():
+def next (dr='>'):
 	ccn=__settings__.getSetting("cplayed")
+	print ccn
 	try:
 		SG=__settings__.getSetting("Sel_gr")
 	except:
@@ -94,7 +105,6 @@ def next ():
 	if SG=='':
 		SG='Все каналы'
 		__settings__.setSetting("Sel_gr",SG)
-	add_item ('[COLOR FF55FF55]Группа: '+SG+'[/COLOR]', 'select_gr')
 	
 	CL=get_gr()
 	Lnm=[]
@@ -103,27 +113,22 @@ def next ():
 	if __settings__.getSetting("serv1")=='true' :
 		try:L1=eval(__settings__.getSetting("Channels"))
 		except:L1=[]
-		if L1==[]: L1=upd_canals_db()
 	else: L1=[]
-	
 	
 	if __settings__.getSetting("serv2")=='true':
 		try:L2=eval(__settings__.getSetting("Channels2"))
 		except:L2=[]
-		if L2==[]: L2=upd_canals_db2()
 	else: L2=[]
-	
 	
 	if __settings__.getSetting("serv3")=='true':
 		try:L3=eval(__settings__.getSetting("Channels3"))
 		except:L3=[]
-		if L3==[]: L3=upd_canals_db3()
 	else: L3=[]
 	
 	L1.extend(L2)
 	L1.extend(L3)
 	L=L1
-
+	print CL
 	for k in CL:
 			for i in L:
 					name  = i['title']
@@ -133,22 +138,26 @@ def next ():
 						#add_item (name, 'play', url, name, cover)
 						Lnm.append(name)
 						Lnu.append([url,name,cover])
-	n=0
+	if dr=='>':n=0
+	else: n=-2
 	for p in Lnm:
 		n+=1
+		if n>=len(Lnm):n=0
 		if p==ccn: 
 			print Lnu[n][1]
 			print Lnu[n][0]
-			play(Lnu[n][0],Lnu[n][1],Lnu[n][2])
+			play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
 
 
 
-def play(url, name ,cover):
-		Player=xbmc.Player()#xPlayer()
-		Player.stop()
+def play(url, name ,cover, ref=True):
+		__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
+		Player=xPlayer()#xbmc.Player()
+		if ref==True:Player.stop()
 		pDialog = xbmcgui.DialogProgressBG()
 		pDialog.create('Viks.tv', 'Поиск потоков ...')
 		#Lpurl=get_stream(url)
+		print url
 		try: Lpurl=get_stream(url)
 		except:
 			Lpurl=[]
@@ -178,9 +187,9 @@ def play(url, name ,cover):
 		while  xbmc.Player().isPlaying():#not
 			xbmc.sleep(1000)
 			#print "========================  playing ======================"
-		xbmc.sleep(1000)
-		print "========================  Refresh ======================"
-		xbmc.executebuiltin("Container.Refresh")
+		xbmc.sleep(500)
+		#print "========================  Refresh ======================"
+		if ref==True:xbmc.executebuiltin("Container.Refresh")
 
 def get_ttv(url):
 		#print url
@@ -275,71 +284,6 @@ def get_stream(url):
 			if i not in Lp and 'peers' not in i: Lp.append(purl)
 		return Lp
 
-
-
-def get_cepg_old(id, serv):
-	import time
-	url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
-	udd = int(time.strftime('%Y%m%d'))
-	#if 1==1:
-	if serv=='tivix': id='t'+id
-	try:
-		E=__settings__.getSetting(id)
-		EPG=eval(E)
-		udata = int(EPG[0]['start_at'][:11].replace('-',''))
-		cdata = int(time.strftime('%Y%m%d'))
-		#print str(udata)+" - "+str(cdata)
-		if cdata>udata:
-			E=getURL(url)
-			__settings__.setSetting(id,E)
-			print 'обновлена устаревшая программа: '+id
-	except:
-		try:
-			E=getURL(url)
-			__settings__.setSetting(id,E)
-			print 'обновлена отсутствующая программа: '+id
-		except:
-			E='[{"name":"", "start_at": "'+time.strftime('%Y-%m-%d')+' --:--:--"}]'
-			__settings__.setSetting(id,E)
-			print 'неудалось загрузить программу: '+id
-
-	try:
-		#E=getURL(url)
-		L=eval(E)
-		#L=EPG[id]
-		itm=''
-		n=0
-		stt=int(__settings__.getSetting('shift'))-6
-		#print stt
-		for i in L:
-			n+=1
-			h=int(time.strftime('%H'))
-			m=int(time.strftime('%M'))
-			name=eval("u'"+i['name']+"'")
-			try:
-				h3 = int(i['start_at'][11:13])-stt
-				m3 = int(i['start_at'][14:15])
-			except:
-				h3=h
-				m3=m
-			try:
-				h2 = int(L[n]['start_at'][11:13])-stt
-				m2 = int(L[n]['start_at'][14:15])
-			except:
-				h2=h
-				m2=m
-			t1=h*60+m
-			t2=h2*60+m2
-			if h3>9:hh=str(h3)
-			else:   hh="0"+str(h3)
-			if m3>9:mm=str(m3)
-			else:   mm="0"+str(m3)
-
-			stm =hh+":"+mm
-			if t2>=t1: itm+= stm+' '+name+'\n'
-		return itm
-	except:
-		return ''
 
 def get_cepg(id, serv):
 	#url='http://schedule.tivix.net/channels/'+serv+'/program/'+id+'/today/'
@@ -553,20 +497,18 @@ def tvgide():
 	L=L1
 	if SG=='Все каналы':
 			for i in L:
+				id = ""
 				namec  = i['title']
 				url   = i['url']
 				cover = i['img']
-				id = get_id(url)
-				#if 'viks.tv' in url: serv = 'viks'
-				#elif 'tivix' in url: serv = 'tivix'
-				#else:
 				serv = 'xmltv'
 				id = get_idx(namec)
 				name=get_cgide(id, serv)
+				
 				#if SG=='Все каналы' or name in CL:
-				if name!="" and name!=None and namec not in Lnm: 
-					add_item (name, 'play', url, namec, cover)
-					Lnm.append(namec)
+				if name!="" and name!=None and namec not in Lnm:
+						add_item (name, 'play', url, namec, cover)
+						Lnm.append(namec)
 
 	else:
 			for k in CL:
@@ -596,17 +538,29 @@ def get_epg(id, serv, name=''):
 	#if 1==1:
 	if serv=='tivix': id='t'+id
 	try:
-			E=getURL(url)#.replace('name":"',"u'").replace('", "start_at',"'")
-			#add_to_db(id, E)eval("u'"+i['name']+"'")
+			E=getURL(url)
+			L=eval(E)
+			L2=[]
+			for i in L:
+					desc=i['name']
+					h2 = int(i['start_at'][11:13])+3
+					if h2>23:hh2=str(h2-24)
+					elif h2>9:hh2=str(h2)
+					else:   hh2="0"+str(h2)
+					start_at=i['start_at'][:11]+hh2+i['start_at'][13:]
+					#print start_at
+					j={'name':desc,'start_at':start_at}
+					L2.append(j)
+			E2=repr(L2)
+
 			idx=get_idx(name)
-			add_to_db(idx, E)
+			if idx!="": add_to_db(idx, E2)
+			
 			#print 'обновлена устаревшая программа: '+id
 	except:
-			E='[{"name":"", "start_at": "'+time.strftime('%Y-%m-%d')+' --:--:--"}]'
-			#add_to_db(id, E)
 			print 'неудалось загрузить программу: '+id
 
-
+#import YaTv
 def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	#print name
 	#print path
@@ -617,14 +571,14 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	listitem = xbmcgui.ListItem("[B]"+name+"[/B]", iconImage=cover)
 	listitem.setProperty('fanart_image', funart)
 	uri = sys.argv[0] + '?mode='+mode
-	uri += '&url='  + urllib.quote_plus(path.encode('utf-8'))
+	uri += '&url='  + urllib.quote_plus(path)#.encode('utf-8')
 	uri += '&name='  + urllib.quote_plus(xt(ind))
 	uri += '&ind='  + urllib.quote_plus(str(ind))
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
 	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
 	
 	if mode=="play":
-		id = get_id(path)
+		#id = get_id(path)
 		if __settings__.getSetting("epgon")=='true':
 			#if __settings__.getSetting("epgtvx")=='true':
 			#	if 'viks.tv' in path:dict={"plot":get_cepg(id,'viks')}
@@ -634,8 +588,11 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 				
 			#if dict['plot']=='':
 				id = get_idx(ind)
-				#if id=='0': print ind
+				#if id=='': print ind
 				dict={"plot":get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")}
+				
+				#dict=YaTv.GetPr('308')
+				#print dict
 		else: dict={}
 		try:listitem.setInfo(type = "Video", infoLabels = dict)
 		except: pass
@@ -713,9 +670,10 @@ def upd_canals_db():
 		
 		CL=get_gr()
 		for i in L:
+			
 			ss='http://viks.tv/'
-			es='"> <img'
-			url=mfindal(i,ss,es)[0]
+			es='.html'
+			url=mfindal(i,ss,es)[0]+es
 		
 			ss='<img src="'
 			es='"><span>'
@@ -860,9 +818,9 @@ def select_gr():
 	if r>=0:
 		SG=Lg[r]
 		__settings__.setSetting("Sel_gr",SG)
-	if __settings__.getSetting("frsup")=='true': 
-		xbmc.sleep(500)
-		xbmc.executebuiltin("Container.Refresh")
+	
+	xbmc.sleep(300)
+	xbmc.executebuiltin("Container.Refresh")
 
 def list_gr():
 	try:L=eval(__settings__.getSetting("Groups"))
@@ -1149,10 +1107,9 @@ def pars_xmltv(xml):
 		try:
 			Le.append({"name":title, "start_at":start_at})
 			epg[id]=Le
-		except: print id+"  :  "+start_at+"  :  "+title
-		#print id+"  :  "+start_at+"  :  "+title
-		#
-		#[{"name":"", "start_at": "2016-05-26 --:--:--"}]
+		except: 
+			pass
+			#print id+"  :  "+start_at+"  :  "+title
 	return epg
 
 def dload_epg_inter():
@@ -1198,7 +1155,7 @@ def intertv():
 				n+=1
 				try:
 					try:
-						if idx!='0':
+						if idx!='':
 							Lpr=L3[idx]
 							Lpr.extend(L2)
 					except:
@@ -1231,6 +1188,71 @@ def intertv():
 				if sc<24:L2.append({"name":pr_nm, "start_at": start_at})
 	#debug (repr(L3['x146']))
 	return L3
+
+def upd_stv():
+	opener = urllib2.build_opener()
+	opener.addheaders.append(('Cookie', 'favorites=1TV%3BRTR%3BNTV%3BMIR%3BTVC%3BKUL%3BMatchTV%3BTNT%3BDOMASHNIY%3BRenTV%3BSTS%3BPiter5_RUS%3BZVEZDA%3BChe%3BKarusel%3B2X2%3BDisney%3BU%3BTV3%3BOTR%3BFriday%3BVesti%3BTNT_4%3BEhoFilm%3B360d%3B360dHD%3BVKT%3BMOSCOW-24%3BDOVERIE%3BPingLolo%3BFAMILY%3Bntv%2B41%3BAMEDIA%3BAmediaHit%3BAmedia1%3BBollywood%3BDrama%3BFOX%20CRIME%3BFOX%20LIFE%3BHDKino%3BPARAMAUNT%3BParamounHD%3BParaComedy%3BSET_RUSSIA%3BAXNSciFi%3BSonyTurbo%3BTV1000%3BTV1000_Act%3BTV1000_RK%3BTV21%3BZee-TV%3BDomKino%3BDomKinoP%3BEuroKINO%3BILLUSION%2B%3BIndia%3Bntv%2B34%3BKinoTV%3Bntv%2B4%3BKinipokaz%3BKinop_HD-1%3BKinop_HD-2%3BKinoPrHD%3Bntv%2B40%3BKomedia1%3BKomedia%3BMir_serial%3BmnogoTV%3BMenKino%3BNSTV%3Bntv%2B3%3Bntv%2B7%3BNacheHD%3BOstroHD%3Bntv%2B10%3BRTVi-LK%3BRTVi-NK%3BRus-Bestst%3BRuDetektiv%3BRU_ILLusio%3BRusRoman%3BSemeynoeHD%3BStrahnoeHD%3BSTSLove%3Bntv%2B39%3BFeniks%3BMatchTV%3BABMotors%3Bntv%2B13%3BEuro-2%3BEurospNews%3Bntv%2B23%3BVia_Sport%3BBoxingTV%3Bntv%2B9%3BKHL_HD%3BMatcharena%3Bboets%3BMatchigra%3BMatchsport%3Bntv%2B11%3Bntv%2B44%3BSporthit%3BNautical%3Bntv%2B1%3BRU_Extrem%3BFootBallTV%3BArirang%3Bntv%2B25%3BBBC_Entert%3BBBC-World%3Bntv%2B33%3BCCTVNews%3BCNBC%3Bntv%2B30%3BCNN_ENG%3BDW%3BDW_DEU%3Bntv%2B19%3BFrance24%3BFrance_FR%3BJSTV%3BNewsOne%3BNHK_World%3BRus_Today%3BRT_Doc%3BRTEspanol%3BRTDrus%3BRAIN%3BKommers_TV%3BLDPR%3BMir24%3BRBK%3B4P.INFO%3B24_DOC%3B365_day%3Bntv%2B17%3BDa%20Vinci%3Bntv%2B16%3Bntv%2B28%3BDiscov_VE%3BGalaxy_TV%3BHistor%20%3BHistoryENG%3Bntv%2B18%3BOCEAN-TV%3BENCYCLO%3BExplorer%3BHistory%3BNature_CEE%3BZooTV%3BZoopark%3BViM%3BVopr-Otvet%3BEGE%3BGivPlaneta%3BJivPriroda%3BIstoria%3BWho_is_who%3BMy_Planet%3BNANO_TV%3BNauka_2.0%3B1Obrazovat%3BProsvejeni%3BTop_secret%3BSTRANA%3BTNV_PL%3B1HD%3BA-OnHipHop%3BBizTV%3BBridge-TV%3BC_Music_TV%3BDangeTV%3BEuropaPlus%3BHardLifeTV%3BiConcerts%3BJuCeTV%3BMCMPOP%3BMCMTOP%3Bntv%2B26%3BMTV_Dance%3BMTVDI%3BMTV_Europ%3BMTV_Hits%3BMTVHI%3BMTV_Music%3BMTV_ROCKS%3BMTVRI%3BMTVRus%3BMTV_AM%3BMusicBox-R%3BMusicBox-T%3BRAP%3BRU-TV%3BRusong_TV%3BTOPSONG_T%3BTRACE_URBA%3BTVMChannel%3BVH1_Class%3BVH1_EURO%3BW_Music_Ch%3BLa-minor%3BMUZ_TVnew%3BMuZ-One%3BO2TV%3BA-ONE%3BSHANSON%3BAmazing%3BAngelTV%3BReality%3BCCTV%3BDTXEMEA%3BEnglishClu%3BFash_One%3BFashion_TV%3BFLN%3BFoodNet%3BFuel_TV_HD%3BGame_Show%3BGlobalStar%3BInsiUlHD%3BLuxe_TV%3BMAN_TV%3BMotors_TV%3BMuseum_HD%3BmyZen.tv%3Bntv%2B20%3BOutdoor%3Bprodengi%3BRTGInt%3BRTG_TV%3BStyle%26moda%3BTTS%3BShoppingLi%3BBulvar%3BStyle_TV%3BTDK%3BTLC%3BTop%20Shop%20T%3BTrChenel%3BTravel%2BAdv%3BTVclub%3BTV_Mail%3BTV_SALE%3Bntv%2B32%3BVintage_%3BWBC%3BW_Fashion%3Bautoplus%3BAGRO-TV%3BBalansTV%3BBober%3BVremya%3BD_Jivotnie%3BDrive_MTU%3BEDA%3BJiVi%3BZagorod_zh%3Bzagorodny%3BZdorov_MTU%3BKuhna%3BMirUvlech%3BMuzhskoj%3BNedvigim%3BNostalgi%3BWeapons%3BHa%26Fi_MTU%3BOhot%26Ribal%3BPark_Razvl%3B1InternetK%3BPsihology%3BRaz-TV%3BRetro_MTU%3Bsarafan-tv%3BSojuz%3BSPAS%3BTeatr%3BTeledom%3BTelekafe%3BTeletravel%3BTehno24%3BTONUS-TV%3B3Angela%3BTurInfo%3BUsadba_MTU%3BUspeh%3BEgoist-TV%3BHUMOUR-TV%3BAni%3BBaby_TV%3BBoomerang%3Bntv%2B29%3BGingerHD%3BGulli%3BJIMJAM%3BNick_Jr%3Bntv%2B15%3BNickelodHD%3BTiJi%3BDetskiy%3Bntv%2B8%3BMother%26Chi%3BMult%3BMultimania%3BRadost_moj%3BUlibkaRebe%3BAmediaPRHD%3BAnFamilHD%3BAnimalPlHD%3BArteHD%3BEurekaHD%3BEuroSporHD%3BFashiOneHD%3BFashion_HD%3BFOXLIFE_HD%3BHD-Life%3BHD_Media%3BHD_Media3D%3BLuxe_TV_HD%3BMezzoLive%3BMGM_HD%3BMTV_LiveHD%3BNatGeoW_HD%3BNat_Geo_HD%3BOutdoor%20HD%3BRTDrushd%3BSET_HD%3BTeleTravHD%3BTrace_SpHD%3BTr_Chan_HD%3BTravAdHD%3BTV1000Come%3BTV1000Mega%3BTV1000Prem%3BRAIN_HD%3BEDA_HD%3BMatchareHD%3BMirHD%3BOhotRybHD%3B1TVHD%3BIQHD%3BRTRHD%3BBlueHust%3BBrazzEuro%3BCandy3D%3BCandy%3BDaring!TV%3BFrench_Lov%3BHustle3DHD%3BHustler%3BPlayboy_TV%3BXXL%3BIskushenie%3BNightClub%3BRusnight%3B8_KANAL%3BHistor2%3BBelarus-TV%3BDomMagazin%3BInva_Media%3BKaleidosco%3BKVNTV%3BMatchKmir%3BKrasLin%3BLiderTV%3BNadegda%3BNasheTV%3B1_Meteo%3BProdvigeni%3BRGD%3BRigiy%3BTBN%3BTvoy%3BTNV%3BToshkaTV%3BTRO%3BUvelir'))
+	urllib2.install_opener(opener)
+	url = 'http://new.s-tv.ru/tv/'
+	http = getURL(url)
+	#debug (http)
+	ss='<td class="channel">'
+	es='<table class="item_table">'
+	L=mfindal(http,ss,es)
+	epg={}
+	#debug (repr(L))
+	n=0
+	t=len(L)
+	for i in L:
+		n+=1
+		#try:
+		if i!="":
+			#debug (i)
+			ss='width="45px" title="'
+			es='" />'
+			cnl_nm=mfindal(i,ss,es)[0][len(ss):]
+			idx=get_idx(cnl_nm)
+			if idx!="":
+				ss='<div class="prg_item">'
+				es='</div>'
+				L2=mfindal(i,ss,es)
+				Le=[]
+				
+				for j in L2:
+					
+					j=j.replace('</span></span>','').replace('<span class="prg_item_cc">&lowast;</span>','')
+					#debug (j)
+					ss='href="#'
+					es='</a>'
+					if ss not in j: 
+						ss='prg_item_no'
+						es='</span>'
+					tmp=j[j.find(ss):]
+					title=mfindal(tmp,ss,es)[0][len(ss):]
+					title=title[title.find('>')+1:]
+			
+					ss='class="prg_item_time">'
+					es='</span>'
+					st=mfindal(j,ss,es)[0][len(ss):]
+			
+					start_at=time.strftime('%Y-%m-%d')+" "+st+":00"
+					#print start_at+" "+title
+		
+					Le.append({"name":title, "start_at":start_at})
+				#epg[idx]=Le
+				pDialog.update(int(n*100/t), message=cnl_nm)
+				add_to_db(idx, repr(Le))
+			#else:
+			#	print cnl_nm
+				#debug (repr(Le))
+		#except: print i
+			
+			#[{"name":"", "start_at": "2016-05-26 --:--:--"}]
+	
+	#return epg
+
+
+#upd_yatv()
 
 def get_params():
 	param=[]
@@ -1273,8 +1295,9 @@ if mode==""         : #root
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
-			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
-			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			#if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			#if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			if __settings__.getSetting('stv')=='true': upd_stv()
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
 			pDialog.close()
 			xbmc.executebuiltin("Container.Refresh")
@@ -1291,9 +1314,11 @@ if mode=="updateepg"   :
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
-			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
-			if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			#if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
+			#if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
+			if __settings__.getSetting('stv')=='true': upd_stv()
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
+			
 			pDialog.close()
 
 if mode=="grman"   :
@@ -1318,9 +1343,6 @@ if mode=="update"   :
 if mode=="select_gr": select_gr()
 if mode=="play"     : play(url, name, cover)
 if mode=="rename"   : updatetc.rename_list(int(ind))
-#xbmc.executebuiltin("Container.Refresh")
-
-
 
 c.close()
 
