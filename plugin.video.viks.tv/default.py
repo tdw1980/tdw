@@ -58,7 +58,7 @@ class xPlayer(xbmc.Player):
 		self.ov_show()
 		cnn=__settings__.getSetting("cplayed")
 		cgide=get_cgide(get_idx(cnn), 'serv')#.replace('[B]','').replace('[/B]','')
-		self.ov_update("[B]I I\n[COLOR FFFFFF00]"+cnn+"[/COLOR][/B]\n"+cgide)
+		self.ov_update("[B]I I\n[COLOR FFFFFF00]"+cnn+"[/COLOR][/B]\n"+xt(cgide))
 
 	def onPlayBackStarted(self):
 		pass
@@ -226,7 +226,7 @@ def next (dr='>'):
 		if p==ccn: 
 			#print Lnu[n][0]
 			cgide=get_cgide(get_idx(Lnu[n][1]), 'serv')#.replace('[B]','').replace('[/B]','')
-			Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+Lnu[n][1]+"[/COLOR][/B]\n"+cgide)
+			Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+Lnu[n][1]+"[/COLOR][/B]\n"+xt(cgide))
 			play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
 
 
