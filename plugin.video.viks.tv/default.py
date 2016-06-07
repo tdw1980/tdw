@@ -21,26 +21,58 @@ def xt(x):return xbmc.translatePath(x)
 def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
+def fs_enc(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode('utf-8').encode(sys_enc)
+
+def fs_dec(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode(sys_enc).encode('utf-8')
+
+
+
 class xPlayer(xbmc.Player):
 
 	def __init__(self):
-		pass
-	
+		self.tsserv = None
+		self.active = True
+		self.started = False
+		self.ended = False
+		self.paused = False
+		self.buffering = False
+		xbmc.Player.__init__(self)
+		width, height = xPlayer.get_skin_resolution()
+		w = width
+		h = int(0.14 * height)
+		x = 0
+		y = (height - h) / 2
+		self._ov_window = xbmcgui.Window(12005)
+		self._ov_label = xbmcgui.ControlLabel(x, y, w, h, '', alignment=6)
+		self._ov_background = xbmcgui.ControlImage(x, y, w, h, fs_dec(xPlayer.get_ov_image()))
+		self._ov_background.setColorDiffuse('0xD0000000')
+		self.ov_visible = False
+
+
 	def onPlayBackPaused(self):
-		pass
+		xbmc.sleep(500)
+		self.ov_show()
+		cnn=__settings__.getSetting("cplayed")
+		cgide=get_cgide(get_idx(cnn), 'serv')#.replace('[B]','').replace('[/B]','')
+		self.ov_update("[B]I I\n[COLOR FFFFFF00]"+cnn+"[/COLOR][/B]\n"+cgide)
 
 	def onPlayBackStarted(self):
 		pass
+		self.ov_hide()
 		#xbmc.executebuiltin('XBMC.ActivateWindow(12005)')
 
 	def onPlayBackResumed(self):
-		pass
+		self.ov_hide()
 
 	def onPlayBackEnded(self):
 		pass
 
 	def onPlayBackStopped(self):
-		pass
+		self.ov_hide()
 
 	def onPlayBackSeek(self, ctime, ofs):
 		print ofs
@@ -51,13 +83,57 @@ class xPlayer(xbmc.Player):
 		if tt>8:
 			print ">8"
 			if ofs>0: #след. канал
-				print '>>>>>>>>>>>>>>>>>>>>>>'
+				self.ov_show()
+				#self.ov_update(">I")
+				#print '>>>>>>>>>>>>>>>>>>>>>>'
 				next ('>')
+				
 			elif ofs<0: # пред. канал
+				self.ov_show()
+				#self.ov_update("I<")
+				#print '<<<<<<<<<<<<<<<<<<<<<<'
 				next ('<')
-				print '<<<<<<<<<<<<<<<<<<<<<<'
 		else:
 			print "<8"
+
+	def __del__(self):
+		self.ov_hide()
+
+	@staticmethod
+	def get_ov_image():
+		import base64
+		ov_image = fs_enc(os.path.join(addon.getAddonInfo('path'), 'bg.png'))
+		if not os.path.isfile(ov_image):
+			fl = open(ov_image, 'wb')
+			fl.write(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='))
+			fl.close()
+		return ov_image
+
+	@staticmethod
+	def get_skin_resolution():
+		import xml.etree.ElementTree as Et
+		skin_path = fs_enc(xbmc.translatePath('special://skin/'))
+		tree = Et.parse(os.path.join(skin_path, 'addon.xml'))
+		res = tree.findall('./extension/res')[0]
+		return int(res.attrib['width']), int(res.attrib['height'])
+
+	def ov_show(self):
+		if not self.ov_visible:
+			self._ov_window.addControls([self._ov_background, self._ov_label])
+			self.ov_visible = True
+
+	def ov_hide(self):
+		if self.ov_visible:
+			self._ov_window.removeControls([self._ov_background, self._ov_label])
+			self.ov_visible = False
+
+	def ov_update(self, txt=" "):
+		if self.ov_visible:
+			self._ov_label.setLabel(txt)#'[B]'+txt+'[/B]'
+
+
+
+
 
 def getURL(url,Referer = 'http://viks.tv/'):
 	req = urllib2.Request(url)
@@ -128,7 +204,7 @@ def next (dr='>'):
 	L1.extend(L2)
 	L1.extend(L3)
 	L=L1
-	print CL
+	#print ">"
 	for k in CL:
 			for i in L:
 					name  = i['title']
@@ -138,30 +214,36 @@ def next (dr='>'):
 						#add_item (name, 'play', url, name, cover)
 						Lnm.append(name)
 						Lnu.append([url,name,cover])
-	if dr=='>':n=0
-	else: n=-2
+	if dr=='>':
+		n=0
+		drs='>> \n'
+	else: 
+		n=-2
+		drs='<< \n'
 	for p in Lnm:
 		n+=1
 		if n>=len(Lnm):n=0
 		if p==ccn: 
-			print Lnu[n][1]
-			print Lnu[n][0]
+			#print Lnu[n][0]
+			cgide=get_cgide(get_idx(Lnu[n][1]), 'serv')#.replace('[B]','').replace('[/B]','')
+			Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+Lnu[n][1]+"[/COLOR][/B]\n"+cgide)
 			play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
 
 
-
+Player=xPlayer()
 def play(url, name ,cover, ref=True):
 		__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
-		Player=xPlayer()#xbmc.Player()
+		#Player=xPlayer()#xbmc.Player()
 		if ref==True:Player.stop()
 		pDialog = xbmcgui.DialogProgressBG()
 		pDialog.create('Viks.tv', 'Поиск потоков ...')
-		#Lpurl=get_stream(url)
-		print url
+		Lpurl=get_stream(url)
+		#print url
 		try: Lpurl=get_stream(url)
 		except:
 			Lpurl=[]
 			showMessage('viks.tv', 'Канал недоступен')
+			return ""
 		
 		#print '--==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-'
 		
@@ -172,7 +254,7 @@ def play(url, name ,cover, ref=True):
 		
 		for purl in Lpurl:
 			k+=1
-			#print purl
+			print purl
 			item = xbmcgui.ListItem(name+" [ "+str(k)+"/"+str(len(Lpurl))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 			playlist.add(url=purl, listitem=item)
 		pDialog.close()
@@ -180,16 +262,17 @@ def play(url, name ,cover, ref=True):
 		__settings__.setSetting("cplayed",name)
 		Player.play(playlist)
 		#xbmc.Player().play(playlist)#, item
-		xbmc.sleep(15000)
+		if __settings__.getSetting("epgon")=='true':
+			xbmc.sleep(15000)
 		
-		#print "======================== isPlaying ======================"
+			#print "======================== isPlaying ======================"
 		
-		while  xbmc.Player().isPlaying():#not
-			xbmc.sleep(1000)
-			#print "========================  playing ======================"
-		xbmc.sleep(500)
-		#print "========================  Refresh ======================"
-		if ref==True:xbmc.executebuiltin("Container.Refresh")
+			while  xbmc.Player().isPlaying():#not
+				xbmc.sleep(1000)
+				#print "========================  playing ======================"
+			xbmc.sleep(500)
+			#print "========================  Refresh ======================"
+			if ref==True:xbmc.executebuiltin("Container.Refresh")
 
 def get_ttv(url):
 		#print url
@@ -207,10 +290,30 @@ def get_ttv(url):
 		except:
 			return ""
 
+def pars_m3u8(url):
+		print 'pars_m3u8'
+		print url
+		#http://testlivestream.rfn.ru/live/smil:r1.smil/playlist.m3u8
+		k1=url.find(".m3u8")
+		tmp=url[:k1]
+		k2=tmp.rfind("/")
+		u2=url[:k2+1]
+		try:http=getURL(url)
+		except: return []
+		debug(http)
+		L=http.splitlines()
+		L2=[]
+		for i in L:
+			#ls=len(i)
+			if '.m3u8' in i: L2.append(u2+i)
+		if len(L2)>1:
+			L2.reverse()
+			return L2
+		else: return [url,]
+
 def get_stream(url):
 	if 'viks.tv' in url:
 		http=getURL(url)
-		
 		
 		ss='//m3u8'
 		es='//m3u8 names'
@@ -219,7 +322,6 @@ def get_stream(url):
 		#ss='//mob srcs'
 		#es='jQuery(document)'
 		#tmp2=mfindal(http,ss,es)[0]
-
 		#tmp=tmp2+tmp
 		
 		ss="]='"
@@ -229,7 +331,10 @@ def get_stream(url):
 		L=mfindal(tmp,ss,es)
 		L.reverse()
 		for i in L:
-			if i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
+			if '.m3u8' in i : 
+				L3u=pars_m3u8(i[len(ss):])
+				Lp.extend(L3u)
+			elif i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
 		
 		if __settings__.getSetting("p2p")=='true':
 			ss='//torrent codes'
@@ -274,14 +379,15 @@ def get_stream(url):
 			tmp=i[len(ss):]
 			if 'm3u8' in tmp:
 				#print "M3U8"
-				purl = tmp
+				L3u=pars_m3u8(tmp)
+				Lp.extend(L3u)
 			else:
 				#print "RTMP"
 				purl = tmp
 				purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
 				purl += " pageURL=http://tivix.net"
 				purl += " swfVfy=true live=true"
-			if i not in Lp and 'peers' not in i: Lp.append(purl)
+				if i not in Lp and 'peers' not in i: Lp.append(purl)
 		return Lp
 
 
@@ -442,10 +548,10 @@ def get_cgide(id, serv):
 					etm =hh2+":"+mm2
 
 					iii='---------------------------'
-					pb1='[COLOR FF5555FF][B]'+iii[:prc]+"[/B][/COLOR]"
-					pb2='[COLOR FFFFFFFF][B]'+iii[:20-prc]+"[/B][/COLOR]"
+					pb1='[B][COLOR FF5555FF]'+iii[:prc]+"[/COLOR]"
+					pb2='[COLOR FFFFFFFF]'+iii[:20-prc]+"[/COLOR][/B]"
 					
-					itm+= stm+" "+pb1+pb2+" "+etm+'[COLOR FFFFFFFF][B] '+name+'[/COLOR]'#[/B]
+					itm+= stm+" "+pb1+pb2+" "+etm+'[COLOR FFFFFFFF][B] '+name+'[/B][/COLOR]'#
 					return itm
 	except:
 		return ""
@@ -458,7 +564,7 @@ def tvgide():
 	if SG=='':
 		SG='Все каналы'
 		__settings__.setSetting("Sel_gr",SG)
-	add_item ('[COLOR FF55FF55]Группа: '+SG+'[/COLOR]', 'select_gr')
+	add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr')
 	
 	CL=get_gr()
 	ttl=len(CL)
@@ -568,7 +674,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	else: funart=icon
 	if __settings__.getSetting("icons")!='true':cover=icon
 
-	listitem = xbmcgui.ListItem("[B]"+name+"[/B]", iconImage=cover)
+	listitem = xbmcgui.ListItem(name, iconImage=cover)#"[B]"++"[/B]"
 	listitem.setProperty('fanart_image', funart)
 	uri = sys.argv[0] + '?mode='+mode
 	uri += '&url='  + urllib.quote_plus(path)#.encode('utf-8')
@@ -909,7 +1015,7 @@ def root():
 	if SG=='':
 		SG='Все каналы'
 		__settings__.setSetting("Sel_gr",SG)
-	add_item ('[COLOR FF55FF55]Группа: '+SG+'[/COLOR]', 'select_gr')
+	add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr')
 	
 	CL=get_gr()
 	ttl=len(CL)
@@ -955,7 +1061,7 @@ def root():
 				#if SG=='Все каналы' or name in CL:
 				if __settings__.getSetting("grinnm")=='true': name=add_grn(name)
 				if name not in Lnm:
-					add_item (name, 'play', url, name, cover)
+					add_item ("[B]"+name+"[/B]", 'play', url, name, cover)
 					Lnm.append(name)
 		else:
 			CL=[]
@@ -969,7 +1075,7 @@ def root():
 					if k==name and name not in Lnm:
 						url   = i['url']
 						cover = i['img']
-						add_item (name, 'play', url, name, cover)
+						add_item ("[B]"+name+"[/B]", 'play', url, name, cover)
 						Lnm.append(name)
 
 	else:
@@ -979,7 +1085,7 @@ def root():
 					if k==name and name not in Lnm:
 						url   = i['url']
 						cover = i['img']
-						add_item (name, 'play', url, name, cover)
+						add_item ("[B]"+name+"[/B]", 'play', url, name, cover)
 						Lnm.append(name)
 	
 	xbmcplugin.endOfDirectory(handle)
@@ -1291,7 +1397,7 @@ if mode==""         : #root
 		cdata = int(time.strftime('%Y%m%d'))
 		try:udata = int(__settings__.getSetting('udata'))
 		except: udata = 0
-		if cdata>udata:
+		if cdata>udata and __settings__.getSetting("epgon")=='true':
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Viks.tv', 'Обновление EPG ...')
 			__settings__.setSetting("udata",str(cdata))
