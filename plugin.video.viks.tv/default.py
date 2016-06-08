@@ -17,7 +17,7 @@ from xid import *
 
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
-	
+
 def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
@@ -57,7 +57,10 @@ class xPlayer(xbmc.Player):
 		xbmc.sleep(500)
 		self.ov_show()
 		cnn=__settings__.getSetting("cplayed")
-		cgide=get_cgide(get_idx(cnn), 'serv')#.replace('[B]','').replace('[/B]','')
+		if __settings__.getSetting("epgosd")=='true':
+			cgide=get_cgide(get_idx(cnn), 'serv')
+		else:
+			cgide=""
 		self.ov_update("[B]I I\n[COLOR FFFFFF00]"+cnn+"[/COLOR][/B]\n"+xt(cgide))
 
 	def onPlayBackStarted(self):
@@ -87,7 +90,6 @@ class xPlayer(xbmc.Player):
 				#self.ov_update(">I")
 				#print '>>>>>>>>>>>>>>>>>>>>>>'
 				next ('>')
-				
 			elif ofs<0: # пред. канал
 				self.ov_show()
 				#self.ov_update("I<")
@@ -130,8 +132,6 @@ class xPlayer(xbmc.Player):
 	def ov_update(self, txt=" "):
 		if self.ov_visible:
 			self._ov_label.setLabel(txt)#'[B]'+txt+'[/B]'
-
-
 
 
 
@@ -182,30 +182,32 @@ def next (dr='>'):
 		SG='Все каналы'
 		__settings__.setSetting("Sel_gr",SG)
 	
-	CL=get_gr()
-	Lnm=[]
-	Lnu=[]
+	if SG!='Все каналы':
 	
-	if __settings__.getSetting("serv1")=='true' :
-		try:L1=eval(__settings__.getSetting("Channels"))
-		except:L1=[]
-	else: L1=[]
+		CL=get_gr()
+		Lnm=[]
+		Lnu=[]
 	
-	if __settings__.getSetting("serv2")=='true':
-		try:L2=eval(__settings__.getSetting("Channels2"))
-		except:L2=[]
-	else: L2=[]
+		if __settings__.getSetting("serv1")=='true' :
+			try:L1=eval(__settings__.getSetting("Channels"))
+			except:L1=[]
+		else: L1=[]
 	
-	if __settings__.getSetting("serv3")=='true':
-		try:L3=eval(__settings__.getSetting("Channels3"))
-		except:L3=[]
-	else: L3=[]
+		if __settings__.getSetting("serv2")=='true':
+			try:L2=eval(__settings__.getSetting("Channels2"))
+			except:L2=[]
+		else: L2=[]
 	
-	L1.extend(L2)
-	L1.extend(L3)
-	L=L1
-	#print ">"
-	for k in CL:
+		if __settings__.getSetting("serv3")=='true':
+			try:L3=eval(__settings__.getSetting("Channels3"))
+			except:L3=[]
+		else: L3=[]
+	
+		L1.extend(L2)
+		L1.extend(L3)
+		L=L1
+		#print ">"
+		for k in CL:
 			for i in L:
 					name  = i['title']
 					if k==name and name not in Lnm:
@@ -214,23 +216,29 @@ def next (dr='>'):
 						#add_item (name, 'play', url, name, cover)
 						Lnm.append(name)
 						Lnu.append([url,name,cover])
-	if dr=='>':
-		n=0
-		drs='>> \n'
-	else: 
-		n=-2
-		drs='<< \n'
-	for p in Lnm:
-		n+=1
-		if n>=len(Lnm):n=0
-		if p==ccn: 
-			#print Lnu[n][0]
-			cgide=get_cgide(get_idx(Lnu[n][1]), 'serv')#.replace('[B]','').replace('[/B]','')
-			Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+Lnu[n][1]+"[/COLOR][/B]\n"+xt(cgide))
-			play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
+		if dr=='>':
+			n=0
+			drs='>> \n'
+		else: 
+			n=-2
+			drs='<< \n'
+		for p in Lnm:
+			n+=1
+			if n>=len(Lnm):n=0
+			if p==ccn: 
+				if __settings__.getSetting("epgosd")=='true':
+					cgide=get_cgide(get_idx(Lnu[n][1]), 'serv')
+				else:
+					cgide=""
+				Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+Lnu[n][1]+"[/COLOR][/B]\n"+xt(cgide))
+				play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
 
 
-Player=xPlayer()
+if __settings__.getSetting("xplay")=='true': 
+	Player=xPlayer()
+else:
+	Player=xbmc.Player()
+
 def play(url, name ,cover, ref=True):
 		__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
 		#Player=xPlayer()#xbmc.Player()
@@ -262,17 +270,21 @@ def play(url, name ,cover, ref=True):
 		__settings__.setSetting("cplayed",name)
 		Player.play(playlist)
 		#xbmc.Player().play(playlist)#, item
-		if __settings__.getSetting("epgon")=='true':
-			xbmc.sleep(15000)
 		
-			#print "======================== isPlaying ======================"
+		xbmc.sleep(6000)
+		#while  xbmc.Player().isPlaying():
+		#		xbmc.sleep(1000)
 		
-			while  xbmc.Player().isPlaying():#not
+		xbmc.sleep(6000)
+		while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
 				#print "========================  playing ======================"
-			xbmc.sleep(500)
+			#
 			#print "========================  Refresh ======================"
-			if ref==True:xbmc.executebuiltin("Container.Refresh")
+		if __settings__.getSetting("epgon")=='true':
+			if ref==True: 
+				xbmc.sleep(300)
+				xbmc.executebuiltin("Container.Refresh")
 
 def get_ttv(url):
 		#print url
@@ -291,6 +303,7 @@ def get_ttv(url):
 			return ""
 
 def pars_m3u8(url):
+	if __settings__.getSetting("pm3u")=='true':
 		print 'pars_m3u8'
 		print url
 		#http://testlivestream.rfn.ru/live/smil:r1.smil/playlist.m3u8
@@ -310,6 +323,8 @@ def pars_m3u8(url):
 			L2.reverse()
 			return L2
 		else: return [url,]
+	else:
+		return [url,]
 
 def get_stream(url):
 	if 'viks.tv' in url:
@@ -332,9 +347,11 @@ def get_stream(url):
 		L.reverse()
 		for i in L:
 			if '.m3u8' in i : 
-				L3u=pars_m3u8(i[len(ss):])
-				Lp.extend(L3u)
-			elif i not in Lp and 'peers' not in i: Lp.append(i[len(ss):])
+				if __settings__.getSetting("m3u8")=='true':
+					L3u=pars_m3u8(i[len(ss):])
+					Lp.extend(L3u)
+			elif i not in Lp and 'peers' not in i: 
+					Lp.append(i[len(ss):])
 		
 		if __settings__.getSetting("p2p")=='true':
 			ss='//torrent codes'
@@ -379,15 +396,17 @@ def get_stream(url):
 			tmp=i[len(ss):]
 			if 'm3u8' in tmp:
 				#print "M3U8"
-				L3u=pars_m3u8(tmp)
-				Lp.extend(L3u)
+				if __settings__.getSetting("m3u8")=='true':
+					L3u=pars_m3u8(tmp)
+					Lp.extend(L3u)
 			else:
 				#print "RTMP"
-				purl = tmp
-				purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
-				purl += " pageURL=http://tivix.net"
-				purl += " swfVfy=true live=true"
-				if i not in Lp and 'peers' not in i: Lp.append(purl)
+				if __settings__.getSetting("rtmp")=='true':
+					purl = tmp
+					purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
+					purl += " pageURL=http://tivix.net"
+					purl += " swfVfy=true live=true"
+					if i not in Lp and 'peers' not in i: Lp.append(purl)
 		return Lp
 
 
@@ -712,9 +731,9 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 
 		ContextCmd=[
 			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=select_gr")'),
-			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+name+'")'),
-			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+name+'")'),
-			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=set_num&name='+name+'")'),
+			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=add&name='+ind+'")'),
+			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=rem&name='+ind+'")'),
+			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=set_num&name='+ind+'")'),
 		('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=update")'),
 			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg")'),
 			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.viks.tv/?mode=tvgide")')]#, replaceItems=True)
