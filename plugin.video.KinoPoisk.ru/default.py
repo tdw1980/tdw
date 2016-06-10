@@ -1141,6 +1141,13 @@ def get_inf_db(n):
 		info=Linfo[0][0].replace("XXCC","'").replace("XXDD",'"')
 		return info
 
+def rem_inf_db(n):
+		tor_id="n"+n
+		try:
+			cu.execute("DROP TABLE "+tor_id+";")
+			c.commit()
+		except: pass
+
 def get_name(info):
 	id=params["info"]["id"]
 	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
@@ -1785,6 +1792,7 @@ def SrcNavi(md="Navigator"):
 		FilmID=i[len(ss):]
 		#info=eval(xt(get_inf_db(FilmID)))
 		try:
+			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(FilmID)
 			info=eval(xt(get_inf_db(FilmID)))
 			nru=info["title"]
 			rating_kp=info["rating"]
@@ -1907,14 +1915,14 @@ def SrcNavi(md="Navigator"):
 				
 				
 				# ------------------ обложка ----------
-				s='http://st.kp.yandex.net/images/sm_'
+				s='//st.kp.yandex.net/images/sm_'
 				e='.jpg" width="'
-				try:cover=mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
+				try:cover='http:'+mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
 				except:cover="http://st.kp.yandex.net/images/image_none_no_border.gif"
 				# ------------------ фанарт ----------
-				s='http://st.kp.yandex.net/images/kadr'
+				s='//st.kp.yandex.net/images/kadr'
 				e='.jpg"/></div>'
-				try:fanart=mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
+				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
 				except:fanart=""
 				
 				info = {"title":fs(nru), 

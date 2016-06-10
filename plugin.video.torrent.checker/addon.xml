@@ -4,7 +4,7 @@ version="0.5.2"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>
-    <import addon="xbmc.python" version="2.14.0"/>
+    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.requests" version="2.6.0"/>
     <import addon="script.module.torrent.ts"/>
     <import addon="script.module.torrent2http"/>

@@ -39,7 +39,7 @@ CDir = os.path.join( addon.getAddonInfo('path'), "images", "covers" )
 #Mpath = "D:\\1\\med\\mednafen.exe"
 Mpath = addon.getSetting("MD")
 fsp=' -video.fs "1" '
-MedList=[".nes", ".gen", ".gbc", ".gba", ".ngp", ".snes", ".sms", ".smc", ".pce", ".gg", ".lnx", ".ngc", ".vb"]
+MedList=[".nes", ".gen", ".gbc", ".gba", ".ngp", ".snes", ".sms", ".smc", ".pce", ".gg", ".lnx", ".ngc", ".vb",".32x" ,".32X" ,".a26" ,".A26" ,".a78" ,".A78" ,".adf" ,".ADF" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".bin" ,".BIN" ,".ccd" ,".CCD" ,".cdi" ,".CDI" ,".col" ,".COL" ,".cso" ,".CSO" ,".cue" ,".CUE" ,".cue" ,".CUE" ,".cue" ,".CUE" ,".cue" ,".CUE" ,".dsk" ,".DSK" ,".dsk" ,".DSK" ,".fba" ,".FBA" ,".gb" ,".GB" ,".gba" ,".GBA" ,".gbc" ,".GBC" ,".gdi" ,".GDI" ,".gen" ,".GEN" ,".gg" ,".GG" ,".gz" ,".GZ" ,".img" ,".IMG" ,".img" ,".iso" ,".ISO" ,".iso" ,".ISO" ,".j64" ,".J64" ,".jag" ,".JAG" ,".lnx" ,".LNX" ,".md" ,".MD" ,".md" ,".MD" ,".md" ,".MD" ,".mdf" ,".MDF" ,".mds" ,".MDS" ,".mgt" ,".MGT" ,".mx1" ,".MX1" ,".mx2" ,".MX2" ,".n64" ,".N64" ,".nds" ,".NDS" ,".nes" ,".NES" ,".ngc" ,".ngp" ,".pce" ,".PCE" ,".rom" ,".ROM" ,".scl" ,".SCL" ,".sfc" ,".SFC" ,".sg" ,".SG" ,".smc" ,".SMC" ,".smd" ,".SMD" ,".sms" ,".SMS" ,".sna" ,".st" ,".stx" ,".szx" ,".SZX" ,".tap" ,".TAP" ,".trd" ,".TRD" ,".tzx" ,".TZX" ,".udi" ,".UDI" ,".v64" ,".V64" ,".vb" ,".VB" ,".ws" ,".wsc" ,".z64" ,".Z64" ,".z80" ,".Z80" ,".zip" ,".ZIP" ,"SNA"]
 
 from core_conf import*
 #try:
