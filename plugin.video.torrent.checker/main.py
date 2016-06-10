@@ -182,7 +182,9 @@ def epd_lst(name, url, ind):
 	add_item ('[B][+] Добавить правило переименования: '+str(len(f))+'[/B]: ', 'add_filtr', L[0].name.replace('\\'," "), str(ind))
 	
 	for i in L:
-		epd_name=i.name.replace('\\'," ")
+		for b in ['\\','/','*',':','|','"','>','<','?']:
+			i=i.replace(b,".")
+		epd_name=i.name#.replace('\\'," ").replace('/'," ")
 		epd_name_f=""
 		for j in f:
 			opid=j[0]
@@ -210,9 +212,11 @@ def save_episodes_r(name, url, ind):
 	
 	add_item ('[B][ - ] Удалить правила переименования[/B] ', 'rem_filtr', url, str(ind))
 	add_item ('[B][+] Добавить правило переименования: '+str(len(f))+'[/B]: ', 'add_filtr', L[0].name.replace('\\'," "), str(ind))
-	add_item ('[B][ СОХРАНИТЬ ][/B]', 'save_episodes2', L[0].name.replace('\\'," "), str(ind))
+	add_item ('[B][ СОХРАНИТЬ ][/B]', 'save_episodes2', L[0].name.replace('\\'," ").replace('/'," "), str(ind))
 	for i in L:
-		epd_name=i.name.replace('\\'," ")
+		for b in ['\\','/','*',':','|','"','>','<','?']:
+			i=i.replace(b,".")
+		epd_name=i.name#.replace('\\'," ").replace('/'," ")
 		epd_name_f=""
 		for j in f:
 			opid=j[0]
@@ -343,8 +347,11 @@ if mode=="save_episodes_api":
 	L1=[]
 	L2=[]
 	for i in L:
-		L1.append(i.name.replace('\\'," "))
-		L2.append(i.name.replace('\\'," ")+".strm")
+		nm=i.name
+		for b in ['\\','/','*',':','|','"','>','<','?']:
+			nm=nm.replace(b,".")
+		L1.append(nm)
+		L2.append(nm+".strm")
 	L3=[['t',name],[0,0],[0,0],L1,L2,0,url]
 	__settings__.setSetting(id="RenameBox", value=repr(L3))
 	__settings__.setSetting(id="info", value=repr(info))

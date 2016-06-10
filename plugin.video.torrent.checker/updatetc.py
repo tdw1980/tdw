@@ -38,7 +38,7 @@ def file_list(name):
 		except: return []
 
 def save_strm(name, epd, url, ind):
-		#print '-==-==-=-=--=-==-=-=-=-=--==-=----kjlklj;lkjkjl=-==--=-=-=-=-=-==-=-=-=-=-=--==-=-=-=-=-=-=-=-=-'
+		#print '-==-==-=-=--=-==-=-=-=-=--==-=--=-==--=-=-=-=-=-==-=-=-=-=-=--==-=-=-=-=-=-=-=-=-'
 		#print repr(name)
 		#name=name.decode('utf-8')
 		try:Directory= __settings__.getSetting("SaveDirectory")
@@ -149,6 +149,8 @@ def add_list(c, manual=True):# --- добавить задание по (имя,
 			name=c[0]
 			if manual: t=inputbox(name)
 			else: t=name
+			for i in ['\\','/','*',':','|','"','>','<','?']:
+				t=t.replace(i,"")
 			if t<>"": name=t
 			c[0]=name
 			HL.append(c)
