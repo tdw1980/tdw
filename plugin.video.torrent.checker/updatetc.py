@@ -40,13 +40,15 @@ def file_list(name):
 def save_strm(name, epd, url, ind):
 		#print '-==-==-=-=--=-==-=-=-=-=--==-=--=-==--=-=-=-=-=-==-=-=-=-=-=--==-=-=-=-=-=-=-=-=-'
 		#print repr(name)
-		#name=name.decode('utf-8')
+		#
+		try:name=name.decode('utf-8')
+		except:pass
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		try:SaveDirectory = os.path.join(ru(Directory), name)
 		except:SaveDirectory = os.path.join(Directory, name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		if os.path.isdir(SaveDirectory)==0: os.mkdir(xt(SaveDirectory))
 		
 		uri = construct_request({
 			'url': url,

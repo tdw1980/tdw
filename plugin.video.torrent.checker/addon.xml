@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.torrent.checker"
-version="0.5.2"
+version="0.5.3"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="xbmc.python" version="2.14.0"/>
     <import addon="script.module.requests" version="2.6.0"/>
     <import addon="script.module.torrent.ts"/>
     <import addon="script.module.torrent2http"/>
