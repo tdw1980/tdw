@@ -235,7 +235,7 @@ def save_episodes2(name, ind):
 	except: pass
 
 def save_episodes_ext(name, url, L2, s, e, nf, info={}):
-	name=name.decode('utf-8')
+	#name=name.decode('utf-8')
 	L=tthp.list(url)
 	n=0
 	if len (L)>0 and nf==1: 
@@ -247,6 +247,7 @@ def save_episodes_ext(name, url, L2, s, e, nf, info={}):
 		updatetc.save_strm(name, epd, url, ind)
 		if nf==1:
 			#if info=={}: info={'title':epd}
+			if isinstance(epd, unicode): epd=epd.encode('utf-8')
 			updatetc.save_nfo(name, epd.replace(".strm","") ,s[n] , e[n], info)
 		n+=1
 	showMessage("Сохранено:", str(len(L))+' файлов', 2000)

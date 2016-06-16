@@ -30,6 +30,7 @@ def shelf(filename, ttl=0):
             yield d["data"]
 
 _config = {}
+_custom_hosts = []
 
 def config():
     global _config
@@ -52,6 +53,14 @@ def config():
             _config = pac_config
     return _config
 
+def config_add(host):
+    import socket
+    global _custom_hosts
+
+    ip = socket.gethostbyname(host.split(':')[0])
+    if not ip in _custom_hosts:
+        _custom_hosts.append(ip)
+
 class AntizapretProxyHandler(urllib2.ProxyHandler, object):
     def __init__(self):
         self.config = config()
@@ -62,8 +71,10 @@ class AntizapretProxyHandler(urllib2.ProxyHandler, object):
         })
     def proxy_open(self, req, proxy, type):
         import socket
+        global _custom_hosts
 
-        if socket.gethostbyname(req.get_host().split(":")[0]) in self.config["domains"]:
+        host = socket.gethostbyname(req.get_host().split(":")[0])
+        if self.config["server"] and (host in self.config["domains"] or host in _custom_hosts):
             xbmc.log("[script.module.antizapret]: Pass request through proxy " + self.config["server"], level=xbmc.LOGDEBUG)
             return urllib2.ProxyHandler.proxy_open(self, req, self.config["server"], type)
 

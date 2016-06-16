@@ -11,6 +11,13 @@ LstDir = addon.getAddonInfo('path')
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
 
+def fs_enc(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode('utf-8').encode(sys_enc)
+
+def fs_dec(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode(sys_enc).encode('utf-8')
 
 
 try:
@@ -39,32 +46,45 @@ def file_list(name):
 
 def save_strm(name, epd, url, ind):
 		#print '-==-==-=-=--=-==-=-=-=-=--==-=--=-==--=-=-=-=-=-==-=-=-=-=-=--==-=-=-=-=-=-=-=-=-'
-		#print repr(name)
-		#
-		try:name=name.decode('utf-8')
-		except:pass
+		
+		if isinstance(name, unicode): name=name.encode('utf-8')
+		if isinstance(epd, unicode): epd=epd.encode('utf-8')
+		
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
-		try:SaveDirectory = os.path.join(ru(Directory), name)
-		except:SaveDirectory = os.path.join(Directory, name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(xt(SaveDirectory))
+		
+		SaveDirectory = os.path.join(Directory, name)
+		
+		if os.path.isdir(fs_enc(SaveDirectory))==0: os.mkdir(fs_enc(SaveDirectory))
 		
 		uri = construct_request({
 			'url': url,
-			'title': epd.encode('utf-8'),
+			'title': epd,
 			'ind':ind,
 			'mode': 'play'
 		})
 		
-		fl = open(os.path.join(SaveDirectory, epd), "w")#.encode('utf-8')
+		fl = open(fs_enc(os.path.join(SaveDirectory, epd)), "w")
 		fl.write(uri)
 		fl.close()
 
 def save_tvshow_nfo(name, info={}):
-		title=name.encode('utf-8')#info['title']#
+		#title=name.encode('utf-8')#info['title']#
 		#cn=title.find(" (")
 		#if cn>0: title=title[:cn]
+		print repr(name)
+		try:title=name.encode('utf-8')
+		except:title=name
+		
+		try:Directory= __settings__.getSetting("SaveDirectory")
+		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
+		
+		if isinstance(Directory, unicode): Directory=Directory.encode('utf-8')
+			
+		SaveDirectory = os.path.join(Directory, name)
+		if os.path.isdir(fs_enc(SaveDirectory))==0: os.mkdir(fs_enc(SaveDirectory))
 		
 		try:year=info['year']
 		except:year=0
@@ -75,13 +95,6 @@ def save_tvshow_nfo(name, info={}):
 		try:fanart=info['fanart']
 		except:fanart=''
 
-		try:Directory= __settings__.getSetting("SaveDirectory")
-		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
-		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
-		try:SaveDirectory = os.path.join(ru(Directory), name)
-		except:SaveDirectory = os.path.join(Directory, name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
-			
 		nfo='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+chr(10)
 		nfo='<tvshow>'+chr(10)
 		
@@ -94,15 +107,21 @@ def save_tvshow_nfo(name, info={}):
 		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
 		nfo+="</tvshow>"+chr(10)
 		
-		fl = open(os.path.join(SaveDirectory, "tvshow.nfo"), "w")
+		fl = open(fs_enc(os.path.join(SaveDirectory, "tvshow.nfo")), "w")
 		fl.write(nfo)
 		fl.close()
 
 
 def save_nfo(name, epd ,s , e, info={}):
-		
+		try: s=s.encode('utf-8')
+		except: pass
+		try: e=e.encode('utf-8')
+		except: pass
+
 		title="season "+s+" episode "+e
-		title=title.encode('utf-8')
+		#title=title.encode('utf-8')
+		try: title=title.encode('utf-8')
+		except: pass
 		#name=ru(info['title'])
 		cn=name.find(" (")
 		if cn>0: name=name[:cn]
@@ -117,9 +136,8 @@ def save_nfo(name, epd ,s , e, info={}):
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
-		try:SaveDirectory = os.path.join(ru(Directory), name)
-		except:SaveDirectory = os.path.join(Directory, name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
+		SaveDirectory = os.path.join(Directory, name)
+		if os.path.isdir(fs_enc(SaveDirectory))==0: os.mkdir(fs_enc(SaveDirectory))
 		
 		nfo="<episodedetails>"+chr(10)
 		nfo+="	<title>"+title+"</title>"+chr(10)
@@ -130,7 +148,7 @@ def save_nfo(name, epd ,s , e, info={}):
 		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
 		nfo+="</episodedetails>"+chr(10)
 		
-		fl = open(os.path.join(SaveDirectory, epd+".nfo"), "w")
+		fl = open(fs_enc(os.path.join(SaveDirectory, epd+".nfo")), "w")
 		fl.write(nfo)
 		fl.close()
 
@@ -213,11 +231,13 @@ def rem_filtr(i):# --- удалить правила автопереимено�
 
 def rem(name):# --- удалить ранее сохраненные STRM по имени задания
 		LD=[]
+		
+		if isinstance(name, unicode): name=name.encode('utf-8')
+		
 		try:Directory= __settings__.getSetting("SaveDirectory")
 		except: Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
 		if Directory=="":Directory=os.path.join(addon.getAddonInfo('path'), 'strm')
-		try:path = os.path.join(ru(Directory), name)
-		except:path = os.path.join(Directory, name)
+		path = fs_enc(os.path.join(Directory, name))
 		
 		if os.path.isdir(path):
 			lst=os.listdir(path)

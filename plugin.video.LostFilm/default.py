@@ -466,6 +466,7 @@ cj = cookielib.FileCookieJar(fcookies)
 hr  = urllib2.HTTPCookieProcessor(cj)
 if __settings__.getSetting("immunicity") == "1": 
 	import antizapret
+	antizapret.config_add(siteUrl)
 	opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
 	print "Immunicity"
 elif __settings__.getSetting("immunicity") == "2": 
@@ -498,8 +499,6 @@ values = {
 				'repage'    : 'user',
 				'act'       : 'login'
 		}
-
-
 
 
 
