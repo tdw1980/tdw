@@ -321,7 +321,7 @@ provider-name="TDW1980">
 
 <addon id="plugin.video.viks.tv"
        name="Viks.tv"
-       version="4.2.0"
+       version="4.2.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -355,6 +355,28 @@ provider-name="TDW1980">
 		<disclaimer>There are git my add-ons for XBMC</disclaimer>
 		<platform>all</platform>
 	</extension>
+</addon>
+
+<addon id="script.module.requests"
+       name="requests"
+       version="2.9.1"
+       provider-name="kennethreitz, beenje">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary>Python HTTP for Humans</summary>
+    <description>Packed for KODI from https://github.com/kennethreitz/requests</description>
+    <platform>all</platform>
+    <language></language>
+    <license>Apache2</license>
+    <forum></forum>
+    <website>http://python-requests.org</website>
+    <source>https://github.com/beenje/script.module.requests</source>
+    <email>beenje AT gmail.com</email>
+  </extension>
 </addon>
 
 <addon id='script.module.torrent.ts' version='0.7.3.2' name='AceStream client' provider-name='1orgar'>

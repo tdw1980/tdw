@@ -818,29 +818,34 @@ def upd_canals_db2():
 	for pg in range(1,5):
 		url='http://tivix.net/page/'+str(pg)
 		http=getURL(url)
-		
+		n=http.find("<div id='dle-content'>")
+		http=http[n:]
 		ss='<div class="all_tv"'
-		es='style="f"> <br><b>'
+		es='</div>'
 		L=mfindal(http,ss,es)
 		
 		CL=get_gr()
 		for i in L:
-			ss='http://tivix.net/'
-			es='.html">'
-			url=mfindal(i,ss,es)[0]+'.html'
+			try:
+				ss='http://tivix.net/'
+				es='.html'
+				url=mfindal(i,ss,es)[0]+'.html'
 		
-			ss='uploads/posts'
-			es='" alt="'
-			img='http://tivix.net/'+mfindal(i,ss,es)[0]
+				ss='uploads/'
+				es='.png"'
+				img='http://tivix.net/'+mfindal(i,ss,es)[0]+'.png'
 
-			ss='title="'
-			es='">'
-			title=mfindal(i,ss,es)[0][len(ss):]
+				ss='title="'
+				es='">'
+				title=mfindal(i,ss,es)[0][len(ss):]
 			
-			LL.append({'url':url, 'img':img, 'title':title})
+				LL.append({'url':url, 'img':img, 'title':title+" #2"})
+			except:
+				pass
 			
-	__settings__.setSetting("Channels2",repr(LL))
+	if LL!=[]:__settings__.setSetting("Channels2",repr(LL))
 	return LL
+
 def upd_canals_db3():
 	LL=[]
 	url='http://torrentstream.tv/browse-vse-kanali-tv-videos-1-date.html'
