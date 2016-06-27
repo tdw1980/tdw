@@ -329,21 +329,27 @@ def pars_m3u8(url):
 def get_stream(url):
 	if 'viks.tv' in url:
 		http=getURL(url)
-		
-		ss='//m3u8'
-		es='//m3u8 names'
-		tmp=mfindal(http,ss,es)[0]
-		
-		#ss='//mob srcs'
-		#es='jQuery(document)'
-		#tmp2=mfindal(http,ss,es)[0]
-		#tmp=tmp2+tmp
+		try:
+			ss='//m3u8'
+			es='//m3u8 names'
+			tmp=mfindal(http,ss,es)[0]
+		except:
+			tmp=""
+		try:
+			ss='//mob srcs'
+			es='jQuery(document)'
+			tmp2=mfindal(http,ss,es)[0]
+			tmp=tmp2+tmp
+		except:
+			tmp=""
 		
 		ss="]='"
 		es="';"
 		Lp=[]
-		
-		L=mfindal(tmp,ss,es)
+		try:
+			L=mfindal(tmp,ss,es)
+		except:
+			L=[]
 		L.reverse()
 		for i in L:
 			if '.m3u8' in i : 
