@@ -67,6 +67,7 @@ def stft(text):
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(Title)\
 						+ '&info=' + urllib.quote_plus(repr(dict))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
 				else:
 					print "YATP"
@@ -107,6 +108,7 @@ def s2kp(id, info):
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(Title)\
 						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 				else:
 					print "YATP"
@@ -152,6 +154,7 @@ def fileek(qury, info):
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(Title)\
 						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 				else:
 					print "YATP"
@@ -161,6 +164,244 @@ def fileek(qury, info):
 		return len(RL)
 
 
+
+def rutor(text, info={}):
+	#try:
+	import rutors
+	rtr=rutors.Tracker()
+	#except: pass
+	
+	RL=rtr.Search(text, "0")
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Rutor»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=OpenCat'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+	tt=0
+	for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+	return len(RL)
+
+def rutoris(text, info={}):
+	#try:
+	import rutor_is
+	rtr=rutor_is.Tracker()
+	#except: pass
+	
+	RL=rtr.Search(text, "0")
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Rutor.is»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=OpenCat'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
+
+	for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+	return len(RL)
+
+
+def torrentom(text, info={}):
+	#try:
+	import torrentom
+	rtr=torrentom.Tracker()
+	#except: pass
+	RL=rtr.Search(text, "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Torrentom.ru»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=OpenCat'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
+	print RL
+	for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title.encode('utf-8'))\
+						+ '&info=' + urllib.quote_plus(repr(dict))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+	return len(RL)
+
+
+
+
+def tfile(text, info={}):
+	#try:
+	import tfile
+	rtr=tfile.Tracker()
+	#except: pass
+	RL=rtr.Search(xt(text), "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Tfile.org»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=OpenCat'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
+
+	for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title)\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+	return len(RL)
+
+def xtreme(text, info={}):
+	#try:
+	import xtreme
+	rtr=xtreme.Tracker()
+	#except: pass
+	RL=rtr.Search(text, "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Xtreme.ws»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=OpenCat'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
+
+	for itm in RL:
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				#print row_url
+				cover=""
+				dict={}
+				if __settings__.getSetting('Engine') == "0":
+					print "ACE"
+					listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
+					listitem.setProperty('fanart_image', cover)
+					purl = sys.argv[0] + '?mode=OpenCat'\
+						+ '&url=' + urllib.quote_plus(row_url)\
+						+ '&title=' + urllib.quote_plus(Title.encode('utf-8'))\
+						+ '&info=' + urllib.quote_plus(repr(info))
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+				else:
+					print "YATP"
+					list_item = xbmcgui.ListItem(Title)
+					url = 'plugin://plugin.video.yatp/?action=list_files&torrent='+row_url
+					xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
+	return len(RL)
 
 
 siteUrl = 'www.fast-torrent.ru'
@@ -2776,21 +3017,79 @@ def OpenList(url, name, dict,title):
 			xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=True)  
 
 	kfsnm=title[9:title.find("(")]#.replace("(","")
-	print kfsnm
+	#print kfsnm
 	if __settings__.getSetting("Krasfs")=="0" and name!=title: 
-		try:s2kp(kfsnm.strip(), {})
-		except:pass
-		try:stft(kfsnm)
-		except:pass
-		try:fileek(kfsnm, {})
-		except:pass
+		if __settings__.getSetting("rutor")=="true":
+			try:
+				ttl=rutor(kfsnm, info)
+				if ttl<1: ttl=rutoris(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("torrentom")=="true":
+			try:torrentom(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("tfile")=="true":
+			ttl4=tfile(kfsnm.strip(), info)
+	
+		if __settings__.getSetting("xtreme")=="true":
+			try:xtreme(kfsnm.strip(), info)
+			except: pass
+			xtreme(kfsnm.strip(), info)
+	
+		if __settings__.getSetting("fileek")=="true":
+			try:fileek(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("tracker")=="true":
+			try:s2kp(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("krasfs")=="true":
+			try:ttl=stft(kfsnm.strip(), info)
+			except: pass
+
+		#try:s2kp(kfsnm.strip(), {})
+		#except:pass
+		#try:stft(kfsnm)
+		#except:pass
+		#try:fileek(kfsnm, {})
+		#except:pass
 	if __settings__.getSetting("Krasfs")=="1" and name!=title and len(L)<1:
-		try:s2kp(kfsnm.strip(), {})
-		except:pass
-		try:stft(kfsnm)
-		except:pass
-		try:fileek(kfsnm, {})
-		except:pass
+		t#ry:s2kp(kfsnm.strip(), {})
+		#except:pass
+		#try:stft(kfsnm)
+		#except:pass
+		#try:fileek(kfsnm, {})
+		#except:pass
+		if __settings__.getSetting("rutor")=="true":
+			try:
+				ttl=rutor(kfsnm, info)
+				if ttl<1: ttl=rutoris(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("torrentom")=="true":
+			try:torrentom(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("tfile")=="true":
+			ttl4=tfile(kfsnm.strip(), info)
+	
+		if __settings__.getSetting("xtreme")=="true":
+			try:xtreme(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("fileek")=="true":
+			try:fileek(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("tracker")=="true":
+			try:s2kp(kfsnm.strip(), info)
+			except: pass
+	
+		if __settings__.getSetting("krasfs")=="true":
+			try:ttl=stft(kfsnm.strip(), info)
+			except: pass
 
 
 def OpenCat(url, name, dict):

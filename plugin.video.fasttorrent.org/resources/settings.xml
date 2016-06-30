@@ -1,10 +1,21 @@
 <settings>
-    <setting id="Engine" type="enum" label="30008" default="0" values="Ace|YATP"/>
-    <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru(YEAR)En|Ru(YEAR)|Ru"/>
-    <setting id="Period" type="enum" label="30002" default="1" values="Год|6 мес.|3 мес.|1 мес.|Неделя|Все"/>
-    <setting id="Vid" type="enum" label="30006" default="0" values="Не менять|Список|Широкий|Эскизы|Карусель|Фанарт|Инфо 1|Инфо 3"/>
-    <setting id="SVid" type="enum" label="30004" default="1" values="Одним списком|В другом окне"/>
-    <setting id="Krasfs" type="enum" label="30007" default="0" values="Всегда|Если нет раздач|Отключить"/>
-    <setting id="Reit" type="text" label="30003" default="0.0"/>
-    <setting id="Name Mode" type="enum" label="30005" default="0" values="Имя|Фамилия"/>
+    <category label="Настройки">
+        <setting id="Engine" type="enum" label="30008" default="0" values="Ace|YATP"/>
+        <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru(YEAR)En|Ru(YEAR)|Ru"/>
+        <setting id="Period" type="enum" label="30002" default="1" values="Год|6 мес.|3 мес.|1 мес.|Неделя|Все"/>
+        <setting id="Vid" type="enum" label="30006" default="0" values="Не менять|Список|Широкий|Эскизы|Карусель|Фанарт|Инфо 1|Инфо 3"/>
+        <setting id="SVid" type="enum" label="30004" default="1" values="Одним списком|В другом окне"/>
+        <setting id="Reit" type="text" label="30003" default="0.0"/>
+        <setting id="Name Mode" type="enum" label="30005" default="0" values="Имя|Фамилия"/>
+    </category>
+    <category label="Поиск">
+        <setting id="Krasfs" type="enum" label="30007" default="0" values="Всегда|Если нет раздач|Отключить"/>
+        <setting id="rutor"     type="bool" label="rutor.org"       default="true"/>
+        <setting id="torrentom" type="bool" label="torrentom.com"   default="true"/>
+        <setting id="tfile"     type="bool" label="new-tfile.org"   default="true"/>
+        <setting id="xtreme"    type="bool" label="xtreme.ws"       default="true"/>
+        <setting id="fileek"    type="bool" label="fileek.com"      default="true"/>
+        <setting id="tracker"   type="bool" label="tracker.ru"      default="true"/>
+        <setting id="krasfs"    type="bool" label="krasfs.ru"       default="true"/>
+    </category>
 </settings>

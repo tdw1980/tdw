@@ -146,7 +146,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.7.1"
+       version="1.8.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -185,7 +185,7 @@
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.6.0"
+       version="2.6.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -242,7 +242,7 @@
 
 <addon id="plugin.video.fasttorrent.org"
        name="fast-torrent.org"
-       version="1.4.2"
+       version="1.5.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -293,6 +293,25 @@
   <extension point="xbmc.addon.metadata">
     <summary>NewStudio.tv</summary>
     <description>NewStudio.tv for AceStreem, YATP, T2Http</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.pazl.tv"
+       name="Пазл ТВ"
+       version="1.0.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.addon.metadata">
+    <summary>Пазл ТВ (Телевидение)</summary>
+    <description>Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере. Очень гибко настраивается под пользователя.</description>
     <platform>all</platform>
   </extension>
 </addon>

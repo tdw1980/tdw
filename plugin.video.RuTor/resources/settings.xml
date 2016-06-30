@@ -1,10 +1,11 @@
 <settings>
-    <setting id="Url" type="text" label="URL(open-tor.org, ru-ru.org ...)" default="open-tor.org"/>
-    <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru/En|Ru"/>
-    <setting id="Hide Scr" type="bool" label="30003" default="false"/>
-    <setting id="KP" type="bool" label="30002" default="true"/>
-    <setting id="Hide TSound" type="bool" label="30004" default="false"/>
-    <setting id="EnabledFiltr" type="bool" label="30006" default="false"/>
-    <setting id="Filtr" type="text" label="30007" default="эротика, этти"/>
+    <setting id="Url" type="text" label="URL(open-tor.org,  ru-ru.org ...)" default="open-tor.org"/>
+    <setting id="immunicity" type="enum" label="Разблокировка" default="1" values="Нет|Да"/>
+    <setting id="Title Mode" type="enum" label="Навание" default="1" values="Ru/En|Ru"/>
+    <setting id="Hide Scr" type="bool" label="Скрыть экранки" default="false"/>
+    <setting id="Hide TSound" type="bool" label="Скрывать звук с экранки" default="false"/>
+    <setting id="KP" type="bool" label="Искать описание на Kinopoisk.ru" default="true"/>
+    <setting id="EnabledFiltr" type="bool" label="Использовать фильтр" default="false"/>
+    <setting id="Filtr" type="text" label="фильтр:" visible="eq(-1,true)" default="эротика, этти"/>
     <setting id="port_path" type="file" label="30008" default="" />
 </settings>

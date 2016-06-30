@@ -26,8 +26,11 @@ sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'rutor.cookies.si
  
 cj = cookielib.FileCookieJar(sid_file) 
 hr  = urllib2.HTTPCookieProcessor(cj) 
-opener = urllib2.build_opener(hr) 
+import antizapret
+#antizapret.config_add(siteUrl)
+opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
 urllib2.install_opener(opener) 
+
 
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)

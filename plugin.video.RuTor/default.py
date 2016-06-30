@@ -34,8 +34,9 @@ addon = xbmcaddon.Addon(id='plugin.video.RuTor')
 __settings__ = xbmcaddon.Addon(id='plugin.video.RuTor')
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
-siteUrl = 'open-tor.org'
+
 siteUrl = __settings__.getSetting('Url')
+if siteUrl == "": siteUrl = 'open-tor.org'
 httpSiteUrl = 'http://' + siteUrl
 
 
@@ -217,13 +218,6 @@ if __settings__.getSetting("immunicity") == "1":
 	import antizapret
 	opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
 	print "Immunicity"
-elif __settings__.getSetting("immunicity") == "2": 
-	prx=__settings__.getSetting("Proxy")
-	if prx.find('http')<0 : prx="http://"+prx
-	proxy_support = urllib2.ProxyHandler({"http" : prx})
-	#proxy_support = urllib2.ProxyHandler({"http" : "http://n17-03-01.opera-mini.net:443"})
-	opener = urllib2.build_opener(proxy_support, hr)
-	print "Proxy "+__settings__.getSetting("Proxy")
 else: 
 	opener = urllib2.build_opener(hr)
 	print "NO Proxy"
@@ -1286,16 +1280,13 @@ def SearchN(category, sort, text, filtr, url='0'):
 			if filtr[3]=="" or Title.find(filtr[3])>0: flt3=1
 			Sflt=flt4+flt2+flt3
 			
-
+			nH=-1
+			Lflt=["CAMRip", ") TS", ") TC", ") ТС", "CamRip", " DVDScr"]
+			#print Title
 			if HideScr == 'true':
-				nH1=Title.find("CAMRip")
-				nH2=Title.find(") TS")
-				nH3=Title.find("CamRip")
-				nH4=Title.find(" DVDScr")
-				nH=nH1+nH2+nH3+nH4
-			else:
-				nH=-1
-				
+				for flt in Lflt:
+					if flt in Title: nH+=1
+			
 			if HideTSnd == 'true':
 				sH=Title.find("Звук с TS")
 			else:
@@ -1491,14 +1482,12 @@ def Search(category, sort, text, url='0'):
 			for TRi in Tresh:
 				if tTitle[5].find(TRi)>=0:UF+=1
 					
+			nH=-1
+			Lflt=["CAMRip", ") TS", ") TC", ") ТС", "CamRip", " DVDScr"]
+			#print Title
 			if HideScr == 'true':
-				nH1=Title.find("CAMRip")
-				nH2=Title.find(") TS")
-				nH3=Title.find("CamRip")
-				nH4=Title.find(" DVDScr")
-				nH=nH1+nH2+nH3+nH4
-			else:
-				nH=-1
+				for flt in Lflt:
+					if flt in Title: nH+=1
 				
 			if HideTSnd == 'true':
 				sH=Title.find("Звук с TS")

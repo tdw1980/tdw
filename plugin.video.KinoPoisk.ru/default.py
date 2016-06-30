@@ -1478,6 +1478,50 @@ def torrentom(text, info={}):
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 	return len(RL)
 
+
+def fasttor(text, info={}):
+	#try:
+	import fasttor
+	rtr2=fasttor.Tracker()
+	#except: pass
+	RL=rtr2.Search(text, "0")
+	#try:RL=rtr.Search(text, "0")
+	#except: RL=[]
+	if len(RL)>0:
+		Title = "[COLOR F050F050]"+"[------- «Fast-Torrent.ru»  "+text+" ---------]"+"[/COLOR]"
+		row_url = Title
+		listitem = xbmcgui.ListItem(Title)
+		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
+		purl = sys.argv[0] + '?mode=Search'\
+			+ '&url=' + urllib.quote_plus(row_url)\
+			+ '&title=' + urllib.quote_plus(Title)\
+			+ '&text=' + urllib.quote_plus('0')
+		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
+		
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
+
+	for itm in RL:
+		#if xt(itm[2]).find(text)>=0:
+				#print itm
+				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				cover=""
+				dict={}
+				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
+				try:listitem.setInfo(type = "Video", infoLabels = dict)
+				except: pass
+				listitem.setProperty('fanart_image', cover)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + info['title']\
+					+ '&info=' + urllib.quote_plus(repr(info))
+				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
+	return len(RL)
+
 def tfile(text, info={}):
 	#try:
 	import tfile
@@ -2227,26 +2271,37 @@ if mode == "Torrents2":
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
 	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-	rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
+	rus=rt(rus).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
+	en=rt(en).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
 	
 	if __settings__.getSetting("rutor")=="true":
-		ttl=rutor(text, info)
-		if ttl<1: ttl=rutoris(text, info)
-		if ttl<1: rutor(rus.replace("a","а"), info)
-		if ttl<14: ttl=rutor_id(id, info)
-	
-	if __settings__.getSetting("dugtor")=="true":
-		try:dugtors(rus.replace("a","а"), info)
+		try:
+			ttl=rutor(text, info)
+			if ttl<1: ttl=rutoris(text, info)
+			if ttl<1: rutor(rus, info)
+			if ttl<14: ttl=rutor_id(id, info)
 		except: pass
 	
+#	if __settings__.getSetting("dugtor")=="true":
+#		try:dugtors(rus.replace("a","а"), info)
+#		except: pass
+
+	if __settings__.getSetting("fasttor")=="true":
+		ttl6=0
+		try:ttl6=fasttor(en.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
+		except: ttl6=0
+		if ttl6<2:
+			try:fasttor(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
+			except: pass
+	
 	if __settings__.getSetting("torrentom")=="true":
-		try:torrentom(rus.replace("a","а"), info)
+		try:torrentom(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
 		except: pass
 	
 	if __settings__.getSetting("tfile")=="true":
 		ttl4=tfile(text, info)
 		try:
-			if ttl4<1:tfile(rus.replace("a","а"), info)
+			if ttl4<1:tfile(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
 		except: pass
 	
 	if __settings__.getSetting("xtreme")=="true":
@@ -2254,13 +2309,17 @@ if mode == "Torrents2":
 		except: pass
 	
 	if __settings__.getSetting("fileek")=="true":
-		fileek(text, info)
+		try:fileek(text, info)
+		except: pass
 	
 	if __settings__.getSetting("tracker")=="true":
-		s2kp(rus.replace("a","а"), info)
+		try:s2kp(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
+		except: pass
 	
-#	ttl=stft(text, info)
-
+	if __settings__.getSetting("krasfs")=="true":
+		try:ttl=stft(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
+		except: pass
+		
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 	xbmc.sleep(300)

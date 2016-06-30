@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <category label="Основные">
+    <setting id="fanart"  type="bool" label="Фанарт" default="false"/>
+    <setting id="icons"   type="bool" label="Логотип" default="true"/>
+    <setting id="intlogo" type="bool" label="Использовать собственные логотипы" default="true"/>
+    <setting id="dllogo"  type="bool" label="   - Догружать отсутствующие логотипы" visible="eq(-1,true)" default="false"/>
+    <setting id="logodir" type="folder" label="   - Путь к логотипам" visible="eq(-2,true)" default=""/>
+    <setting id="grinnm"  type="bool" label="Показывать группы в общем списке" default="false"/>
+    <setting id="abc"     type="bool" label="Общий список по алфавиту" default="true"/>
+    <setting id="grincm"  type="bool" label="Список групп в контекстном меню" default="false"/>
+    <setting id="xplay"   type="bool" label="Продвинутый плеер (переключение каналов, OSD)" default="true"/>
+  </category>
+  <category label="Программа">
+    <setting id="epgon"  type="bool" label="Показывать программу" default="true"/>
+    <setting id="epgosd" type="bool" label="Показывать передачи в OSD" default="true"/>
+    <setting id="epgtvx" type="bool" label="Обновлять с Tivix.net" default="true"/>
+    <setting id="epgxml" type="bool" label="Обновлять с Torrent-tv.ru" default="true"/>
+    <setting id="stv"    type="bool" label="Обновлять с S-TV.ru" default="true"/>
+    <setting id="shift"  type="enum" label="Смещение программы (от московского времени):" default="6" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
+  </category>
+  <category label="Серверы">
+    <setting id="split" type="bool" label="[B]Объединять одинаковые каналы серверов[/B]" default="false"/>
+    
+    <setting id="serv1" type="bool" label="[B]#1   Peers.tv    [/B]" default="true"/>
+    <setting id="serv2" type="bool" label="[B]#2   Ok-tv.org    [/B]" default="true"/>
+    <setting id="serv3" type="bool" label="[B]#3   Torrent-tv.ru (P2P SID)     [/B]" default="true"/>
+    <setting id="serv4" type="bool" label="[B]#4   Televizorhd.ru (AceLive)    [/B]" default="true"/>
+  </category>
+  <category label="P2P">
+    <setting id="p2p_start" type="bool" label="- Предпочитать P2P потоки" default="false"/>
+    <setting id="p2p_serv"  type="text" label="- P2P сервер" default="127.0.0.1"/>
+    <setting id="p2p_port"  type="text" label="- P2P порт" default="6878"/>
+    <setting id="ACEstr"    type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
+  </category>
+  <setting id="udata" default="0"/>'
+  <setting id="epgitv" type="bool" label="Обновлять с Teleguide.info" default="false"/>
+  <setting id="frsup"  type="bool" label="Принудительно обновлять список" default="true"/>
+</settings>
+    <setting id="SID-4"   type="bool" label="               - Использовать SID"   visible="eq(-1,true)" default="true"/>
+    <setting id="ALV-4"   type="bool" label="               - Использовать AceLive"   visible="eq(-2,true)" default="true"/>
+    <setting id="rtmp-1"  type="bool" label="               - Использовать RTMP"  visible="eq(-1,true)" default="true"/>
+    <setting id="m3u8-1"  type="bool" label="               - Использовать M3U8"  visible="eq(-2,true)" default="true"/>
+    <setting id="pm3u-1"  type="bool" label="               - Анализировать M3U8" visible="eq(-3,true)" default="true"/>
+    <setting id="p2p-1"   type="bool" label="               - Использовать P2P"   visible="eq(-4,true)" default="true"/>
+    <setting id="rtmp-2"  type="bool" label="               - Использовать RTMP"  visible="eq(-1,true)" default="true"/>
+    <setting id="m3u8-2"  type="bool" label="               - Использовать M3U8"  visible="eq(-2,true)" default="true"/>
+    <setting id="pm3u-2"  type="bool" label="               - Анализировать M3U8" visible="eq(-3,true)" default="true"/>
+    <setting id="p2p-2"   type="bool" label="               - Использовать P2P"   visible="eq(-4,true)" default="true"/>

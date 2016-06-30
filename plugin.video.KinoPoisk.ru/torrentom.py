@@ -23,7 +23,7 @@ socket.setdefaulttimeout(50)
 icon = ""
 siteUrl = 'torrentom.com'
 httpSiteUrl = 'http://' + siteUrl
-sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'dugtor.cookies.sid')
+sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'torrentom.cookies.sid')
  
 cj = cookielib.FileCookieJar(sid_file) 
 hr  = urllib2.HTTPCookieProcessor(cj) 
@@ -184,7 +184,7 @@ def upd(text):
 	#SUrl='http://dugtor.ru/engine/modules/search-torrents/search.php'
 	#Post='search_ok=go_search&static=off&fraza='+text#{"fraza":text, "search_ok":"go_search", "static":"off"}
 	SUrl='http://torrentom.com/torrentz/search/'+formatKP(text)+"/"#'%D2%E5%F0%EC%E8%ED%E0%F2%EE%F0'
-	#print SUrl
+	print SUrl
 	http = GET(SUrl, httpSiteUrl)#, Post)
 	if http == None:
 		print 'torrentom: Сервер не отвечает'
@@ -221,16 +221,16 @@ def formtext(http):
 	
 	LL=[]
 	for i in L:
-		#print i
-		ss='<a target="_blank" href="'
+		print i
+		ss=' href="'
 		es='.htm" alt="'
 		url='http://torrentom.com'+mfindal(i, ss, es)[0][len(ss):]+".htm"
-		#print url
+		print url
 		
 		ss='"><b>'
 		es='</b></a>'
 		title=mfindal(i, ss, es)[0][len(ss):]
-		#print title
+		print title
 		LL.append([title.decode('cp1251'),url])
 	return LL
 

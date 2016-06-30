@@ -303,14 +303,14 @@ def info(id):
 				
 				
 				# ------------------ обложка ----------
-				s='http://st.kp.yandex.net/images/sm_'
+				s='//st.kp.yandex.net/images/sm_'
 				e='.jpg" width="'
-				try:cover=mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
+				try:cover='http:'+mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
 				except:cover="http://st.kp.yandex.net/images/image_none_no_border.gif"
 				# ------------------ фанарт ----------
-				s='http://st.kp.yandex.net/images/kadr'
+				s='//st.kp.yandex.net/images/kadr'
 				e='.jpg"/></div>'
-				try:fanart=mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
+				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
 				except:fanart=""
 				
 				info = {"title":fs(nru), 
