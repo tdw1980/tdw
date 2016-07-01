@@ -110,6 +110,9 @@ def upepg():
 			if __settings__.getSetting('stv')=='true': upd_stv()
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
 			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
+			if __settings__.getSetting('vsetv_ru')=='true': upd_EPG_vsetv("rubase")
+			if __settings__.getSetting('vsetv_ua')=='true': upd_EPG_vsetv("uabase")
+			if __settings__.getSetting('vsetv_by')=='true': upd_EPG_vsetv("bybase")
 			#xbmc.executebuiltin("Container.Refresh")
 			pDialog.close()
 
@@ -162,7 +165,73 @@ def upd_stv():
 					Le.append({"name":title, "start_at":start_at})
 				#epg[idx]=Le
 				pDialog.update(int(n*100/t), message=cnl_nm)
-				add_to_db(idx, repr(Le))
+				if len(Le)>0:add_to_db(idx, repr(Le))
+
+
+def upd_EPG_vsetv(pack):
+	url = 'http://www.vsetv.com/schedule_package_'+pack+'_day.html'
+	#url = 'http://www.vsetv.com/schedule_package_bybase_day.html'
+	#url = 'http://www.vsetv.com/schedule_package_rubase_day.html'
+	#url = 'http://www.vsetv.com/schedule_package_uabase_day.html'
+	http = getURL(url)
+	ss='<div class=chlogo>'
+	es='></div><div class="clear'
+	L=mfindal(http,ss,es)
+	epg={}
+	n=0
+	t=len(L)
+	for i in L:
+		#print i
+		try:
+			i=i.decode('windows-1251')
+			i=i.encode('utf-8')
+		except: pass
+		i=i.replace(chr(10),"").replace(chr(13),"").replace("\t","")
+		#debug (i)
+		n+=1
+		if i!="":
+			
+			ss='class="channeltitle">'
+			es='</td><td width="99%"'
+			cnl_nm=mfindal(i,ss,es)[0][len(ss):]
+			#print cnl_nm
+			idx=get_idx(cnl_nm)
+			if idx=="": idx=get_idx(cnl_nm.replace(" Россия","").replace(" (Россия)","").replace(" (Международный)",""))
+			
+			if idx!="":
+				tmp=i.replace('class="past','class="').replace('class="onair"','class="time"')
+				tmp=tmp.replace('</div><div class="prname2">','<:--:>').replace('align="absmiddle">&nbsp;','-:>').replace('.html>','-:>').replace('.html class=b>','-:>')
+				tmp=tmp.replace('-:><','')
+				sdn=tmp.find('chnum')
+				tmp=tmp[sdn:]
+				ss='class="time"'
+				es='div><div'
+				#print tmp
+				L2=mfindal(tmp,ss,es)
+				Le=[]
+				for j in L2:
+					try:
+						ss='"time">'
+						es='<:'
+						stm=mfindal(j,ss,es)[0][len(ss):]
+						
+						ss=':>'
+						es='</'
+						pr_nm=mfindal(j,ss,es)[0][len(ss):]
+						if pr_nm=="": print j
+						
+						start_at=time.strftime('%Y-%m-%d')+" "+stm+":00"
+						#print start_at +" - "+pr_nm
+						Le.append({"name":pr_nm, "start_at":start_at})
+					except: 
+						print j
+						pass
+				try:pDialog.update(int(n*100/t), message=cnl_nm)
+				except: pass
+				if len(Le)>0:add_to_db(idx, repr(Le))
+
+			else:
+				print "NO_ID: "+cnl_nm
 
 
 def upd_EPG_xmltv():
@@ -344,8 +413,12 @@ while not xbmc.abortRequested:
 		try:udata = int(get_inf_db('udata'))
 		except: udata = 0
 		cdata = int(time.strftime('%Y%m%d'))
+		#print('----- PTV ud:'+str(udata))
+		#print('----- PTV сd:'+str(cdata))
+		
 		if cdata>udata and __settings__.getSetting("epgon")=='true': 
 			add_to_db ("udata", str(cdata))
+			print('----- PTV обновление -----')
 			upepg()
 			xbmc.executebuiltin("Container.Refresh")
 		

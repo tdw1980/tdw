@@ -12,11 +12,14 @@
     <setting id="xplay"   type="bool" label="Продвинутый плеер (переключение каналов, OSD)" default="true"/>
   </category>
   <category label="Программа">
-    <setting id="epgon"  type="bool" label="Показывать программу" default="true"/>
-    <setting id="epgosd" type="bool" label="Показывать передачи в OSD" default="true"/>
-    <setting id="epgtvx" type="bool" label="Обновлять с Tivix.net" default="true"/>
-    <setting id="epgxml" type="bool" label="Обновлять с Torrent-tv.ru" default="true"/>
-    <setting id="stv"    type="bool" label="Обновлять с S-TV.ru" default="true"/>
+    <setting id="epgon"    type="bool" label="Показывать программу" default="true"/>
+    <setting id="epgosd"   type="bool" label="Показывать передачи в OSD" default="true"/>
+    <setting id="epgtvx"   type="bool" label="Обновлять с Tivix.net" default="true"/>
+    <setting id="epgxml"   type="bool" label="Обновлять с Torrent-tv.ru" default="true"/>
+    <setting id="stv"      type="bool" label="Обновлять с S-TV.ru" default="true"/>
+    <setting id="vsetv_ru" type="bool" label="Обновлять с Vsetv.com (Российский пакет)" default="true"/>
+    <setting id="vsetv_ua" type="bool" label="Обновлять с Vsetv.com (Украинский пакет)" default="true"/>
+    <setting id="vsetv_by" type="bool" label="Обновлять с Vsetv.com (Белорусский пакет)" default="true"/>
     <setting id="shift"  type="enum" label="Смещение программы (от московского времени):" default="6" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
   </category>
   <category label="Серверы">

@@ -1618,8 +1618,8 @@ def root():
 	
 	if intlogo =='true': ctd=False
 	else:                ctd=True
-	print "------ time"
-	print time.time()-ct
+	#print "------ time"
+	#print time.time()-ct
 	xbmcplugin.endOfDirectory(handle, cacheToDisc=ctd)
 
 def get_allurls(xid, L):
@@ -2039,12 +2039,12 @@ if mode==""         : #root
 			udata =int(get_inf_db('udata'))
 			#udata = int(__settings__.getSetting('udata'))
 		except: udata = 0
-		print "-=-=-=-=-=-=- udata ------ - - - - - "
-		print udata
-		if cdata>udata and __settings__.getSetting("epgon")=='true':
-			add_to_db ("udata", str(cdata))
+		#print "-=-=-=-=-=-=- udata ------ - - - - - "
+		#print udata
+		#if cdata>udata and __settings__.getSetting("epgon")=='true':
+		#	add_to_db ("udata", str(cdata))
 			#__settings__.setSetting("udata",str(cdata))
-			upepg()
+			#upepg()
 			
 
 if mode=="context_gr"  :
@@ -2100,5 +2100,70 @@ if mode=="next2"     : next ('>')
 
 if mode=="rename"   : updatetc.rename_list(int(ind))
 #upd_canals_db3()
+
+def upd_EPG_vsetv():
+	url = 'http://www.vsetv.com/schedule_package_bybase_day.html'
+	http = getURL(url)
+	ss='<div class=chlogo>'
+	es='></div><div class="clear'
+	L=mfindal(http,ss,es)
+	epg={}
+	n=0
+	t=len(L)
+	for i in L:
+		#print i
+		try:
+			i=i.decode('windows-1251')
+			i=i.encode('utf-8')
+		except: pass
+		i=i.replace(chr(10),"").replace(chr(13),"").replace("\t","")
+		#debug (i)
+		n+=1
+		if i!="":
+			
+			ss='class="channeltitle">'
+			es='</td><td width="99%"'
+			cnl_nm=mfindal(i,ss,es)[0][len(ss):]
+			#print cnl_nm
+			idx=get_idx(cnl_nm)
+			if idx=="": idx=get_idx(cnl_nm.replace(" Россия",""))
+			
+			if idx!="":
+				tmp=i.replace('class="past','class="').replace('class="onair"','class="time"')
+				tmp=tmp.replace('</div><div class="prname2">','<:--:>').replace('align="absmiddle">&nbsp;','-:>').replace('.html>','-:>').replace('.html class=b>','-:>')
+				tmp=tmp.replace('-:><','')
+				sdn=tmp.find('chnum')
+				tmp=tmp[sdn:]
+				ss='class="time"'
+				es='div><div'
+				#print tmp
+				L2=mfindal(tmp,ss,es)
+				Le=[]
+				for j in L2:
+					try:
+						ss='"time">'
+						es='<:'
+						stm=mfindal(j,ss,es)[0][len(ss):]
+						
+						ss=':>'
+						es='</'
+						pr_nm=mfindal(j,ss,es)[0][len(ss):]
+						if pr_nm=="": print j
+						
+						start_at=time.strftime('%Y-%m-%d')+" "+stm+":00"
+						#print start_at +" - "+pr_nm
+						Le.append({"name":pr_nm, "start_at":start_at})
+					except: 
+						print j
+						pass
+				try:pDialog.update(int(n*100/t), message=cnl_nm)
+				except: pass
+				if len(Le)>0:add_to_db(idx, repr(Le))
+
+			else:
+				print "NO_ID: "+cnl_nm
+		#if n>13: break
+#upd_EPG_vsetv()
+
 c.close()
 
