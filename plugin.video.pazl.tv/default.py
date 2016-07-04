@@ -87,6 +87,10 @@ class xPlayer(xbmc.Player):
 
 	def onPlayBackStopped(self):
 		self.ov_hide()
+		if __settings__.getSetting("epgon")=='true':
+			xbmc.sleep(300)
+			#showMessage("", "Обновляем список", times = 3000)
+			xbmc.executebuiltin("Container.Refresh")
 	
 	def onPlayBackSpeedChanged(self, ofs):
 		ct=int(time.strftime('%Y%m%d%H%M%S'))
@@ -199,7 +203,7 @@ def GETimg(target, nmi):
 		if sz > 0:
 			return path
 		else:
-			if __settings__.getSetting("dllogo")=='true': return target
+			if __settings__.getSetting("dllogo")=='false': return target
 			
 			pDialog = xbmcgui.DialogProgressBG()
 			pDialog.create('Пазл ТВ', 'Загрузка логотипа: '+ nmi)
@@ -384,15 +388,18 @@ def play(urls, name ,cover, ref=True):
 		__settings__.setSetting("cplayed",name)
 		
 		Player.play(playlist)
-		
-		xbmc.sleep(6000)
-		xbmc.sleep(6000)
-		while  xbmc.Player().isPlaying():
+		xbmcplugin.endOfDirectory(handle)
+		if __settings__.getSetting("epgon")=='true' or __settings__.getSetting("xplay")=='true':
+			while not xbmc.Player().isPlaying():
+				xbmc.sleep(300)
+			#xbmc.sleep(6000)
+			xbmc.sleep(300)
+			while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
 				#print "========================  playing ======================"
-		if __settings__.getSetting("epgon")=='true':
-			if ref==True: 
+			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
 				xbmc.sleep(300)
+				#showMessage("", "Обновляем список", times = 3000)
 				xbmc.executebuiltin("Container.Refresh")
 				#print "========================  Refresh ======================"
 
@@ -2097,73 +2104,7 @@ if mode=="next"     :
 	xbmc.executebuiltin('Container.Update("plugin://plugin.video.pazl.tv/?mode=next2")')
 
 if mode=="next2"     : next ('>')
-
 if mode=="rename"   : updatetc.rename_list(int(ind))
-#upd_canals_db3()
-
-def upd_EPG_vsetv():
-	url = 'http://www.vsetv.com/schedule_package_bybase_day.html'
-	http = getURL(url)
-	ss='<div class=chlogo>'
-	es='></div><div class="clear'
-	L=mfindal(http,ss,es)
-	epg={}
-	n=0
-	t=len(L)
-	for i in L:
-		#print i
-		try:
-			i=i.decode('windows-1251')
-			i=i.encode('utf-8')
-		except: pass
-		i=i.replace(chr(10),"").replace(chr(13),"").replace("\t","")
-		#debug (i)
-		n+=1
-		if i!="":
-			
-			ss='class="channeltitle">'
-			es='</td><td width="99%"'
-			cnl_nm=mfindal(i,ss,es)[0][len(ss):]
-			#print cnl_nm
-			idx=get_idx(cnl_nm)
-			if idx=="": idx=get_idx(cnl_nm.replace(" Россия",""))
-			
-			if idx!="":
-				tmp=i.replace('class="past','class="').replace('class="onair"','class="time"')
-				tmp=tmp.replace('</div><div class="prname2">','<:--:>').replace('align="absmiddle">&nbsp;','-:>').replace('.html>','-:>').replace('.html class=b>','-:>')
-				tmp=tmp.replace('-:><','')
-				sdn=tmp.find('chnum')
-				tmp=tmp[sdn:]
-				ss='class="time"'
-				es='div><div'
-				#print tmp
-				L2=mfindal(tmp,ss,es)
-				Le=[]
-				for j in L2:
-					try:
-						ss='"time">'
-						es='<:'
-						stm=mfindal(j,ss,es)[0][len(ss):]
-						
-						ss=':>'
-						es='</'
-						pr_nm=mfindal(j,ss,es)[0][len(ss):]
-						if pr_nm=="": print j
-						
-						start_at=time.strftime('%Y-%m-%d')+" "+stm+":00"
-						#print start_at +" - "+pr_nm
-						Le.append({"name":pr_nm, "start_at":start_at})
-					except: 
-						print j
-						pass
-				try:pDialog.update(int(n*100/t), message=cnl_nm)
-				except: pass
-				if len(Le)>0:add_to_db(idx, repr(Le))
-
-			else:
-				print "NO_ID: "+cnl_nm
-		#if n>13: break
-#upd_EPG_vsetv()
 
 c.close()
 
