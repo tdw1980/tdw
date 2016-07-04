@@ -87,8 +87,9 @@ class xPlayer(xbmc.Player):
 
 	def onPlayBackStopped(self):
 		self.ov_hide()
+		#xbmcplugin.endOfDirectory(handle)
 		if __settings__.getSetting("epgon")=='true':
-			xbmc.sleep(300)
+			xbmc.sleep(600)
 			#showMessage("", "Обновляем список", times = 3000)
 			xbmc.executebuiltin("Container.Refresh")
 	
@@ -286,8 +287,9 @@ def next (dr='>'):
 						
 						#add_item ("[B]"+name+"[/B]", 'play', urls, name, cover)
 						if id!="" and __settings__.getSetting("split")=='true':Lid.append(id)
-						Lnm.append(name2)
-						Lnu.append([urls,name2,cover])
+						if name2 not in Lnm:
+							Lnm.append(name2)
+							Lnu.append([urls,name2,cover])
 		if dr=='>':
 			n=0
 			drs='>> \n'
@@ -321,7 +323,8 @@ def play(urls, name ,cover, ref=True):
 	__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
 	if ref==True:Player.stop()
 	pDialog = xbmcgui.DialogProgressBG()
-	pDialog.create('Пазл ТВ', 'Поиск потоков ...')
+	try:pDialog.create('Пазл ТВ', 'Поиск потоков ...')
+	except: pass
 	Lpurl=[]
 	for url in urls:
 		#Lcurl=get_stream(url)
@@ -388,16 +391,17 @@ def play(urls, name ,cover, ref=True):
 		__settings__.setSetting("cplayed",name)
 		
 		Player.play(playlist)
-		xbmcplugin.endOfDirectory(handle)
+		xbmc.sleep(1000)
 		if __settings__.getSetting("epgon")=='true' or __settings__.getSetting("xplay")=='true':
 			while not xbmc.Player().isPlaying():
 				xbmc.sleep(300)
 			#xbmc.sleep(6000)
-			xbmc.sleep(300)
+			#xbmc.sleep(300)
 			while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
 				#print "========================  playing ======================"
 			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
+				#xbmcplugin.endOfDirectory(handle)
 				xbmc.sleep(300)
 				#showMessage("", "Обновляем список", times = 3000)
 				xbmc.executebuiltin("Container.Refresh")
@@ -405,7 +409,7 @@ def play(urls, name ,cover, ref=True):
 
 def get_ttv(url):
 		http=getURL(url)
-		print http
+		#print http
 		ss1='this.loadPlayer("'
 		ss2='this.loadTorrent("'
 		es='",{autoplay: true})'
@@ -448,7 +452,7 @@ def pars_m3u8(url):
 		return [url,]
 
 def get_stream(url):
-	print url
+	#print url
 	if 'viks.tv' in url:
 		http=getURL(url)
 		
@@ -573,14 +577,14 @@ def get_stream(url):
 				ss='frameborder="0" scrolling="no" src="'
 				es='" bgcolor="#000000" allowtransparency="true"'
 				pl=mfindal(http,ss,es)[0][len(ss):]
-				print pl
+				#print pl
 				
 				http2=getURL(pl)
 				#print http2
 				ss='file='
 				es='"></object>'
 				st=mfindal(http2,ss,es)[0][len(ss):]
-				print st
+				#print st
 				L=[st,]
 			except: pass
 				
@@ -593,7 +597,7 @@ def get_stream(url):
 					for t in Lt:
 						t=t.replace('site=1906','site=1714')
 						trst=get_ttv(t)
-						print trst
+						#print trst
 						Lp2.append(trst)
 					L.extend(Lp2)
 				except: pass
@@ -637,7 +641,7 @@ def get_stream(url):
 			for t in Lt:
 				t=t.replace('site=1510','site=1714')
 				trst=get_ttv(t)
-				print trst
+				#print trst
 				Lp2.append(trst)
 			Lp.extend(Lp2)
 
@@ -1239,8 +1243,8 @@ def upd_canals_db4():
 			
 		except: 
 		#else:
-			print " --------------- ОШИБКА  ----------------- "
-			print i
+			#print " --------------- ОШИБКА  ----------------- "
+			#print i
 			pass
 			
 	if fdbc:
@@ -1591,7 +1595,7 @@ def root():
 				url   = i['url']
 				cover = i['img']
 				id=get_idx(name)
-				if id=="": print lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+				#if id=="": print lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 				if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
 				if grinnm =='true': name2=add_grn(name)
 				else: name2=name
