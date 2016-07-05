@@ -71,7 +71,7 @@ class xPlayer(xbmc.Player):
 		if __settings__.getSetting("split")=='true':  cnn=__settings__.getSetting("cplayed").replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 		else:                                         cnn=__settings__.getSetting("cplayed").replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
 		if __settings__.getSetting("epgosd")=='true':
-			cgide=get_cgide(get_idx(cnn), 'serv')
+			cgide=get_cgide(get_idx(__settings__.getSetting("cplayed")), 'serv')
 		else:
 			cgide=""
 		self.ov_update("[B]I I\n[COLOR FFFFFF00]"+cnn+"[/COLOR][/B]\n"+xt(cgide))
@@ -319,6 +319,8 @@ else:
 	Player=xbmc.Player()
 
 def play(urls, name ,cover, ref=True):
+	#xbmcplugin.endOfDirectory(handle, False, False)
+	
 	#print urls
 	__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
 	if ref==True:Player.stop()
@@ -364,6 +366,7 @@ def play(urls, name ,cover, ref=True):
 	if Lpurl2==[]:
 		pDialog.close()
 		showMessage('Пазл ТВ', 'Канал недоступен')
+		if __settings__.getSetting("xplay")=='true': Player.ov_hide()
 		__settings__.setSetting("cplayed",name)
 		try:n_play=int(__settings__.getSetting("n_play"))
 		except:n_play=0
@@ -399,6 +402,7 @@ def play(urls, name ,cover, ref=True):
 			#xbmc.sleep(300)
 			while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
+				
 				#print "========================  playing ======================"
 			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
 				#xbmcplugin.endOfDirectory(handle)
@@ -406,6 +410,7 @@ def play(urls, name ,cover, ref=True):
 				#showMessage("", "Обновляем список", times = 3000)
 				xbmc.executebuiltin("Container.Refresh")
 				#print "========================  Refresh ======================"
+
 
 def get_ttv(url):
 		http=getURL(url)
@@ -607,6 +612,45 @@ def get_stream(url):
 		except:
 			return []
 	
+	elif 'onelike.tv' in url:
+		try:
+			L=[]
+			try:
+				http=getURL(url)
+				#print http
+				ss='http://vkluchi.tv'
+				es='" scrolling="no"></iframe>'
+				pl=mfindal(http,ss,es)[0]
+				#print pl
+				
+				http2=getURL(pl)
+				print http2
+				ss='file='
+				es="'></object>"
+				st=mfindal(http2,ss,es)[0][len(ss):]
+				print st
+				L=[st,]
+			except: pass
+				
+			if __settings__.getSetting("p2p-2")=='true':
+				try:
+					ss='http://1ttv.net'
+					es='" width="100%" height="450" bgcolor="#000000"'
+					Lt=mfindal(http,ss,es)#[0]
+					Lp2=[]
+					for t in Lt:
+						t=t.replace('site=2045','site=1714')
+						trst=get_ttv(t)
+						#print trst
+						Lp2.append(trst)
+					L.extend(Lp2)
+				except: pass
+
+			return L
+				
+		except:
+			return []
+
 	
 	elif 'tivix.net' in url:
 		Lp=[]
@@ -956,7 +1000,7 @@ def upd_canals_db1():
 		return LL
 
 
-def upd_canals_db2():
+def upd_canals_db21():
 	LL=[]
 	for pg in range(1,5):
 		url='http://tivix.net/page/'+str(pg)
@@ -990,6 +1034,77 @@ def upd_canals_db2():
 	else:showMessage('tivix.net', 'Не удалось загрузить каналы', times = 3000)
 		
 	return LL
+
+def upd_canals_db22():
+		LL=[]
+	#for pg in range(1,5):
+		url='http://ok-tv.org'
+		http=getURL(url)
+		
+		ss='<a target="_blank"'
+		es='style="width:100px;"'
+		L=mfindal(http,ss,es)
+		
+		for i in L:
+			ss='href="'
+			es='.html'
+			url='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]+es
+		
+			ss='src="'
+			es='" alt="'
+			img='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]
+
+			ss='title="'
+			es='" href'
+			title=mfindal(i,ss,es)[0][len(ss):]
+			#try: tiitle=title.decode('windows-1251')
+			#except:pass
+			try: tiitle=title.encode('utf-8')
+			except:pass
+			#print title
+			title=title.replace('смотреть','').replace('смотреть','').replace('Cмотреть','').replace('онлайн','').replace('прямой эфир','').replace('прямо эфир','').replace('прямую трансляцию','').replace('бесплатно','').strip()
+			#tiitle=title.replace(u'смотреть','').replace(u'Cмотреть','').replace(u'онлайн','').replace(u'прямой эфир','').replace(u'бесплатно','').strip()
+			
+			LL.append({'url':url, 'img':img, 'title':title+" #2"})
+			
+		if LL!=[]:save_channels(2, LL)
+		else:showMessage('ok-tv.org', 'Не удалось загрузить каналы', times = 3000)
+		
+		return LL
+
+
+
+def upd_canals_db2():
+		LL=[]
+	#for pg in range(1,5):
+		url='http://onelike.tv'
+		http=getURL(url)
+		ss='<td style="text-align: center;">'
+		es='height="95" /></a></td>'
+		L=mfindal(http,ss,es)
+		for i in L:
+			try:
+				ss='<a href="'
+				es='.html'
+				url='http://onelike.tv'+mfindal(i,ss,es)[0][len(ss):]+'.html'
+		
+				ss='src="'
+				es='.png"'
+				img='http://onelike.tv'+mfindal(i,ss,es)[0][len(ss):]+'.png'
+
+				ss='title="'
+				es='" width="95"'
+				title=mfindal(i,ss,es)[0][len(ss):].replace(' смотреть онлайн','').strip()
+			
+				LL.append({'url':url, 'img':img, 'title':title+" #2"})
+			except:
+				pass
+			
+		if LL!=[]:save_channels(2, LL)
+		else:showMessage('onelike.tv', 'Не удалось загрузить каналы', times = 3000)
+		
+		return LL
+
 
 def upd_canals_db3():  #xml
 	import cnl
@@ -1263,42 +1378,6 @@ def upd_canals_db4():
 	return LL
 
 
-def upd_canals_db2():
-		LL=[]
-	#for pg in range(1,5):
-		url='http://ok-tv.org'
-		http=getURL(url)
-		
-		ss='<a target="_blank"'
-		es='style="width:100px;"'
-		L=mfindal(http,ss,es)
-		
-		for i in L:
-			ss='href="'
-			es='.html'
-			url='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]+es
-		
-			ss='src="'
-			es='" alt="'
-			img='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]
-
-			ss='title="'
-			es='" href'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			#try: tiitle=title.decode('windows-1251')
-			#except:pass
-			try: tiitle=title.encode('utf-8')
-			except:pass
-			#print title
-			title=title.replace('смотреть','').replace('смотреть','').replace('Cмотреть','').replace('онлайн','').replace('прямой эфир','').replace('прямо эфир','').replace('прямую трансляцию','').replace('бесплатно','').strip()
-			#tiitle=title.replace(u'смотреть','').replace(u'Cмотреть','').replace(u'онлайн','').replace(u'прямой эфир','').replace(u'бесплатно','').strip()
-			
-			LL.append({'url':url, 'img':img, 'title':title+" #2"})
-			
-		if LL!=[]:save_channels(2, LL)
-		else:showMessage('ok-tv.org', 'Не удалось загрузить каналы', times = 3000)
-		
-		return LL
 
 
 
@@ -1538,6 +1617,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 		except: pass
 
 		fld=False
+		#fld=True
 		ContextGr=[('[B]Все каналы[/B]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name=Все каналы")'),]
 		for grn in list_gr():
 			ContextGr.append(('[B]'+grn+'[/B]','Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name='+urllib.quote_plus(grn)+'")'))
@@ -1595,7 +1675,7 @@ def root():
 				url   = i['url']
 				cover = i['img']
 				id=get_idx(name)
-				#if id=="": print lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+				if id=="": print lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 				if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
 				if grinnm =='true': name2=add_grn(name)
 				else: name2=name
