@@ -20,16 +20,18 @@ import socket
 socket.setdefaulttimeout(50)
 
 icon = ""
-siteUrl = 'ru-ru.org'
+siteUrl = 'open-tor.org'
 httpSiteUrl = 'http://' + siteUrl
 sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'rutors.cookies.sid')
  
 cj = cookielib.FileCookieJar(sid_file) 
 hr  = urllib2.HTTPCookieProcessor(cj) 
-import antizapret
-#antizapret.config_add(siteUrl)
-opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
-urllib2.install_opener(opener) 
+try:
+	import antizapret
+	#antizapret.config_add(siteUrl)
+	opener = urllib2.build_opener(antizapret.AntizapretProxyHandler(), hr)
+	urllib2.install_opener(opener)
+except: pass
 
 
 def ru(x):return unicode(x,'utf8', 'ignore')
