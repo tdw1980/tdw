@@ -16,6 +16,10 @@ from xbmcwindow import *
 
 images = os.path.join(_addon_path, 'images')
 UserDir = xbmc.translatePath(os.path.join(xbmc.translatePath("special://masterprofile/"),"addon_data","plugin.video.pazl.tv"))
+ld=os.listdir(os.path.join(addon.getAddonInfo('path'),"serv"))
+Lserv=[]
+for i in ld:
+	if '.pyo' not in i: Lserv.append(i[:-3])
 
 class MyVideoAddon(AddonDialogWindow):
 
@@ -38,13 +42,6 @@ class MyVideoAddon(AddonDialogWindow):
         self.list_bg_focus = os.path.join(images, 'MenuItemFO.png')
         self.button_bg_Nofocus = os.path.join(images, 'KeyboardKeyNF.png')
         self.button_bg_focus = os.path.join(images, 'KeyboardKey.png')
-#        self.radio_focus = os.path.join(images, 'radiobutton-focus.png')
-#        self.radio_Nofocus = os.path.join(images, 'radiobutton-nofocus.png')
-#        self.check_focus = os.path.join(images, 'OverlayWatched.png')
-#        self.edit_focus = os.path.join(images, 'button-focus.png')
-#        self.slider_bg = os.path.join(images, 'osd_slider_bg_2.png')
-#        self.slider_nib = os.path.join(images, 'osd_slider_nib.png')
-#        self.slider_nib_nf = os.path.join(images, 'osd_slider_nibNF.png')
 
     def set_controls(self):
         idw=__settings__.getSetting("idw")
@@ -99,14 +96,6 @@ class MyVideoAddon(AddonDialogWindow):
         self.button_remg.controlUp(self.list)
         self.button_addg.controlRight(self.button_remg)
         self.button_remg.controlLeft(self.button_addg)
-        #self.radiobutton.controlUp(self.button)
-        #self.radiobutton.controlDown(self.edit)
-        #self.edit.controlUp(self.radiobutton)
-        #self.edit.controlDown(self.list)
-        #self.list.controlUp(self.edit)
-        #self.list.controlDown(self.button)
-        #self.slider.controlUp(self.list)
-        #self.slider.controlDown(self.button)
         self.setFocus(self.list)
 
     def onControl(self, control):
@@ -235,40 +224,26 @@ def List_gr():
 		
 	return Lg
 
-def List_cn():
-	
-	if __settings__.getSetting("serv1")=='true' :
-		try:
-			import Channels1
-			L1=Channels1.Channels
-		except:L1=[]
-	else: L1=[]
-	
-	if __settings__.getSetting("serv2")=='true':
-		try:
-			import Channels2
-			L2=Channels2.Channels
-		except:L2=[]
-	else: L2=[]
-	
-	if __settings__.getSetting("serv3")=='true':
-		try:
-			import Channels3
-			L3=Channels3.Channels
-		except:L3=[]
-	else: L3=[]
 
-	if __settings__.getSetting("serv4")=='true':
-		try:
-			import Channels4
-			L4=Channels4.Channels
-		except:L4=[]
-	else: L4=[]
-	
-	L1.extend(L2)
-	L1.extend(L3)
-	L1.extend(L4)
-	L=L1
+def get_all_channeles():
+	pDialog = xbmcgui.DialogProgressBG()
+	L=[]
+	for i in Lserv:
+		serv_id=str(int(i[1:3]))
+		if __settings__.getSetting("serv"+serv_id+"")=='true' :
+			
+			try: exec ("import Channels"+serv_id+"; Ls=Channels"+serv_id+".Channels")
+			except:Ls=[]
+			if Ls==[]: 
+				pDialog.create('Пазл ТВ', 'Обновление списка каналов #'+serv_id+' ...')
+				Ls=upd_canals_db(i)
+				pDialog.close()
+		else: Ls=[]
+		L.extend(Ls)
+	return L
+
+def List_cn():
+	L=get_all_channeles()
 	Lg=get_gr()
 	Lnm=[]
 	for i in L:
@@ -283,7 +258,6 @@ def List_cn():
 	for name in Lnm:
 					if name in Lg: name=sel(name)
 					Lc.append(name)
-	
 	return Lc
 
 

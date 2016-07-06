@@ -19,6 +19,7 @@ while not xbmc.abortRequested:
 			print('----- Torrent Checker started -----')
 			#xbmcgui.Dialog().notification('Torrent Checker', 'Запущен', icon, 1000, False)
 			start_trigger = False
+			time.sleep(15)
 			updatetc.update()
 		# ---------------------------------
 		time.sleep(1)
