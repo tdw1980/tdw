@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import string, xbmc, xbmcgui, xbmcplugin, xbmcaddon
-import os, cookielib, urllib, urllib2, time
+import os, sys, cookielib, urllib, urllib2, time
 addon = xbmcaddon.Addon(id='plugin.video.pazl.tv')
 __settings__ = xbmcaddon.Addon(id='plugin.video.pazl.tv')
 #-----------------------------------------
 
 icon = ""
 serv_id = '4'
-siteUrl = 'televizorhd.ru'
+siteUrl = 'asplaylist.net'
 httpSiteUrl = 'http://' + siteUrl
 sid_file = os.path.join(xbmc.translatePath('special://temp/'), siteUrl+'.sid')
 
@@ -20,6 +20,14 @@ urllib2.install_opener(opener)
 
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
+def fs_enc(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode('utf-8').encode(sys_enc)
+
+def fs_dec(path):
+    sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+    return path.decode(sys_enc).encode('utf-8')
+
 from xid import *
 
 def showMessage(heading, message, times = 3000):
@@ -83,6 +91,7 @@ class PZL:
 		return ['http://'+srv+':'+prt+'/ace/getstream?url='+url,]
 
 	def Canals(self):
+		Logo = xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'logo'))
 		import logodb
 		Ldb=logodb.ttvlogo
 		LL=[]
@@ -155,7 +164,7 @@ class PZL:
 					img="http://televizorhd.ru/templates/Server-Torrent-TV/dleimages/no_image.jpg"
 					
 				if no_err: 
-					LL.append({'url':url, 'img':img, 'title':title+' #4'})
+					LL.append({'url':url, 'img':img, 'title':title+' #'+serv_id})
 					Lu.append(url)
 				
 			except: 
@@ -174,7 +183,7 @@ class PZL:
 			fl.write('}')
 			fl.close()
 
-		if LL!=[]:save_channels(4, LL)
-		else: showMessage('televizorhd.ru', 'Не удалось загрузить каналы', 3000)
+		if LL!=[]:save_channels(serv_id, LL)
+		else: showMessage('asplaylist.net', 'Не удалось загрузить каналы', 3000)
 
 		return LL

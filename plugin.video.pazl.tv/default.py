@@ -76,8 +76,8 @@ class xPlayer(xbmc.Player):
 		xbmc.sleep(300)
 		self.ov_show()
 		self.ov_update('[B]I I[/B]')
-		if __settings__.getSetting("split")=='true':  cnn=__settings__.getSetting("cplayed").replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-		else:                                         cnn=__settings__.getSetting("cplayed").replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+		if __settings__.getSetting("split")=='true':  cnn=unmark(__settings__.getSetting("cplayed"))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+		else:                                         cnn=colormark(__settings__.getSetting("cplayed"))#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
 		if __settings__.getSetting("epgosd")=='true':
 			cgide=get_cgide(get_idx(__settings__.getSetting("cplayed")), 'serv')
 		else:
@@ -290,7 +290,7 @@ def next (dr='>'):
 						if __settings__.getSetting("intlogo")=='true':  cover = GETimg(cover, id.replace("xttv",""))
 						if __settings__.getSetting("split")=='true':
 																		urls=get_allurls(id, L)
-																		name=name.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+																		name=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 						else: urls = [i['url'],]
 						
 						#add_item ("[B]"+name+"[/B]", 'play', urls, name, cover)
@@ -312,7 +312,7 @@ def next (dr='>'):
 					cgide=get_cgide(get_idx(Lnu[n][1]), 'serv')
 				else:
 					cgide=""
-				if __settings__.getSetting("split")=='true':nmc=Lnu[n][1].replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+				if __settings__.getSetting("split")=='true':nmc=unmark(Lnu[n][1])#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 				else: nmc=Lnu[n][1]
 				Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+nmc+"[/COLOR][/B]\n"+xt(cgide))
 				play(Lnu[n][0],Lnu[n][1],Lnu[n][2], False)
@@ -392,8 +392,8 @@ def play(urls, name ,cover, ref=True):
 			k=0
 			for purl in Lpurl2:
 				k+=1
-				if __settings__.getSetting("split")=='true':name2=name.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-				else:name2=name.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+				if __settings__.getSetting("split")=='true':name2=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+				else:name2=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
 				item = xbmcgui.ListItem(name2+" [ "+str(k)+"/"+str(len(Lpurl2))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 				playlist.add(url=purl, listitem=item)
 		
@@ -411,7 +411,7 @@ def play(urls, name ,cover, ref=True):
 			while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
 				
-				#print "========================  playing ======================"
+				print "========================  playing "+str(time.time())+"======================"
 			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
 				#xbmcplugin.endOfDirectory(handle)
 				xbmc.sleep(300)
@@ -419,6 +419,15 @@ def play(urls, name ,cover, ref=True):
 				xbmc.executebuiltin("Container.Refresh")
 				#print "========================  Refresh ======================"
 
+def unmark(nm):
+	for i in range (0,20):
+		nm=nm.replace(" #"+str(i),"")
+	return nm
+
+def colormark(nm):
+	for i in range (0,20):
+		nm=nm.replace(" #"+str(i),"[COLOR 40FFFFFF] #"+str(i)+"[/COLOR]")
+	return nm
 
 def get_ttv(url):
 		http=getURL(url)
@@ -466,7 +475,8 @@ def pars_m3u8(url):
 
 def get_stream(url):
 	for i in Lserv:
-		if i[4:] in url:
+		ids=i[4:].replace('_','-')
+		if ids in url:
 			exec ("import "+i+"; serv="+i+".PZL()")
 			return serv.Streams(url)
 	return []
@@ -579,7 +589,7 @@ def get_stream_off(url):
 			return []
 
 
-	elif 'peers.tv44' in url:
+	elif 'peers.tv' in url:
 		try:
 				url1=urllib.unquote_plus(url)+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:35.0) Gecko/20100101 Firefox/35.0'
 				url2=urllib.unquote_plus(url.replace('/126/','/16/'))+ '|User-Agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:35.0) Gecko/20100101 Firefox/35.0'
@@ -950,464 +960,9 @@ def set_num_cn(name):
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.Refresh")
 
-
-def upd_canals_db0_off():
-	LL=[]
-	for pg in range(1,5):
-		url=httpSiteUrl+'/page/'+str(pg)
-		http=getURL(url)
-		
-		ss='<div class="all_tv">'
-		es='an></a>'
-		L=mfindal(http,ss,es)
-		
-		CL=get_gr()
-		for i in L:
-			
-			ss='http://viks.tv/'
-			es='.html'
-			url=mfindal(i,ss,es)[0]+es
-		
-			ss='<img src="'
-			es='"><span>'
-			img='http://viks.tv/'+mfindal(i,ss,es)[0][len(ss):]
-
-			ss='<span>'
-			es='</sp'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			
-			LL.append({'url':url, 'img':img, 'title':title+" #1"})
-			
-	if LL!=[]:save_channels(1, LL)
-	else:showMessage('viks.tv', 'Не удалось загрузить каналы', times = 3000)
-		
-	return LL
-
-def upd_canals_db1_off():
-		LL=[]
-		url='http://api.peers.tv/peerstv/2/'
-		http=getURL(url)
-		
-		ss='<track>'
-		es='</track>'
-		L=mfindal(http,ss,es)
-		
-		for i in L:
-			ss='<location>'
-			es='</location>'
-			url=mfindal(i,ss,es)[0][len(ss):]
-		
-			ss='<image>'
-			es='</image>'
-			img=mfindal(i,ss,es)[0][len(ss):]
-
-			ss='<title>'
-			es='</title>'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			
-			LL.append({'url':url, 'img':img, 'title':title+" #1"})
-			
-		if LL!=[]:save_channels(1, LL)
-		else:showMessage('peers.tv', 'Не удалось загрузить каналы', times = 3000)
-		
-		return LL
-
 def upd_canals_db(i):
 	exec ("import "+i+"; serv="+i+".PZL()")
 	return serv.Canals()
-
-def upd_canals_db21_off():
-	LL=[]
-	for pg in range(1,5):
-		url='http://tivix.net/page/'+str(pg)
-		http=getURL(url)
-		n=http.find("<div id='dle-content'>")
-		http=http[n:]
-		ss='<div class="all_tv"'
-		es='</div>'
-		L=mfindal(http,ss,es)
-		
-		CL=get_gr()
-		for i in L:
-			try:
-				ss='http://tivix.net/'
-				es='.html'
-				url=mfindal(i,ss,es)[0]+'.html'
-		
-				ss='uploads/'
-				es='.png"'
-				img='http://tivix.net/'+mfindal(i,ss,es)[0]+'.png'
-
-				ss='title="'
-				es='">'
-				title=mfindal(i,ss,es)[0][len(ss):]
-			
-				LL.append({'url':url, 'img':img, 'title':title+" #2"})
-			except:
-				pass
-			
-	if LL!=[]:save_channels(2, LL)
-	else:showMessage('tivix.net', 'Не удалось загрузить каналы', times = 3000)
-		
-	return LL
-
-def upd_canals_db22_off():
-		LL=[]
-	#for pg in range(1,5):
-		url='http://ok-tv.org'
-		http=getURL(url)
-		
-		ss='<a target="_blank"'
-		es='style="width:100px;"'
-		L=mfindal(http,ss,es)
-		
-		for i in L:
-			ss='href="'
-			es='.html'
-			url='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]+es
-		
-			ss='src="'
-			es='" alt="'
-			img='http://ok-tv.org'+mfindal(i,ss,es)[0][len(ss):]
-
-			ss='title="'
-			es='" href'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			#try: tiitle=title.decode('windows-1251')
-			#except:pass
-			try: tiitle=title.encode('utf-8')
-			except:pass
-			#print title
-			title=title.replace('смотреть','').replace('смотреть','').replace('Cмотреть','').replace('онлайн','').replace('прямой эфир','').replace('прямо эфир','').replace('прямую трансляцию','').replace('бесплатно','').strip()
-			#tiitle=title.replace(u'смотреть','').replace(u'Cмотреть','').replace(u'онлайн','').replace(u'прямой эфир','').replace(u'бесплатно','').strip()
-			
-			LL.append({'url':url, 'img':img, 'title':title+" #2"})
-			
-		if LL!=[]:save_channels(2, LL)
-		else:showMessage('ok-tv.org', 'Не удалось загрузить каналы', times = 3000)
-		
-		return LL
-
-
-
-def upd_canals_db2_off():
-		LL=[]
-	#for pg in range(1,5):
-		url='http://onelike.tv'
-		http=getURL(url)
-		ss='<td style="text-align: center;">'
-		es='height="95" /></a></td>'
-		L=mfindal(http,ss,es)
-		for i in L:
-			try:
-				ss='<a href="'
-				es='.html'
-				url='http://onelike.tv'+mfindal(i,ss,es)[0][len(ss):]+'.html'
-		
-				ss='src="'
-				es='.png"'
-				img='http://onelike.tv'+mfindal(i,ss,es)[0][len(ss):]+'.png'
-
-				ss='title="'
-				es='" width="95"'
-				title=mfindal(i,ss,es)[0][len(ss):].replace(' смотреть онлайн','').strip()
-			
-				LL.append({'url':url, 'img':img, 'title':title+" #2"})
-			except:
-				pass
-			
-		if LL!=[]:save_channels(2, LL)
-		else:showMessage('onelike.tv', 'Не удалось загрузить каналы', times = 3000)
-		
-		return LL
-
-
-def upd_canals_db3_off():  #xml
-	import cnl
-	import logodb
-	Ldb=logodb.ttvlogo
-	LL=[]
-	Lu=[]
-	for i in cnl.ttvcnl:
-		LL.append({'url':i['url'], 'img':i['img'], 'title':i['title']+" #3"})
-		Lu.append(i['url'])
-	pref='http://1ttv.net/iframe.php?site=1714&channel='
-	xml=dload_epg_xml()
-	n=xml.find('<channel id')
-	k=xml.find('<programme ')
-	xml=xml[n:k]
-	xml=xml.replace(chr(10),"").replace(chr(13),"").replace("<channel id", "\n<channel id")
-	L=xml.splitlines()
-	#debug (xml)
-	#LL=[]
-	fdbc=False
-	for i in L:
-		if 'id="ttv' in i:
-			try:
-				ss='id="ttv'
-				es='"><display-name lang="ru">'
-				id=mfindal(i,ss,es)[0][len(ss):]
-				url=pref+id
-				if url not in Lu:
-					Lu.append(url)
-					#print url
-					ss='<display-name lang="ru">'
-					es='</display-name>'
-					title=mfindal(i,ss,es)[0][len(ss):]
-					#print title
-					
-					try:
-						img=Ldb[id]
-					except:
-						print "################ Логотип отсутствует в БД #################"
-						print url
-						tmp=getURL(url)
-						ss='http://torrent-tv.ru/uploads/'
-						es='.png" style="vertical-align'
-						img=mfindal(tmp,ss,es)[0]+'.png'
-						print '"'+id+'":"'+img+'"'
-						Ldb[id]=img
-						fdbc=True
-						print "################ Логотип сохранен в БД #################"
-					
-					LL.append({'url':url, 'img':img, 'title':title+" #3"})
-			except:
-					pass
-					print "!_!_!_!_!_!_!_!_ Ошибка получения канала TTB !_!_!_!_!_!_!_!_"
-					print i
-					print "!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_!_"
-	if fdbc:
-		fp=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'logodb.py'))
-		fl = open(fp, "w")
-		fl.write('# -*- coding: utf-8 -*-\n')
-		fl.write('ttvlogo={\n')
-		for i in Ldb.items():
-			fl.write('"'+i[0]+'":"'+i[1]+'",\n')
-		fl.write('}')
-		fl.close()
-
-	if LL!=[]: save_channels(3, LL)
-	else: showMessage('torrent-tv.ru', 'Не удалось загрузить каналы', times = 3000)
-
-	return LL
-
-def upd_canals_db41_off(): #http://televizorhd.ru
-	import logodb
-	Ldb=logodb.ttvlogo
-	LL=[]
-	url='http://televizorhd.ru'
-	#pref='http://1ttv.net/iframe.php?site=1714&channel='
-	http=getURL(url)
-		
-	ss='<li>'
-	es='</li>'
-	L=mfindal(http,ss,es)
-	fdbc=False
-	no_err=True
-	for i in L:
-		try:
-			ss='<a href="'
-			es='"><div class="openPart">'
-			url=mfindal(i,ss,es)[0][len(ss):]
-			#print url
-			
-			ss='<div class="openPart">'
-			es='</div></a>'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			try:
-				title=title.decode('windows-1251')
-				title=title.encode('utf-8')
-			except: pass
-				
-			id = get_idx(title)
-			if id=="":
-				try:
-					#print "-=======================================================-"
-					#print "-------------------- нет ID канала в БД -----------------------"
-					#print lower(title)
-					#print "-------------------- поиск ID на сайте  -----------------------"
-					#print url
-					h=getURL(url)
-					ss='http://1ttv.net/iframe.php?site=1714&channel='
-					es='" rel="nofollow" width="100%" height="570"'
-					id=mfindal(h,ss,es)[0][len(ss):]
-					#print '"'+lower(title)+'":"ttv'+id+'"'
-				except:
-					#print "-------------------- ID на сайте не найден -----------------------"
-					id=""
-			if id!="":
-				try:
-					#print "-------------------- Поиск логотипа в БД по ID -------------------"
-					img=Ldb[id]
-					#print img
-				except:
-					#try:
-					#	#print "------------ Логотип отсутствует в БД > Грузим с 1ttv ------------"
-					#	u2='http://1ttv.net/iframe.php?site=2252&channel='+id
-					#	tmp=getURL(u2)
-					#	ss='http://torrent-tv.ru/uploads/'
-					#	es='.png" style="vertical-align'
-					#	img=mfindal(tmp,ss,es)[0]+'.png'
-					#	#print '"'+id+'":"'+img+'"'
-					#	Ldb[id]=img
-					#	fdbc=True
-					#	#print "-------------------- Логотип сохранен в БД -------------------------"
-					#except:
-						#print "---------------------- Ошибка поиска на 1ttv > ищем локально -----------------------"
-						path = fs_enc(os.path.join(Logo, id.replace("xttv","")+'.png'))
-						try: sz=os.path.getsize(path)
-						except: sz=0
-						if sz >0:
-							img=path
-						else:
-							#try:
-							#	h=getURL(url)
-							#	ss='http://televizorhd.ru/uploads/posts'
-							#	es='_1.png'
-							#	img=mfindal(h,ss,es)[0]+es
-							#except:
-								#print "------------------! Логотип незвестен !-------------------------"
-								#print url
-								#print id
-								#print lower(title)
-								img="http://televizorhd.ru/templates/Server-Torrent-TV/dleimages/no_image.jpg"
-				
-			else:
-				#print " --------------- ОШИБКА ЗАГРУЗКИ КАНАЛА ----------------- "
-				#print i
-				no_err=False
-			if no_err: LL.append({'url':url, 'img':img, 'title':title+' #4'})
-		except: 
-			#print " --------------- ОШИБКА  ----------------- "
-			#print i
-			pass
-			
-	if fdbc:
-		fp=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'logodb.py'))
-		fl = open(fp, "w")
-		fl.write('# -*- coding: utf-8 -*-\n')
-		fl.write('ttvlogo={\n')
-		for i in Ldb.items():
-			fl.write('"'+i[0]+'":"'+i[1]+'",\n')
-		fl.write('}')
-		fl.close()
-
-	if LL!=[]:save_channels(4, LL)
-	else: showMessage('televizorhd.ru', 'Не удалось загрузить каналы', 3000)
-	return LL
-
-def upd_canals_db4_off():
-	import logodb
-	Ldb=logodb.ttvlogo
-	LL=[]
-	url='http://www.trambroid.com/playlist.xspf'
-	http=getURL(url)
-	http=http.replace(chr(10),"").replace(chr(13),"").replace("<track>", "\n<track>")
-	#debug (http)
-	L=http.splitlines()
-	Lu=[]
-	fdbc=False
-	for i in L:
-		no_err=True
-		try:
-		#if '<location>' in i:
-			#print "=================================================================="
-			ss='<location>'
-			es='</location>'
-			url=mfindal(i,ss,es)[0][len(ss):]
-			
-			#print url
-				
-			ss='<title>'
-			es='</title>'
-			title=mfindal(i,ss,es)[0][len(ss):]
-			#print title
-			
-			id = get_idx(title).replace("xttv","")
-			if id=="":
-					#print "-------------------- Нет ID -------------------"
-					print lower(title)
-
-			if id!="" and url not in Lu:
-				#print id
-				
-				try:
-					#print "-------------------- Поиск логотипа в БД по ID -------------------"
-					img=Ldb[id]
-					#print img
-				except:
-					#try:
-						#print "------------ Логотип отсутствует в БД > Грузим с 1ttv ------------"
-						#u2='http://1ttv.net/iframe.php?site=1714&channel='+id
-						#tmp=getURL(u2)
-						#ss='http://torrent-tv.ru/uploads/'
-						#es='.png" style="vertical-align'
-						#img=mfindal(tmp,ss,es)[0]+'.png'
-						#print '"'+id+'":"'+img+'"'
-						#Ldb[id]=img
-						#fdbc=True
-						#print "-------------------- Логотип сохранен в БД -------------------------"
-					#except:
-						#print "---------------------- Ошибка поиска на 1ttv > ищем локально -----------------------"
-						path = fs_enc(os.path.join(Logo, id+'.png'))
-						try: sz=os.path.getsize(path)
-						except: sz=0
-						if sz >0:
-							img=path
-						else:
-								#print "------------------! Логотип незвестен !-------------------------"
-								#print url
-								#print id
-								#print lower(title)
-								img="http://televizorhd.ru/templates/Server-Torrent-TV/dleimages/no_image.jpg"
-								no_err=False
-				
-			else:
-				#print " --------------- ОШИБКА ЗАГРУЗКИ КАНАЛА ----------------- "
-				#print i
-				no_err=False
-				img="http://televizorhd.ru/templates/Server-Torrent-TV/dleimages/no_image.jpg"
-				
-			if no_err: 
-				LL.append({'url':url, 'img':img, 'title':title+' #4'})
-				Lu.append(url)
-			
-		except: 
-		#else:
-			#print " --------------- ОШИБКА  ----------------- "
-			#print i
-			pass
-			
-	if fdbc:
-		fp=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'logodb.py'))
-		fl = open(fp, "w")
-		fl.write('# -*- coding: utf-8 -*-\n')
-		fl.write('ttvlogo={\n')
-		for i in Ldb.items():
-			fl.write('"'+i[0]+'":"'+i[1]+'",\n')
-		fl.write('}')
-		fl.close()
-
-	if LL!=[]:save_channels(4, LL)
-	else: showMessage('televizorhd.ru', 'Не удалось загрузить каналы', 3000)
-
-	return LL
-
-
-
-
-
-def televizorhd_off(url):
-	#url='http://www.trambroid.com/playlist.xspf'
-	L1=['a','e','l','d','y','f','r','c','w','x','.','/','h']
-	n=55
-	for i in L1:
-		n+=3
-		j=chr(n)
-		url=url.replace(i,j)
-	return url
-
-#print televizorhd("http://www.trambroid.com/playlist.xspf")
 
 def save_channels(n, L):
 		ns=str(n)
@@ -1440,8 +995,13 @@ def select_gr():
 		SG=Lg[r]
 		__settings__.setSetting("Sel_gr",SG)
 	
-	xbmc.sleep(300)
-	xbmc.executebuiltin("Container.Refresh")
+	try:root_tm = float(__settings__.getSetting("root_tm"))
+	except: root_tm = 0
+	
+	if __settings__.getSetting("frsup")=='true':
+#		xbmc.sleep(300)
+		print 'Refresh'
+		xbmc.executebuiltin("Container.Refresh")
 
 def list_gr():
 	try:L=open_Groups()
@@ -1625,72 +1185,85 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 
 
 def root():
-	try:	SG=__settings__.getSetting("Sel_gr")
-	except: SG=''
+		try:	SG=__settings__.getSetting("Sel_gr")
+		except: SG=''
+			
+		if SG=='':
+			SG='Все каналы'
+			__settings__.setSetting("Sel_gr",SG)
+		add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr', cover=icon)
 		
-	if SG=='':
-		SG='Все каналы'
-		__settings__.setSetting("Sel_gr",SG)
-	add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr', cover=icon)
-	
-	CL=get_gr()
-	ttl=len(CL)
-	if ttl==0:ttl=250
-	Lnm=[]
-	nserv=0
-	for k in ['1','2','3','4']:
-		if __settings__.getSetting("serv"+k)=='true': nserv+=1
-	
-	L=get_all_channeles()
-	
-	intlogo =__settings__.getSetting("intlogo")
-	grinnm  =__settings__.getSetting("grinnm")
-	splitcn   =__settings__.getSetting("split")
-	
-	ct= time.time()
-	if SG=='Все каналы':
-		for i in L:
-				name  = i['title']
-				url   = i['url']
-				cover = i['img']
-				id=get_idx(name)
-				if id=="": print lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-				if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
-				if grinnm =='true': name2=add_grn(name)
-				else: name2=name
-				
-				if __settings__.getSetting("split")=='true' or nserv==1: name2=name2.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-				else: name2=name2.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
-				
-				if id not in Lnm:
-					add_item ("[B]"+name2+"[/B]", 'play', [url,], name, cover)
-					if id!="" and splitcn =='true': Lnm.append(id)
-		if __settings__.getSetting("abc")=='true':  xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
-
-	else: # Группы
-		for k in CL:
-				for i in L:
-					name = i['title']
-					name2 = i['title']
+		CL=get_gr()
+		ttl=len(CL)
+		if ttl==0:ttl=250
+		Lnm=[]
+		nserv=0
+		for k in range (1,len(Lserv)+1):
+			if __settings__.getSetting("serv"+str(k))=='true': nserv+=1
+		
+		L=get_all_channeles()
+		
+		intlogo =__settings__.getSetting("intlogo")
+		grinnm  =__settings__.getSetting("grinnm")
+		splitcn   =__settings__.getSetting("split")
+		
+		ct= time.time()
+		if SG=='Все каналы':
+			for i in L:
+					name  = i['title']
+					url   = i['url']
+					cover = i['img']
 					id=get_idx(name)
-					if k==name and id not in Lnm:
-						cover = i['img']
-						if intlogo == 'true':  cover = GETimg(cover, id.replace("xttv",""))
-						#if id=='': print name+' : '+i['url']
-						if splitcn =='true':	urls=get_allurls(id, L)
-						else: 					urls = [i['url'],]
-						
-						if splitcn =='true' or nserv==1: name=name.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-						else: name=name.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
-						
-						add_item ("[B]"+name+"[/B]", 'play', urls, name2, cover)
-						if id!="" and splitcn =='true':Lnm.append(id)
-	
-	if intlogo =='true': ctd=False
-	else:                ctd=True
-	#print "------ time"
-	#print time.time()-ct
-	xbmcplugin.endOfDirectory(handle, cacheToDisc=ctd)
+					if id=="": print unmark(lower(name))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+					if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
+					if grinnm =='true': name2=add_grn(name)
+					else: name2=name
+					
+					if __settings__.getSetting("split")=='true' or nserv==1: name2=unmark(name2)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+					else: name2=colormark(name2)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+					
+					if id not in Lnm:
+						add_item ("[B]"+name2+"[/B]", 'play', [url,], name, cover)
+						if id!="" and splitcn =='true': Lnm.append(id)
+			if __settings__.getSetting("abc")=='true':  xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+
+		else: # Группы
+			if __settings__.getSetting("frslst")=='true':
+				NCL=[]
+				for b in CL: #10
+					NCL.append(unmark(b))
+			
+				NL=[]
+				for a in L: #1000
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+			else:
+				NCL=CL
+				NL=L
+			
+			for k in CL: #10
+					for i in NL: #30
+						name = i['title']
+						name2 = i['title']
+						id=get_idx(name)
+						if k==name and id not in Lnm:
+							cover = i['img']
+							if intlogo == 'true':  cover = GETimg(cover, id.replace("xttv",""))
+							#if id=='': print name+' : '+i['url']
+							if splitcn =='true':	urls=get_allurls(id, NL) #30
+							else: 					urls = [i['url'],]
+							
+							if splitcn =='true' or nserv==1: name=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+							
+							add_item ("[B]"+name+"[/B]", 'play', urls, name2, cover)
+							if id!="" and splitcn =='true':Lnm.append(id)
+		
+		if intlogo =='true': ctd=False
+		else:                ctd=True
+		#print "------ time"
+		#print time.time()-ct
+		xbmcplugin.endOfDirectory(handle, cacheToDisc=ctd)
 
 def get_allurls(xid, L):
 	id=xid[1:]
@@ -1700,7 +1273,7 @@ def get_allurls(xid, L):
 			L2.append(i[0])
 	L3=[]
 	for j in L:
-		name = lower(j['title']).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+		name = unmark(lower(j['title']))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 		if name in L2:
 			L3.append(j['url'])
 	return L3
@@ -1725,7 +1298,7 @@ def get_id(url):
 			return '0'
 
 def get_idx(name):
-	name=lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+	name=unmark(lower(name))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 	try:
 		id="x"+xmlid[name]
 	except: 

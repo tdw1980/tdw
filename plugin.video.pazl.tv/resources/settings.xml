@@ -24,12 +24,13 @@
   </category>
   <category label="Серверы">
     <setting id="split" type="bool" label="[B]Объединять одинаковые каналы серверов[/B]" default="false"/>
-    
-    <setting id="serv1" type="bool" label="[B]#1   Peers.tv    [/B]" default="true"/>
-    <setting id="serv2" type="bool" label="[B]#2   Onelike.tv    [/B]" default="true"/>
-    <setting id="p2p-2"   type="bool" label="              2.1 - Использовать P2P"   visible="eq(-1,true)" default="true"/>
-    <setting id="serv3" type="bool" label="[B]#3   Torrent-tv.ru (P2P SID)     [/B]" default="true"/>
-    <setting id="serv4" type="bool" label="[B]#4   Televizorhd.ru (AceLive)    [/B]" default="true"/>
+    <setting id="serv1" type="bool" label="[B]#1   Peers.tv    [/B]"                 default="true"/>
+    <setting id="serv2" type="bool" label="[B]#2   Onelike.tv    [/B]"               default="true"/>
+    <setting id="serv3" type="bool" label="[B]#3   Torrent-tv.ru (P2P SID)  [/B]"    default="true"/>
+    <setting id="serv4" type="bool" label="[B]#4   ASplaylist.net (AceLive) [/B]"    default="true"/>
+    <setting id="serv5" type="bool" label="[B]#5   Ok-tv.org    [/B]"                default="false"/>
+    <setting id="serv6" type="bool" label="[B]#6   Televizorhd.ru (AceLive) [/B]"    default="false"/>
+    <setting id="serv7" type="bool" label="[B]#7   Glaz.tv  [/B]"                    default="false"/>
   </category>
   <category label="P2P">
     <setting id="p2p_start" type="bool" label="- Предпочитать P2P потоки" default="false"/>
@@ -37,9 +38,12 @@
     <setting id="p2p_port"  type="text" label="- P2P порт" default="6878"/>
     <setting id="ACEstr"    type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
   </category>
-  <setting id="udata" default="0"/>'
-  <setting id="epgitv" type="bool" label="Обновлять с Teleguide.info" default="false"/>
-  <setting id="frsup"  type="bool" label="Принудительно обновлять список" default="true"/>
+  <category label="Отладка">
+    <setting id="frsup"  type="bool" label="Принудительно обновлять список (замедляет)" default="true"/>
+    <setting id="frslst"  type="bool" label="Фильтровать список в группах (ускоряет)" default="true"/>
+  </category>
+
+  
 </settings>
     <setting id="SID-4"   type="bool" label="               - Использовать SID"   visible="eq(-1,true)" default="true"/>
     <setting id="ALV-4"   type="bool" label="               - Использовать AceLive"   visible="eq(-2,true)" default="true"/>
@@ -50,3 +54,5 @@
     <setting id="rtmp-2"  type="bool" label="               - Использовать RTMP"  visible="eq(-1,true)" default="true"/>
     <setting id="m3u8-2"  type="bool" label="               - Использовать M3U8"  visible="eq(-2,true)" default="true"/>
     <setting id="pm3u-2"  type="bool" label="               - Анализировать M3U8" visible="eq(-3,true)" default="true"/>
+    <setting id="p2p-2"   type="bool" label="              2.1 - Использовать P2P"   visible="eq(-1,true)" default="true"/>
+    <setting id="epgitv" type="bool" label="Обновлять с Teleguide.info" default="false"/>
