@@ -7,7 +7,7 @@
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
-            library="default.py">
+             library="default.py">
         <provides>video</provides>
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
