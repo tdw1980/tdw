@@ -275,21 +275,46 @@ def next (dr='>'):
 		
 		L=get_all_channeles()
 		
+		
+		if __settings__.getSetting("frslst")=='true':
+				NCL=[]
+				for b in CL: #10
+					NCL.append(unmark(b))
+			
+				NL=[]
+				for a in L: #1000
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+		else:
+				NCL=CL
+				NL=L
+
+		if __settings__.getSetting("noserv") == 'true':
+				CL2=[]
+				for i in CL:
+					i2=uni_mark(i)
+					if i2 not in CL2: CL2.append(i2)
+				CL=CL2
+		
 		for k in CL:
-			for i in L:
+			for i in NL:
 					name  = i['title']
+					name3 = i['title']
+					if __settings__.getSetting("noserv") == 'true': 
+											name3 = uni_mark(name3)
+											#k = uni_mark(k)
 					name2  = i['title']
 					id=get_idx(name)
 					#if __settings__.getSetting("split")=='true':
 					#	urls=get_allurls(id, L)
 					#else:
 					#	urls=[]
-					if k==name and id not in Lid:
+					if k==name3 and id not in Lid:
 						
 						cover = i['img']
 						if __settings__.getSetting("intlogo")=='true':  cover = GETimg(cover, id.replace("xttv",""))
 						if __settings__.getSetting("split")=='true':
-																		urls=get_allurls(id, L)
+																		urls=get_allurls(id, NL)
 																		name=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
 						else: urls = [i['url'],]
 						
@@ -411,7 +436,7 @@ def play(urls, name ,cover, ref=True):
 			while  xbmc.Player().isPlaying():
 				xbmc.sleep(1000)
 				
-				print "========================  playing "+str(time.time())+"======================"
+				#print "========================  playing "+str(time.time())+"======================"
 			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
 				#xbmcplugin.endOfDirectory(handle)
 				xbmc.sleep(300)
@@ -422,6 +447,11 @@ def play(urls, name ,cover, ref=True):
 def unmark(nm):
 	for i in range (0,20):
 		nm=nm.replace(" #"+str(i),"")
+	return nm
+
+def uni_mark(nm):
+	for i in range (0,20):
+		nm=lower(nm.replace(" #"+str(i),""))
 	return nm
 
 def colormark(nm):
@@ -1185,6 +1215,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 
 
 def root():
+		#nt=time.time()
 		try:	SG=__settings__.getSetting("Sel_gr")
 		except: SG=''
 			
@@ -1241,12 +1272,23 @@ def root():
 				NCL=CL
 				NL=L
 			
+			if __settings__.getSetting("noserv") == 'true':
+				CL2=[]
+				for i in CL:
+					i2=uni_mark(i)
+					if i2 not in CL2: CL2.append(i2)
+				CL=CL2
+			
 			for k in CL: #10
 					for i in NL: #30
 						name = i['title']
+						name3 = i['title']
+						if __settings__.getSetting("noserv") == 'true': 
+												name3 = uni_mark(name3)
+												#k = uni_mark(k)
 						name2 = i['title']
 						id=get_idx(name)
-						if k==name and id not in Lnm:
+						if k==name3 and id not in Lnm:
 							cover = i['img']
 							if intlogo == 'true':  cover = GETimg(cover, id.replace("xttv",""))
 							#if id=='': print name+' : '+i['url']
@@ -1254,18 +1296,18 @@ def root():
 							else: 					urls = [i['url'],]
 							
 							if splitcn =='true' or nserv==1: name=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]")
 							
 							add_item ("[B]"+name+"[/B]", 'play', urls, name2, cover)
 							if id!="" and splitcn =='true':Lnm.append(id)
 		
 		if intlogo =='true': ctd=False
 		else:                ctd=True
-		#print "------ time"
-		#print time.time()-ct
+		#print "------ time -----"
+		#debug (str(time.time()-nt))
 		xbmcplugin.endOfDirectory(handle, cacheToDisc=ctd)
 
-def get_allurls(xid, L):
+def get_allurls_off(xid, L):
 	id=xid[1:]
 	L2=[]
 	for i in xmlid.items():
@@ -1278,6 +1320,15 @@ def get_allurls(xid, L):
 			L3.append(j['url'])
 	return L3
 
+def get_allurls(xid, L):
+	L3=[]
+	for j in L:
+		name = j['title']
+		id=get_idx(name)
+		if id == xid and id !="":
+			L3.append(j['url'])
+	return L3
+
 def add_grn(name):
 	try:L=open_Groups()
 	except:L=[]
@@ -1287,7 +1338,7 @@ def add_grn(name):
 	return name
 
 
-def get_id(url):
+def get_id_off(url):
 		try:
 			if 'viks.tv' in url:ss='viks.tv/'
 			else:               ss='tivix.net/'

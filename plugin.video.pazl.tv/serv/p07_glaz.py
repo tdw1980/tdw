@@ -128,16 +128,19 @@ class PZL:
 			#	return []
 
 	def Canals(self):
+		pDialog = xbmcgui.DialogProgressBG()
+		pDialog.create('Пазл ТВ', 'glaz.tv')
 		LL=[]
+		b=0
 		for n in range (1,9):
 			url='http://www.glaz.tv/online-tv/'+str(n)+'/'
 			http=getURL(url)
 			ss='<td style="border-width:1px 0">'
 			es='<strong>'
 			L=mfindal(http,ss,es)
-			
 			for i in L:
-				print i
+				b+=1
+				#print i
 				if "/online-tv/" in i and 'Вещание с других сайтов' not in i:
 					
 					ss='/online-tv/'
@@ -152,8 +155,13 @@ class PZL:
 					es='" style="'
 					title=mfindal(i,ss,es)[0][len(ss):]
 					
-					LL.append({'url':url, 'img':img, 'title':title+" #"+serv_id})
+					title=title.replace(' (ТНТ-Comedy, Comedy TV)','').replace(' (Вести 24)','').replace(' (ex. LifeNews)','').replace(' (Россия К)','').replace(' (Перец)','').replace('/Телеклуб','').replace(' (Мать и дитя)','')
 					
+					tmp=getURL(url)
+					pDialog.update(b*100/(len(L)*9), message='glaz.tv')
+					if 'http://www.glaz.tv/uppod-hls2.swf' in tmp or 'http://1ttv.net/' in tmp:
+						LL.append({'url':url, 'img':img, 'title':title+" #"+serv_id})
+		pDialog.close()
 		if LL!=[]:save_channels(serv_id, LL)
 		else:showMessage('glaz.tv', 'Не удалось загрузить каналы', times = 3000)
 				

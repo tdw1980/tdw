@@ -167,12 +167,12 @@ def SetList(url, n=1):
 				es='"><img height="122"'
 				url="http://zaycev.net"+mfindal(i, ss, es)[0][len(ss):]
 				
-				ss='src="//cdnimg.zaycev.net'
+				ss='src="//cdndl.zaycev.net'
 				es='"/></a><a class="musicset-item-pic__shadow'
-				img="http://cdnimg.zaycev.net"+mfindal(i, ss, es)[0][len(ss):]
+				img="http://cdndl.zaycev.net"+mfindal(i, ss, es)[0][len(ss):]
 
 				ss='class="musicset-item__pic-preview" alt="Музыкальная подборка: '
-				es='" src="//cdnimg.zaycev.net'
+				es='" src="//cdndl.zaycev.net'
 				title=mfindal(i, ss, es)[0][len(ss):]
 
 				uri = sys.argv[0] + '?mode=songs'
@@ -281,7 +281,7 @@ def Songs(url, n=1):
 def FindArt(http):
 	try:
 		#http=getURL(url)
-		ss='http://cdnimg.zaycev.net'
+		ss='http://cdndl.zaycev.net'
 		es='" rel="image_src" id="social-share-image'
 		img=ss+mfindal(http, ss, es)[0][len(ss):]
 		return img

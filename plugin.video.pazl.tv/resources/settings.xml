@@ -39,11 +39,11 @@
     <setting id="ACEstr"    type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
   </category>
   <category label="Отладка">
-    <setting id="frsup"  type="bool" label="Принудительно обновлять список (замедляет)" default="true"/>
+    <setting id="frsup"   type="bool" label="Принудительно обновлять список (замедляет)" default="true"/>
     <setting id="frslst"  type="bool" label="Фильтровать список в группах (ускоряет)" default="true"/>
+    <setting id="noserv"  type="bool" label="Игнорировать #ID сервера (в группах)" default="false"/>
   </category>
 
-  
 </settings>
     <setting id="SID-4"   type="bool" label="               - Использовать SID"   visible="eq(-1,true)" default="true"/>
     <setting id="ALV-4"   type="bool" label="               - Использовать AceLive"   visible="eq(-2,true)" default="true"/>

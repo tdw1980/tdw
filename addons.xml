@@ -92,7 +92,7 @@
 
 <addon id="plugin.audio.zaycev.net"
        name="zaycev.net"
-       version="0.5.0"
+       version="0.5.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -299,13 +299,13 @@
 
 <addon id="plugin.video.pazl.tv"
        name="Пазл ТВ"
-       version="1.4.2"
+       version="1.4.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
-             library="default.py">
+            library="default.py">
         <provides>video</provides>
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
