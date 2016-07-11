@@ -268,6 +268,7 @@ def update():
 		url2   = urllib.unquote_plus(i[1])
 		if url2[:4]=='plug':
 			xbmc.executebuiltin('RunPlugin("'+url2+'")')
+			time.sleep(10)
 		else:
 			if len(i)>2: f = i[2]
 			else: f=[]

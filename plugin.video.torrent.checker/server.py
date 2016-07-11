@@ -35,6 +35,7 @@ while not xbmc.abortRequested:
 		n=time.time()-lu
 		if n>= upint:
 			n=0
+			time.sleep(15)
 			updatetc.update()
 			at=time.strftime('Обновлено: %d.%m.%Y - %H:%M')
 			__settings__.setSetting("AT", at)

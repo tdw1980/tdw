@@ -20,7 +20,7 @@
     <setting id="vsetv_ru" type="bool" label="Обновлять с Vsetv.com (Российский пакет)" default="true"/>
     <setting id="vsetv_ua" type="bool" label="Обновлять с Vsetv.com (Украинский пакет)" default="true"/>
     <setting id="vsetv_by" type="bool" label="Обновлять с Vsetv.com (Белорусский пакет)" default="true"/>
-    <setting id="shift"  type="enum" label="Смещение программы (от московского времени):" default="6" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
+    <setting id="shift"    type="enum" label="Смещение программы (от московского времени):" default="6" values="-6ч|-5ч|-4ч|-3ч|-2ч|-1ч|нет|1ч|2ч|3ч|4ч|5ч|6ч"/>
   </category>
   <category label="Серверы">
     <setting id="split" type="bool" label="[B]Объединять одинаковые каналы серверов[/B]" default="false"/>
@@ -33,9 +33,10 @@
     <setting id="serv7" type="bool" label="[B]#7   Glaz.tv  [/B]"                    default="false"/>
   </category>
   <category label="P2P">
-    <setting id="p2p_start" type="bool" label="- Предпочитать P2P потоки" default="false"/>
-    <setting id="p2p_serv"  type="text" label="- P2P сервер" default="127.0.0.1"/>
-    <setting id="p2p_port"  type="text" label="- P2P порт" default="6878"/>
+    <setting id="p2p_start" type="bool" label="Предпочитать P2P потоки" default="false"/>
+    <setting id="ace_start" type="bool" label="Автостарт Ace Stream" default="false"/>
+    <setting id="p2p_serv"  type="text" label="P2P сервер" default="127.0.0.1"/>
+    <setting id="p2p_port"  type="text" label="P2P порт" default="6878"/>
     <setting id="ACEstr"    type="text" label="[B]Внимание![/B] Для работы P2P необходим Ace Stream" default="http://acestream.org"/>
   </category>
   <category label="Отладка">

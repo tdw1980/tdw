@@ -286,7 +286,7 @@ def next (dr='>'):
 					if unmark(a['title']) in NCL:
 						NL.append(a)
 		else:
-				NCL=CL
+				#NCL=CL
 				NL=L
 
 		if __settings__.getSetting("noserv") == 'true':
@@ -355,6 +355,21 @@ def play(urls, name ,cover, ref=True):
 	#xbmcplugin.endOfDirectory(handle, False, False)
 	
 	#print urls
+	if __settings__.getSetting("split")=='true':
+		L  = get_all_channeles()
+		CL = get_gr()
+		id=get_idx(name)
+		if __settings__.getSetting("frslst")=='true':
+				NCL=[]
+				for b in CL: #10
+					NCL.append(unmark(b))
+				NL=[]
+				for a in L: #1000
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+				L=NL
+		urls=get_allurls(id, L)
+	
 	__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
 	if ref==True:Player.stop()
 	pDialog = xbmcgui.DialogProgressBG()
@@ -384,7 +399,9 @@ def play(urls, name ,cover, ref=True):
 		Ltmp.extend(Lm3u8)
 		Ltmp.extend(Lrtmp)
 		Ltmp.extend(Lourl)
-		
+	
+	if __settings__.getSetting("ace_start")=='true' and len(Lp2p)>0: ASE_start()
+	
 	if __settings__.getSetting("p2p_start")=='true':
 			Lpurl2.extend(Lp2p)
 			Lpurl2.extend(Lm3u8)
@@ -392,9 +409,9 @@ def play(urls, name ,cover, ref=True):
 			Lpurl2.extend(Lourl)
 	else:
 			Lpurl2.extend(Lm3u8)
+			Lpurl2.extend(Lourl)
 			Lpurl2.extend(Lp2p)
 			Lpurl2.extend(Lrtmp)
-			Lpurl2.extend(Lourl)
 	
 	if Lpurl2==[]:
 		pDialog.close()
@@ -413,14 +430,26 @@ def play(urls, name ,cover, ref=True):
 		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
 		playlist.clear()
 		
-		for j in range (0,3): # несколько копий в плейлист
+		n=1
+		if len(Lpurl2)>1:n=3
+		
+		for j in range (0,n): # несколько копий в плейлист
 			k=0
 			for purl in Lpurl2:
 				k+=1
-				if __settings__.getSetting("split")=='true':name2=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-				else:name2=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+				if __settings__.getSetting("split")=='true':name2=unmark(name)#.replace(" #1","")
+				else:name2=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 				item = xbmcgui.ListItem(name2+" [ "+str(k)+"/"+str(len(Lpurl2))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
 				playlist.add(url=purl, listitem=item)
+		
+		for j in range (0,5):
+			purl2=os.path.join(addon.getAddonInfo('path'),"2.mp4")
+			item = xbmcgui.ListItem(" > ", path=purl2, thumbnailImage=cover, iconImage=cover)
+			playlist.add(url=purl2, listitem=item)
+		
+		#purl1="plugin://plugin.video.pazl.tv/?mode=next"
+		#item = xbmcgui.ListItem(" > ", path=purl, thumbnailImage=cover, iconImage=cover)
+		#playlist.add(url=purl2, listitem=item)
 		
 		pDialog.close()
 		
@@ -428,13 +457,14 @@ def play(urls, name ,cover, ref=True):
 		
 		Player.play(playlist)
 		xbmc.sleep(1000)
+		xbmcplugin.endOfDirectory(handle)
 		if __settings__.getSetting("epgon")=='true' or __settings__.getSetting("xplay")=='true':
 			while not xbmc.Player().isPlaying():
-				xbmc.sleep(300)
+				xbmc.sleep(1000)
 			#xbmc.sleep(6000)
 			#xbmc.sleep(300)
 			while  xbmc.Player().isPlaying():
-				xbmc.sleep(1000)
+				xbmc.sleep(500)
 				
 				#print "========================  playing "+str(time.time())+"======================"
 			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
@@ -749,7 +779,6 @@ def get_stream_off(url):
 		return []
 
 def get_cepg(id, serv):
-	if serv=='tivix': id='t'+id
 	try:
 		E=get_inf_db(id)
 		L=eval(E)
@@ -914,7 +943,7 @@ def tvgide():
 	if SG=='':
 		SG='Все каналы'
 		__settings__.setSetting("Sel_gr",SG)
-	add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr')
+	add_item ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr', "", 'tvgide')
 	
 	CL=get_gr()
 	ttl=len(CL)
@@ -928,34 +957,55 @@ def tvgide():
 				id = ""
 				namec  = i['title']
 				url   = i['url']
-				cover = i['img']
-				serv = 'xmltv'
 				id = get_idx(namec)
-				name=get_cgide(id, serv)
+				cover = i['img']
+				if __settings__.getSetting("intlogo") == 'true':  cover = GETimg(cover, id.replace("xttv",""))
+				name=get_cgide(id, 'xmltv')
 				
-				#if SG=='Все каналы' or name in CL:
-				if name!="" and name!=None and namec not in Lnm:
-						add_item (name, 'play', [url,], namec, cover)
-						Lnm.append(namec)
+				if name!="" and name!=None and id not in Lnm:
+						mr=name.find('[/COLOR]')
+						pr='[COLOR 0000ff00][B]'+str(mr)+'[/B][/COLOR]'
+						add_item (pr+name, 'play', [url,], namec, cover)
+						if __settings__.getSetting("split")=='true': Lnm.append(id)
 
 	else:
-			for k in CL:
-				for i in L:
+		
+			if __settings__.getSetting("frslst")=='true':
+				NCL=[]
+				for b in CL: 
+					NCL.append(unmark(b))
+			
+				NL=[]
+				for a in L: 
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+				L=NL
+
+			if __settings__.getSetting("noserv") == 'true':
+				CL2=[]
+				for i in CL:
+					i2=uni_mark(i)
+					if i2 not in CL2: CL2.append(i2)
+				CL=CL2
+		
+		
+			#for k in CL:
+			for i in L:
 					namec  = i['title']
-					if k==namec:
+					name3 = i['title']
+					if __settings__.getSetting("noserv") == 'true': name3 = uni_mark(name3)
+					if name3 in CL:
 						url   = i['url']
-						cover = i['img']
-						id = get_id(url)
-						#if 'viks.tv' in url: serv = 'viks'
-						#elif 'tivix' in url: serv = 'tivix'
-						#else:
-						serv = 'xmltv'
 						id = get_idx(namec)
-						name=get_cgide(id, serv)
-						if name!="" and name!=None and namec not in Lnm: 
-							add_item (name, 'play', [url,], namec, cover)
-							Lnm.append(namec)
-	
+						cover = i['img']
+						if __settings__.getSetting("intlogo") == 'true':  cover = GETimg(cover, id.replace("xttv",""))
+						name=get_cgide(id, 'xmltv')
+						if name!="" and name!=None and id not in Lnm: 
+							mr=name.find('[/COLOR]')
+							pr='[COLOR 0000ff00][B]'+str(mr)+'[/B][/COLOR]'
+							add_item (pr+name, 'play', [url,], namec, cover)
+							if __settings__.getSetting("split")=='true': Lnm.append(id)
+	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
 	xbmcplugin.endOfDirectory(handle)
 
 
@@ -1008,7 +1058,7 @@ def save_channels(n, L):
 
 
 
-def select_gr():
+def select_gr(ind):
 	try:L=open_Groups()
 	except:
 		L=Ldf
@@ -1028,8 +1078,8 @@ def select_gr():
 	try:root_tm = float(__settings__.getSetting("root_tm"))
 	except: root_tm = 0
 	
-	if __settings__.getSetting("frsup")=='true':
-#		xbmc.sleep(300)
+	if __settings__.getSetting("frsup")=='true' or ind=="tvgide":
+		#xbmc.sleep(300)
 		print 'Refresh'
 		xbmc.executebuiltin("Container.Refresh")
 
@@ -1164,7 +1214,6 @@ def get_all_channeles():
 def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	if __settings__.getSetting("fanart")=='true':funart=cover
 	else: funart=fanart
-		
 	if __settings__.getSetting("icons")!='true':cover=icon
 
 	listitem = xbmcgui.ListItem(name, iconImage=cover)
@@ -1174,16 +1223,16 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	uri += '&name='  + urllib.quote_plus(xt(ind))
 	uri += '&ind='  + urllib.quote_plus(str(ind))
 	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
-	if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
+	#if funart!=None and funart!="":uri += '&funart='  + urllib.quote_plus(funart)
 	
 	if mode=="play":
 		if __settings__.getSetting("epgon")=='true':
 				id = get_idx(ind)
-				#if id=='': print ind
-				dict={"plot":get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")}
-		else: dict={}
-		try:listitem.setInfo(type = "Video", infoLabels = dict)
-		except: pass
+				cepg=get_cepg(id,'xmltv').replace('&quot;','"').replace('&apos;',"'")
+				if cepg !="":
+					dict={"plot":cepg}
+					try:listitem.setInfo(type = "Video", infoLabels = dict)
+					except: pass
 
 		fld=False
 		#fld=True
@@ -1245,13 +1294,13 @@ def root():
 					url   = i['url']
 					cover = i['img']
 					id=get_idx(name)
-					if id=="": print unmark(lower(name))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+					if id=="": print unmark(lower(name))#.replace(" #1","")
 					if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
 					if grinnm =='true': name2=add_grn(name)
 					else: name2=name
 					
-					if __settings__.getSetting("split")=='true' or nserv==1: name2=unmark(name2)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-					else: name2=colormark(name2)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+					if __settings__.getSetting("split")=='true' or nserv==1: name2=unmark(name2)#.replace(" #1","")
+					else: name2=colormark(name2)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 					
 					if id not in Lnm:
 						add_item ("[B]"+name2+"[/B]", 'play', [url,], name, cover)
@@ -1263,13 +1312,12 @@ def root():
 				NCL=[]
 				for b in CL: #10
 					NCL.append(unmark(b))
-			
 				NL=[]
 				for a in L: #1000
 					if unmark(a['title']) in NCL:
 						NL.append(a)
 			else:
-				NCL=CL
+				#NCL=CL
 				NL=L
 			
 			if __settings__.getSetting("noserv") == 'true':
@@ -1281,22 +1329,20 @@ def root():
 			
 			for k in CL: #10
 					for i in NL: #30
-						name = i['title']
-						name3 = i['title']
-						if __settings__.getSetting("noserv") == 'true': 
-												name3 = uni_mark(name3)
-												#k = uni_mark(k)
+						name  = i['title']
 						name2 = i['title']
+						name3 = i['title']
+						if __settings__.getSetting("noserv") == 'true': name3 = uni_mark(name3)
 						id=get_idx(name)
 						if k==name3 and id not in Lnm:
 							cover = i['img']
 							if intlogo == 'true':  cover = GETimg(cover, id.replace("xttv",""))
-							#if id=='': print name+' : '+i['url']
-							if splitcn =='true':	urls=get_allurls(id, NL) #30
-							else: 					urls = [i['url'],]
+							#if splitcn =='true':	urls=get_allurls(id, NL) #30
+							#else: 					
+							urls = [i['url'],]
 							
-							if splitcn =='true' or nserv==1: name=unmark(name)#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]")
+							if splitcn =='true' or nserv==1: name=unmark(name)#.replace(" #1","")
+							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 							
 							add_item ("[B]"+name+"[/B]", 'play', urls, name2, cover)
 							if id!="" and splitcn =='true':Lnm.append(id)
@@ -1424,7 +1470,56 @@ def unzip(filename):
 		f=fil.read(name)
 		return f
 
+def ASE_start():
+	srv=__settings__.getSetting("p2p_serv")
+	prt=__settings__.getSetting("p2p_port")
+	lnk='http://'+srv+':'+prt+'/webui/api/service?method=get_version&format=jsonp&callback=mycallback'#getstream?id='+CID
+	try:
+		http=getURL(lnk)
+		return False
+	except:
+		#showMessage('Пазл ТВ', 'Запуск Ace Stream')
+		pDialog.create('Пазл ТВ', 'Запуск Ace Stream ...')
+		pDialog.update(0, message='Запуск Ace Stream ...')
+		start_linux()
+		start_windows()
+		pDialog.update(25, message='Запуск Ace Stream ...')
+		xbmc.sleep(1500)
+		pDialog.update(50, message='Запуск Ace Stream ...')
+		xbmc.sleep(1500)
+		pDialog.update(75, message='Запуск Ace Stream ...')
+		xbmc.sleep(1500)
+		pDialog.update(100, message='Запуск Ace Stream ...')
+		xbmc.sleep(500)
+		pDialog.close()
+		return True
 
+def start_linux():
+        import subprocess
+        try:
+            subprocess.Popen(['acestreamengine', '--client-console'])
+        except:
+            try:
+                subprocess.Popen('acestreamengine-client-console')
+            except: 
+                try:
+                    xbmc.executebuiltin('XBMC.StartAndroidActivity("org.acestream.engine")')
+                except:
+                    return False
+        return True
+    
+def start_windows():
+        try:
+            import _winreg
+            try:
+                t = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, r'Software\AceStream')
+            except:
+                t = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, r'Software\TorrentStream')
+            path = _winreg.QueryValueEx(t, r'EnginePath')[0]
+            os.startfile(path)
+            return True
+        except:
+            return False
 
 def get_params():
 	param=[]
@@ -1515,14 +1610,14 @@ if mode=="update"   :
 						Ls=upd_canals_db(i)
 			pDialog.close()
 
-if mode=="select_gr": select_gr()
+if mode=="select_gr": select_gr(ind)
 if mode=="play"     : play(url, name, cover)
 if mode=="next"     : 
 	#video=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), '1.wmv'))
 	xbmc.executebuiltin('Container.Update("plugin://plugin.video.pazl.tv/?mode=next2")')
 
 if mode=="next2"     : next ('>')
-if mode=="rename"   : updatetc.rename_list(int(ind))
+#if mode=="rename"   : updatetc.rename_list(int(ind))
 
 c.close()
 

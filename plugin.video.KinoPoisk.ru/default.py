@@ -118,7 +118,7 @@ def play_url(torr_link,img, info={}):
 def play_url2(params):
     #print 'play'
     torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
-    
+    torr_link=urllib.unquote(params["torr_url"]).replace("ru-ru.org","open-tor.org")
     Engine = __settings__.getSetting("Engine")
     if Engine=="2":
         tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
