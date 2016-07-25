@@ -24,6 +24,19 @@ def xt(x):return xbmc.translatePath(x)
 def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
+def unmark(nm):
+	for i in range (0,20):
+		nm=nm.replace(" #"+str(i),"")
+	return nm
+
+def lower(s):
+	try:s=s.decode('utf-8')
+	except: pass
+	try:s=s.decode('windows-1251')
+	except: pass
+	s=s.lower().encode('utf-8')
+	return s
+
 def getURL(url, Referer = httpSiteUrl):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
@@ -46,6 +59,7 @@ def mfindal(http, ss, es):
 	return L
 
 def get_ttv(url):
+		#print url
 		http=getURL(url)
 		#print http
 		ss1='this.loadPlayer("'
@@ -70,7 +84,7 @@ def get_ttv(url):
 			return ""
 
 def dload_epg_xml():
-	try:
+	#try:
 			target='http://api.torrent-tv.ru/ttv.xmltv.xml.gz'
 			#print "-==-=-=-=-=-=-=- download =-=-=-=-=-=-=-=-=-=-"
 			fp = xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'tmp.zip'))
@@ -85,10 +99,10 @@ def dload_epg_xml():
 			xml=ungz(fp)
 			#print "-==-=-=-=-=-=-=- unpak ok =-=-=-=-=-=-=-=-=-=-"
 			#os.remove(fp)
-			return xml
-	except Exception, e:
-			print 'HTTP ERROR ' + str(e)
-			return ''
+			return xml[:120000]
+	#except Exception, e:
+	#		print 'HTTP ERROR ' + str(e)
+	#		return ''
 
 def ungz(filename):
 	import gzip
@@ -105,6 +119,15 @@ def save_channels(ns, L):
 			fl.write(repr(i)+',\n')
 		fl.write(']\n')
 		fl.close()
+
+def save_aid(ns, d):
+		fp=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'aid'+ns+'.py'))
+		fl = open(fp, "w")
+		fl.write('# -*- coding: utf-8 -*-\n')
+		fl.write('n2id=')
+		fl.write(repr(d))
+		fl.close()
+
 
 class PZL:
 	def __init__(self):
@@ -186,3 +209,53 @@ class PZL:
 		else: showMessage('torrent-tv.ru', 'Не удалось загрузить каналы', times = 3000)
 
 		return LL
+
+	def Archive(self, id, dt):
+		url='http://torrent-tv.ru/tv-archive-channel.php?channel='+id+'&data='+dt#12-7-2016
+		http=getURL(url)
+		ss='<p style="font: normal 12px sans-serif; line-height: 1;">'
+		es='<br />'
+		L=mfindal(http,ss,es)
+		LL=[]
+		for i in L:
+			
+			try:
+				i=i.replace(chr(10),"").replace(chr(13),"").replace('<p style="font: normal 12px sans-serif; line-height: 1;">', '')
+				#print i
+				ss='<strong>'
+				es=' &ndash;'
+				tm=mfindal(i,ss,es)[0][len(ss):].strip()
+				#print tm
+				
+				ss='">'
+				es='</a></p>'
+				title=mfindal(i,ss,es)[0][len(ss):].strip()
+				#print title
+				
+				ss='href="'
+				es='">'
+				uri='http://torrent-tv.ru/'+mfindal(i,ss,es)[0][len(ss):]+'&noflash'
+				#print uri
+				
+				LL.append({'url':uri, 'title':title, 'time':tm})
+			except: pass
+		return LL
+
+	def name2id(self):
+		url='http://torrent-tv.ru/tv-archive.php'
+		http=getURL(url)
+		ss='<option value='
+		es='</option>'
+		L=mfindal(http,ss,es)
+		d={}
+		for i in L:
+			#try:
+				i=i.replace('<option value=','').replace(' disabled selected','')
+				j = eval("("+i.replace('">', '", "')+'")')
+				i1 = j[0]
+				i2 = lower(unmark(j[1]))
+				#print i
+				d[i2] = i1
+			#except: pass
+		save_aid('3', d)
+		return d

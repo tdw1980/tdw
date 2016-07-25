@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, sys, urllib2, time
-
+#nt=time.time()
 PLUGIN_NAME   = 'plugin.video.pazl.tv'
 handle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.pazl.tv')
@@ -21,9 +21,16 @@ sys.path.append(os.path.join(addon.getAddonInfo('path'),"serv"))
 ld=os.listdir(os.path.join(addon.getAddonInfo('path'),"serv"))
 Lserv=[]
 for i in ld:
-	if '.pyo' not in i: Lserv.append(i[:-3])
+	if i[-3:]=='.py': Lserv.append(i[:-3])
 
 #Lserv=['p01_peers', 'p02_onelike', 'p03_1ttv', 'p04_asplaylist']
+
+sys.path.append(os.path.join(addon.getAddonInfo('path'),"arh"))
+ld=os.listdir(os.path.join(addon.getAddonInfo('path'),"arh"))
+Larh=[]
+for i in ld:
+	if i[-3:]=='.py': Larh.append(i[:-3])
+
 
 from xid import *
 from DefGR import *
@@ -49,6 +56,131 @@ def lower(s):
 	except: pass
 	s=s.lower().encode('utf-8')
 	return s
+
+if __settings__.getSetting("ACE_API")=='true': 
+	import socket, threading, re
+
+	class _TSServ(threading.Thread):
+		def __init__(self, socket):
+			self.pkey = 'n51LvQoTlJzNGaFxseRK-uvnvX-sD4Vm5Axwmc4UcoD-jruxmKsuJaH0eVgE'
+			threading.Thread.__init__(self)
+			self._sock = socket
+			self._buffer = 65 * 1024
+			self._last_received = ''
+			self.active = True
+			self.err = False
+			self.auth_ok = False
+			self.version = None
+			self.files = None
+			self.key = None
+			self.index = None
+			self.content_url = None
+			self.can_save = False
+			self.save_info = None
+			self.state = 0
+			self.status = [0, '', '']
+			self.pause = False
+			self.vod = True
+
+		def push(self, command):
+			print ('TSSERV: [%s]' % command)
+			try:
+				self._sock.send(command + '\r\n')
+			except:
+				self.err = True
+
+		def run(self):
+			while self.active and not self.err:
+				try:
+					self.temp = self._sock.recv(self._buffer)
+				except:
+					self.temp = ''
+				self._last_received += self.temp
+				ind = self._last_received.find('\r\n')
+				if ind != -1:
+					fcom = self._last_received
+					while ind != -1:
+						self._last_received = fcom[:ind]
+						self.exec_com()
+						fcom = fcom[(ind + 2):]
+						ind = fcom.find('\r\n')
+					self._last_received = ''
+
+		def exec_com(self):
+			line = self._last_received
+			cmd = self._last_received.split(' ')[0]
+			params = self._last_received.split(' ')[1::]
+			if cmd != 'STATUS':
+				print('TSSERV: {%s}' % self._last_received)
+			if cmd == 'HELLOTS':
+				try:
+					self.version = params[0].split('=')[1]
+				except:
+					self.version = '1.0.6'
+				try:
+					if params[2].split('=')[0] == 'key':
+						self.key = params[2].split('=')[1]
+				except: 
+					try:
+						self.key = params[1].split('=')[1]
+					except:
+						print('TSSERV: no HELLO key received')
+			elif cmd == 'AUTH':
+				self.auth_ok = True
+			elif cmd == 'LOADRESP':
+				self.files = line[line.find('{'):len(line)]
+			elif cmd == 'EVENT':
+				if params[0] == 'cansave':
+					if int(self.index) == int(params[1].split('=')[1]):
+						self.can_save = True
+						self.save_info = [params[1], params[2]]
+				elif params[0] == 'getuserdata':
+					self.push('USERDATA [{"gender": 1}, {"age": 3}]')
+					self.err = True
+			elif cmd == 'START':
+				try:
+					self.content_url = urllib2.unquote(params[0].split('=')[1])
+				except:
+					self.content_url = params[0]
+			elif cmd == 'RESUME':
+				self.pause = False
+			elif cmd == 'PAUSE':
+				self.pause = True
+			elif cmd == 'SHUTDOWN':
+				self.active = False
+			elif cmd == 'STATE':
+				self.state = int(params[0])
+				if self.state == 6:
+					self.err = True
+			elif cmd == 'STATUS':
+				self._get_status(params[0])
+
+		def _get_status(self, params):
+			ss = re.compile(r'main:[a-z]+', re.S)
+			s1 = re.findall(ss, params)[0]
+			st = s1.split(':')[1]
+
+		def end(self):
+			self.active = False
+
+	try:
+		import _winreg
+		try:
+			t = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, r'Software\AceStream')
+		except:
+			t = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, r'Software\TorrentStream')
+		port_file = os.path.join(os.path.dirname(_winreg.QueryValueEx(t, 'EnginePath')[0]), r'acestream.port')
+		gf = open(port_file, 'r')
+		tsport=int(gf.read())
+	except:
+			#return "X PORT"
+			tsport=62062
+
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.connect(('127.0.0.1', tsport))
+	#sock.settimeout(3)
+	tsserv = _TSServ(sock)
+
 
 class xPlayer(xbmc.Player):
 
@@ -76,8 +208,8 @@ class xPlayer(xbmc.Player):
 		xbmc.sleep(300)
 		self.ov_show()
 		self.ov_update('[B]I I[/B]')
-		if __settings__.getSetting("split")=='true':  cnn=unmark(__settings__.getSetting("cplayed"))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
-		else:                                         cnn=colormark(__settings__.getSetting("cplayed"))#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]").replace(" #2","[COLOR 40FFFFFF] #2[/COLOR]").replace(" #3","[COLOR 40FFFFFF] #3[/COLOR]").replace(" #4","[COLOR 40FFFFFF] #4[/COLOR]")
+		if __settings__.getSetting("split")=='true':  cnn=unmark(__settings__.getSetting("cplayed"))#.replace(" #1","")
+		else:                                         cnn=colormark(__settings__.getSetting("cplayed"))#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 		if __settings__.getSetting("epgosd")=='true':
 			cgide=get_cgide(get_idx(__settings__.getSetting("cplayed")), 'serv')
 		else:
@@ -92,20 +224,22 @@ class xPlayer(xbmc.Player):
 
 	def onPlayBackEnded(self):
 		pass
-
+		if __settings__.getSetting("ACE_API")=='true':ACE2_end()
+		
 	def onPlayBackStopped(self):
 		self.ov_hide()
-		#xbmcplugin.endOfDirectory(handle)
+		if __settings__.getSetting("ACE_API")=='true':ACE2_end()
+		#xbmcplugin.endOfDirectory(handle, False, False)
 		if __settings__.getSetting("epgon")=='true':
-			xbmc.sleep(600)
-			#showMessage("", "Обновляем список", times = 3000)
-			xbmc.executebuiltin("Container.Refresh")
+			#xbmc.sleep(600)
+			#time.sleep(1)
+			if __settings__.getSetting("frsup")=='true':xbmc.executebuiltin("Container.Refresh")
 	
 	def onPlayBackSpeedChanged(self, ofs):
 		ct=int(time.strftime('%Y%m%d%H%M%S'))
 		pt=int(__settings__.getSetting("play_tm"))
 		tt=ct-pt
-		if tt>6:
+		if tt>3:
 			if ofs>1: #след. канал
 				self.ov_show()
 				self.ov_update('[B]>>[/B]')
@@ -125,7 +259,7 @@ class xPlayer(xbmc.Player):
 		ct=int(time.strftime('%Y%m%d%H%M%S'))
 		pt=int(__settings__.getSetting("play_tm"))
 		tt=ct-pt
-		if tt>6:
+		if tt>3:
 			if ofs>0: #след. канал
 				self.ov_show()
 				self.ov_update('[B]>>[/B]')
@@ -139,7 +273,7 @@ class xPlayer(xbmc.Player):
 				__settings__.setSetting("lastnx","<")
 				next ('<')
 		else:
-			print "<8"
+			print "<3"
 
 	def __del__(self):
 		self.ov_hide()
@@ -254,7 +388,7 @@ def inputbox(t):
 	else:
 		return t
 
-def next (dr='>'):
+def next_off (dr='>'):
 	print "next ok"
 	ccn=__settings__.getSetting("cplayed")
 	print ccn
@@ -345,21 +479,314 @@ def next (dr='>'):
 		Player.ov_update('[B][COLOR FFFF0000][ ! ][/COLOR]\nПереключение каналов\nдоступно только в группах.[/B]')
 		xbmc.sleep(3000)
 		Player.ov_hide()
+
+def next (dr='>'):
+	ccn=__settings__.getSetting("cplayed")
+	print ccn
+	try:
+		SG=__settings__.getSetting("Sel_gr")
+	except:
+		SG=''
+	if SG=='':
+		SG='Все каналы'
+		__settings__.setSetting("Sel_gr",SG)
+	
+	if SG!='Все каналы':
 		
+		if dr=='>':
+			Lnu=eval(__settings__.getSetting("next_itm"))
+			drs='>> \n'
+		else: 
+			Lnu=eval(__settings__.getSetting("prev_itm"))
+			drs='<< \n'
+		if __settings__.getSetting("epgosd")=='true':cgide=get_cgide(get_idx(Lnu[1]), 'serv')
+		else:cgide=""
+		if __settings__.getSetting("split")=='true':nmc=unmark(Lnu[1])#.replace(" #1","")
+		else: nmc=Lnu[1]
+		Player.ov_update('[B]'+drs+"[COLOR FFFFFF00]"+nmc+"[/COLOR][/B]\n"+xt(cgide))
+		play(Lnu[0],Lnu[1],Lnu[2], False)
+	else:
+		Player.ov_update('[B][COLOR FFFF0000][ ! ][/COLOR]\nПереключение каналов\nдоступно только в группах.[/B]')
+		xbmc.sleep(3000)
+		Player.ov_hide()
+
+
+def set_np ():
+	ccn=__settings__.getSetting("cplayed")
+	try:SG=__settings__.getSetting("Sel_gr")
+	except:SG=''
+	if SG=='':
+		SG='Все каналы'
+		__settings__.setSetting("Sel_gr",SG)
+	
+	if SG!='Все каналы':
+		CL=get_gr()
+		Lnm=[]
+		Lnu=[]
+		Lid=[]
+		
+		L=get_all_channeles()
+		
+		if __settings__.getSetting("frslst")=='true':
+				NCL=[]
+				for b in CL: #10
+					NCL.append(unmark(b))
+			
+				NL=[]
+				for a in L: #1000
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+		else:
+				NL=L
+
+		if __settings__.getSetting("noserv") == 'true':
+				CL2=[]
+				for i in CL:
+					i2=uni_mark(i)
+					if i2 not in CL2: CL2.append(i2)
+				CL=CL2
+		
+		for k in CL:
+			for i in NL:
+					name  = i['title']
+					name3 = i['title']
+					if __settings__.getSetting("noserv") == 'true': 
+											name3 = uni_mark(name3)
+											#k = uni_mark(k)
+					name2  = i['title']
+					id=get_idx(name)
+					if k==name3 and id not in Lid:
+						
+						cover = i['img']
+						if __settings__.getSetting("intlogo")=='true':  cover = GETimg(cover, id.replace("xttv",""))
+						if __settings__.getSetting("split")=='true':
+																		urls=get_allurls(id, NL)
+																		name=unmark(name)#.replace(" #1","")
+						else: urls = [i['url'],]
+						
+						if id!="" and __settings__.getSetting("split")=='true':Lid.append(id)
+						if name2 not in Lnm:
+							Lnm.append(name2)
+							Lnu.append([urls,name2,cover])
+		n=0
+		for p in Lnm:
+			if p==ccn:
+				nn=n+1
+				np=n-1
+				if nn>=len(Lnm):nn=0
+				if __settings__.getSetting("split")=='true':nmc=unmark(Lnu[n][1])#.replace(" #1","")
+				else: nmc=Lnu[n][1]
+				__settings__.setSetting("next_itm",repr(Lnu[nn]))
+				__settings__.setSetting("prev_itm",repr(Lnu[np]))
+			n+=1
+	else:
+		pass
+
 if __settings__.getSetting("xplay")=='true': 
 	Player=xPlayer()
 else:
 	Player=xbmc.Player()
+
+
+def play_ace2(url):
+	s=url.find('getstream?id=')
+	if s<0: return ""
+	PID=url[s+13:]
+	print PID
+	
+	tsserv.start()
+	tsserv.push('HELLOBG version=3')
+	#command='HELLOBG version=3'
+	#sock.send(command + '\r\n')
+	n=0
+	while not tsserv.version:
+			print tsserv.version
+			n+=1
+			xbmc.sleep(200)
+			if n>50: return "X HELLOBG"
+	import hashlib
+	sha1 = hashlib.sha1()
+	pkey = tsserv.pkey
+	sha1.update(tsserv.key + pkey)
+	key = sha1.hexdigest()
+	pk = pkey.split('-')[0]
+	ready_key = 'READY key=%s-%s' % (pk, key)
+	tsserv.push(ready_key)
+	#sock.send(ready_key + '\r\n')
+
+	n=0
+	while not tsserv.auth_ok:
+			n+=1
+			xbmc.sleep(200)
+			if n>50: return "X READY"
+	#PID=url
+	tsserv.push('START PID '+PID+' 0')
+	while not tsserv.state == 2:
+			n+=1
+			xbmc.sleep(200)
+			if n>50: return "X START"
+	return tsserv.content_url
+
+def ACE2_end():
+	try:
+		tsserv.push('SHUTDOWN')
+		sock.shutdown(socket.SHUT_RDWR)
+		sock.close()
+	except:
+		pass
+
 
 def play(urls, name ,cover, ref=True):
 	#xbmcplugin.endOfDirectory(handle, False, False)
 	
 	#print urls
 	if __settings__.getSetting("split")=='true':
-		L  = get_all_channeles()
-		CL = get_gr()
+		try:	SG=__settings__.getSetting("Sel_gr")
+		except: SG=''
+		if SG=='':
+			SG='Все каналы'
 		id=get_idx(name)
-		if __settings__.getSetting("frslst")=='true':
+		L  = get_all_channeles()
+		
+		if __settings__.getSetting("frslst")=='true' and SG!='Все каналы':
+				CL = get_gr()
+				NCL=[]
+				for b in CL: #10
+					NCL.append(unmark(b))
+				NL=[]
+				for a in L: #1000
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+				L=NL
+		urls=get_allurls(id, L)
+	
+	#print urls
+	__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
+	if ref==True:
+		Player.stop()
+	pDialog = xbmcgui.DialogProgressBG()
+	try:pDialog.create('Пазл ТВ', 'Поиск потоков ...')
+	except: pass
+	Lpurl=[]
+	for url in urls:
+		#Lcurl=get_stream(url)
+		try: Lcurl=get_stream(url)
+		except:Lcurl=[]
+		#print Lcurl
+		try:Lpurl.extend(Lcurl)
+		except:Lcurl=[]
+	
+	Lpurl2=[]
+	Lm3u8 =[]
+	Lrtmp =[]
+	Lp2p  =[]
+	Lourl =[]
+	Ltmp=[]
+	
+	for i in Lpurl:
+		if '.m3u8' in i and i not in Lm3u8:  Lm3u8.append(i)
+		elif 'rtmp' in i and i not in Lrtmp: Lrtmp.append(i)
+		elif '/ace/' in i and i not in Lp2p: 
+				if __settings__.getSetting("ACE_API")=='true': Lp2p.append(play_ace2(i))
+				else: Lp2p.append(i)
+		elif i not in Ltmp:                  Lourl.append(i)
+		Ltmp.extend(Lp2p)
+		Ltmp.extend(Lm3u8)
+		Ltmp.extend(Lrtmp)
+		Ltmp.extend(Lourl)
+	
+	if __settings__.getSetting("ace_start")=='true' and len(Lp2p)>0: ASE_start()
+	
+	if __settings__.getSetting("p2p_start")=='true':
+			Lpurl2.extend(Lp2p)
+			Lpurl2.extend(Lm3u8)
+			Lpurl2.extend(Lrtmp)
+			Lpurl2.extend(Lourl)
+	else:
+			Lpurl2.extend(Lm3u8)
+			Lpurl2.extend(Lourl)
+			Lpurl2.extend(Lp2p)
+			Lpurl2.extend(Lrtmp)
+	
+	if Lpurl2==[]:
+		pDialog.close()
+		showMessage('Пазл ТВ', 'Канал недоступен')
+		if __settings__.getSetting("xplay")=='true': Player.ov_hide()
+		__settings__.setSetting("cplayed",name)
+		try:n_play=int(__settings__.getSetting("n_play"))
+		except:n_play=0
+		if n_play<3:
+			set_np ()
+			__settings__.setSetting("n_play",str(n_play+1))
+			next (__settings__.getSetting("lastnx"))
+		else:
+			return ""
+		
+	else:
+		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
+		playlist.clear()
+		
+		n=1
+		if len(Lpurl2)>1:n=3
+		
+		for j in range (0,n): # несколько копий в плейлист
+			k=0
+			for purl in Lpurl2:
+				k+=1
+				if __settings__.getSetting("split")=='true':name2=unmark(name)#.replace(" #1","")
+				else:name2=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
+				item = xbmcgui.ListItem(name2+" [ "+str(k)+"/"+str(len(Lpurl2))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
+				playlist.add(url=purl, listitem=item)
+		
+		for j in range (0,3):
+			purl2=os.path.join(addon.getAddonInfo('path'),"2.mp4")
+			item = xbmcgui.ListItem(" > ", path=purl2, thumbnailImage=cover, iconImage=cover)
+			playlist.add(url=purl2, listitem=item)
+		
+		
+		#purl1="plugin://plugin.video.pazl.tv/?mode=next"
+		#item = xbmcgui.ListItem(" > ", path=purl, thumbnailImage=cover, iconImage=cover)
+		#playlist.add(url=purl2, listitem=item)
+		
+		pDialog.close()
+		
+		__settings__.setSetting("cplayed",name)
+		
+		Player.play(playlist)
+		#time.sleep(1)
+		#xbmc.sleep(1000)
+		set_np ()
+		#xbmcplugin.endOfDirectory(handle)
+		
+		if __settings__.getSetting("epgon")=='true' or __settings__.getSetting("xplay")=='true':
+			while not xbmc.Player().isPlaying():
+				time.sleep(1)
+				#xbmc.sleep(1000)
+			
+			while  xbmc.Player().isPlaying():
+				#time.sleep(0.5)
+				xbmc.sleep(300)
+				
+				#print "========================  playing "+str(time.time())+"======================"
+			if __settings__.getSetting("ACE_API")=='true': ACE2_end()
+			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
+				#xbmcplugin.endOfDirectory(handle)
+				#xbmc.sleep(300)
+				#showMessage("", "Обновляем список", times = 3000)
+				if __settings__.getSetting("frsup")=='true':xbmc.executebuiltin("Container.Refresh")
+				print "========================  Refresh ======================"
+
+def play_b(urls, name ,cover, ref=True):
+	if __settings__.getSetting("split")=='true':
+		try:	SG=__settings__.getSetting("Sel_gr")
+		except: SG=''
+		if SG=='':
+			SG='Все каналы'
+		id=get_idx(name)
+		L  = get_all_channeles()
+		
+		if __settings__.getSetting("frslst")=='true' and SG!='Все каналы':
+				CL = get_gr()
 				NCL=[]
 				for b in CL: #10
 					NCL.append(unmark(b))
@@ -371,15 +798,70 @@ def play(urls, name ,cover, ref=True):
 		urls=get_allurls(id, L)
 	
 	__settings__.setSetting("play_tm",time.strftime('%Y%m%d%H%M%S'))
-	if ref==True:Player.stop()
+	if ref==True:
+		Player.stop()
 	pDialog = xbmcgui.DialogProgressBG()
 	try:pDialog.create('Пазл ТВ', 'Поиск потоков ...')
 	except: pass
 	Lpurl=[]
 	for url in urls:
-		Lcurl=get_stream(url)
 		try: Lcurl=get_stream(url)
 		except:Lcurl=[]
+		try:Lpurl.extend(Lcurl)
+		except:Lcurl=[]
+	
+	Lpurl2=Lcurl
+	
+	if Lpurl2==[]:
+		pDialog.close()
+		showMessage('Пазл ТВ', 'Канал недоступен')
+		if __settings__.getSetting("xplay")=='true': 
+			Player.ov_hide()
+			__settings__.setSetting("cplayed",name)
+			try:n_play=int(__settings__.getSetting("n_play"))
+			except:n_play=0
+			if n_play<3:
+				set_np ()
+				__settings__.setSetting("n_play",str(n_play+1))
+				next (__settings__.getSetting("lastnx"))
+			else:
+				return ""
+		
+	else:
+		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
+		playlist.clear()
+		
+		k=0
+		for purl in Lpurl2:
+				k+=1
+				if __settings__.getSetting("split")=='true':name2=unmark(name)
+				else:name2=colormark(name)
+				item = xbmcgui.ListItem(name2+" [ "+str(k)+"/"+str(len(Lpurl2))+" ]", path=purl, thumbnailImage=cover, iconImage=cover)
+				playlist.add(url=purl, listitem=item)
+		
+		pDialog.close()
+		
+		Player.play(playlist)
+		if  __settings__.getSetting("xplay")=='true':
+			__settings__.setSetting("cplayed",name)
+			set_np ()
+			while not xbmc.Player().isPlaying():
+				time.sleep(1)
+			while  xbmc.Player().isPlaying():
+				xbmc.sleep(300)
+
+def play_archive(urls, name ,cover, ref=True):
+	#print urls
+	Player.stop()
+	pDialog = xbmcgui.DialogProgressBG()
+	try:pDialog.create('Пазл ТВ', 'Поиск потоков ...')
+	except: pass
+	Lpurl=[]
+	for url in urls:
+		#Lcurl=get_stream(url)
+		try: Lcurl=get_archive(url)
+		except:Lcurl=[]
+		#print Lcurl
 		try:Lpurl.extend(Lcurl)
 		except:Lcurl=[]
 	
@@ -416,15 +898,7 @@ def play(urls, name ,cover, ref=True):
 	if Lpurl2==[]:
 		pDialog.close()
 		showMessage('Пазл ТВ', 'Канал недоступен')
-		if __settings__.getSetting("xplay")=='true': Player.ov_hide()
-		__settings__.setSetting("cplayed",name)
-		try:n_play=int(__settings__.getSetting("n_play"))
-		except:n_play=0
-		if n_play<3:
-			__settings__.setSetting("n_play",str(n_play+1))
-			next (__settings__.getSetting("lastnx"))
-		else:
-			return ""
+		return ""
 		
 	else:
 		playlist = xbmc.PlayList (xbmc.PLAYLIST_VIDEO)
@@ -447,32 +921,13 @@ def play(urls, name ,cover, ref=True):
 			item = xbmcgui.ListItem(" > ", path=purl2, thumbnailImage=cover, iconImage=cover)
 			playlist.add(url=purl2, listitem=item)
 		
-		#purl1="plugin://plugin.video.pazl.tv/?mode=next"
-		#item = xbmcgui.ListItem(" > ", path=purl, thumbnailImage=cover, iconImage=cover)
-		#playlist.add(url=purl2, listitem=item)
 		
 		pDialog.close()
-		
-		__settings__.setSetting("cplayed",name)
 		
 		Player.play(playlist)
 		xbmc.sleep(1000)
 		xbmcplugin.endOfDirectory(handle)
-		if __settings__.getSetting("epgon")=='true' or __settings__.getSetting("xplay")=='true':
-			while not xbmc.Player().isPlaying():
-				xbmc.sleep(1000)
-			#xbmc.sleep(6000)
-			#xbmc.sleep(300)
-			while  xbmc.Player().isPlaying():
-				xbmc.sleep(500)
-				
-				#print "========================  playing "+str(time.time())+"======================"
-			if ref==True and __settings__.getSetting("epgon")=='true' and __settings__.getSetting("xplay")=='false':
-				#xbmcplugin.endOfDirectory(handle)
-				xbmc.sleep(300)
-				#showMessage("", "Обновляем список", times = 3000)
-				xbmc.executebuiltin("Container.Refresh")
-				#print "========================  Refresh ======================"
+
 
 def unmark(nm):
 	for i in range (0,20):
@@ -536,247 +991,24 @@ def pars_m3u8(url):
 def get_stream(url):
 	for i in Lserv:
 		ids=i[4:].replace('_','-')
+		#print ids
+		if 'torrent-tv.ru' in url and ids=='1ttv': ids='torrent-tv'
 		if ids in url:
+			print ids
 			exec ("import "+i+"; serv="+i+".PZL()")
 			return serv.Streams(url)
 	return []
 
-def get_stream_off(url):
-	#print url
-	if 'viks.tv' in url:
-		http=getURL(url)
-		
-		ss='//m3u8'
-		es='//m3u8 names'
-		tmp=mfindal(http,ss,es)[0]
-		
-		#ss='//mob srcs'
-		#es='jQuery(document)'
-		#tmp2=mfindal(http,ss,es)[0]
-		#tmp=tmp2+tmp
-		
-		ss="]='"
-		es="';"
-		Lp=[]
-		
-		L=mfindal(tmp,ss,es)
-		#L.reverse()
-		for i in L:
-			srim=i[len(ss):]
-			if '.m3u8' in srim and __settings__.getSetting("m3u8-1")=='true':
-				if __settings__.getSetting("pm3u-1")=='true':
-					L3u=pars_m3u8(srim)
-					Lp.extend(L3u)
-				else:
-					Lp.append(srim)
-			elif 'rtmp' in srim and __settings__.getSetting("rtmp-1")=='true':
-				Lp.append(srim)
-			elif 'peers' not in srim:
-					Lp.append(srim)
-		
-		if __settings__.getSetting("p2p-1")=='true':
-			ss='//torrent codes'
-			es='//mob names'
-			tmp3=mfindal(http,ss,es)[0]
-		
-			ss='src=\\"'
-			es='\\" width='
-			Lt=mfindal(tmp3,ss,es)
-		
-			Lp2=[]
-			for t in Lt:
-				trst=get_ttv(t[len(ss):])
-				Lp2.append(trst)
-			#if __settings__.getSetting("p2p_start")=='true':
-			#	Lp2.extend(Lp)
-			#	Lp=Lp2
-			#else:
-			Lp.extend(Lp2)
-		return Lp
-	
-	elif 'torrentstream.tv' in url:
-		
-		if __settings__.getSetting("serv3")=='true':
-				http=getURL(url)
-				ss='<iframe src="'
-				es='" style="width:650'
-				t=mfindal(http,ss,es)[0][len(ss):]
-				trst=get_ttv(t)
-				if trst=="":return []
-				else:      return [trst,]
-		else:
-			return []
-	
-	elif 'televizorhd.ru' in url:
-		
-		if __settings__.getSetting("serv4")=='true':
-			if __settings__.getSetting("SID-4")=='true' or __settings__.getSetting("ALV-4")=='true':
-				http=getURL(url)
-				if __settings__.getSetting("ALV-4")=='true':
-					ss='this.loadTorrent("'
-					es='",{autoplay: true});}catch(e)'
-					try:t1=mfindal(http,ss,es)[0][len(ss):]
-					except:t1=""
-				
-					if 'content.asplaylist.net' in t1: t=['http://127.0.0.1:6878/ace/getstream?url='+t1,]
-					else: t=[]
-				else:t=[]
-				if __settings__.getSetting("SID-4")=='true':
-					ss='http://1ttv.net/iframe.php?'
-					es='" rel="nofollow" width="100%" height="570"'
-					
-					try:
-						t2=mfindal(http,ss,es)[0]
-						if t2!="" and t2!=None: t.append(t2)
-					except:pass
-					
-				
-				return t
-		else:
-			return []
 
-	elif 'asplaylist.net' in url:
-		srv=__settings__.getSetting("p2p_serv")
-		prt=__settings__.getSetting("p2p_port")
-		return ['http://'+srv+':'+prt+'/ace/getstream?url='+url,]
-
-	elif '1ttv.net' in url:
-		try:
-				trst=get_ttv(url)
-				if trst=="":return []
-				else:      return [trst,]
-		except:
-			return []
-
-
-	elif 'peers.tv' in url:
-		try:
-				url1=urllib.unquote_plus(url)+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:35.0) Gecko/20100101 Firefox/35.0'
-				url2=urllib.unquote_plus(url.replace('/126/','/16/'))+ '|User-Agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:35.0) Gecko/20100101 Firefox/35.0'
-				return [url1, url2]
-		except:
-			return []
-	
-	elif 'ok-tv.org' in url:
-		try:
-			L=[]
-			try:
-				
-				http=getURL(url)
-				#print http
-				ss='frameborder="0" scrolling="no" src="'
-				es='" bgcolor="#000000" allowtransparency="true"'
-				pl=mfindal(http,ss,es)[0][len(ss):]
-				#print pl
-				
-				http2=getURL(pl)
-				#print http2
-				ss='file='
-				es='"></object>'
-				st=mfindal(http2,ss,es)[0][len(ss):]
-				#print st
-				L=[st,]
-			except: pass
-				
-			if True:#__settings__.getSetting("p2p-2")=='true':
-				try:
-					ss='http://1ttv.net'
-					es='" width="660" height="450" bgcolor="#000000"'
-					Lt=mfindal(http,ss,es)#[0]
-					Lp2=[]
-					for t in Lt:
-						t=t.replace('site=1906','site=1714')
-						trst=get_ttv(t)
-						#print trst
-						Lp2.append(trst)
-					L.extend(Lp2)
-				except: pass
-
-			return L
-				
-		except:
-			return []
-	
-	elif 'onelike.tv' in url:
-		try:
-			L=[]
-			try:
-				http=getURL(url)
-				#print http
-				ss='http://vkluchi.tv'
-				es='" scrolling="no"></iframe>'
-				pl=mfindal(http,ss,es)[0]
-				#print pl
-				
-				http2=getURL(pl)
-				print http2
-				ss='file='
-				es="'></object>"
-				st=mfindal(http2,ss,es)[0][len(ss):]
-				print st
-				L=[st,]
-			except: pass
-				
-			if __settings__.getSetting("p2p-2")=='true':
-				try:
-					ss='http://1ttv.net'
-					es='" width="100%" height="450" bgcolor="#000000"'
-					Lt=mfindal(http,ss,es)#[0]
-					Lp2=[]
-					for t in Lt:
-						t=t.replace('site=2045','site=1714')
-						trst=get_ttv(t)
-						#print trst
-						Lp2.append(trst)
-					L.extend(Lp2)
-				except: pass
-
-			return L
-				
-		except:
-			return []
-
-	
-	elif 'tivix.net' in url:
-		Lp=[]
-		http=getURL(url)
-		#ss='&file='
-		#es='&st='
-		#L=mfindal(http,ss,es)
-#		for i in L:
-#			tmp=i[len(ss):]
-#			if 'm3u8' in tmp:
-#				#print "M3U8"
-#				if __settings__.getSetting("m3u8-2")=='true':
-#					if __settings__.getSetting("pm3u-2")=='true':
-#						L3u=pars_m3u8(tmp)
-#						Lp.extend(L3u)
-#					else:
-#						Lp.append(tmp)
-#			else:
-				#print "RTMP"
-#				if __settings__.getSetting("rtmp-2")=='true':
-#					purl = tmp
-#					purl += " swfUrl=http://tivix.net/templates/Default/style/uppod.swf"
-#					purl += " pageURL=http://tivix.net"
-#					purl += " swfVfy=true live=true"
-#					if 'peers' not in purl: Lp.append(purl)
-		
-		if True:#__settings__.getSetting("p2p-2")=='true':
-			ss='http://1ttv.net'
-			es='\\" width=\\"800\\" height='
-			Lt=mfindal(http,ss,es)#[0]
-			Lp2=[]
-			for t in Lt:
-				t=t.replace('site=1510','site=1714')
-				trst=get_ttv(t)
-				#print trst
-				Lp2.append(trst)
-			Lp.extend(Lp2)
-
-		return Lp
-	else:
-		return []
+def get_archive(url):
+	for i in Larh:
+		ids=i[4:].replace('_','-')
+		#print ids
+		if ids in url:
+			print ids
+			exec ("import "+i+"; serv="+i+".ARH()")
+			return serv.Streams(url)
+	return []
 
 def get_cepg(id, serv):
 	try:
@@ -1044,6 +1276,10 @@ def upd_canals_db(i):
 	exec ("import "+i+"; serv="+i+".PZL()")
 	return serv.Canals()
 
+def upd_archive_db(i):
+	exec ("import "+i+"; serv="+i+".ARH()")
+	return serv.name2id()
+
 def save_channels(n, L):
 		ns=str(n)
 		fp=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), 'Channels'+ns+'.py'))
@@ -1210,6 +1446,32 @@ def get_all_channeles():
 	
 	return L
 
+def get_all_archive():
+	pDialog = xbmcgui.DialogProgressBG()
+	L=[]
+	for i in Larh:
+		serv_id=str(int(i[1:3]))
+		if True:#__settings__.getSetting("serv"+serv_id+"")=='true' :
+			
+			try: exec ("import aid"+serv_id+"; Ds=aid"+serv_id+".n2id")
+			except:Ds={}
+			if Ds=={}: 
+				pDialog.create('Пазл ТВ', 'Обновление архива #'+serv_id+' ...')
+				Ds=upd_archive_db(i)
+				pDialog.close()
+		else: Ds={}
+		if Ds !={}:
+			Ds['srv_id']=i
+			L.append(Ds)
+	return L
+
+
+if __settings__.getSetting("grincm")=='true':
+	ContextGr=[('[B]Все каналы[/B]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name=Все каналы")'),]
+	for grn in list_gr():
+		ContextGr.append(('[B]'+grn+'[/B]','Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name='+urllib.quote_plus(grn)+'")'))
+		ContextGr.append(('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=tvgide")'))
+
 
 def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 	if __settings__.getSetting("fanart")=='true':funart=cover
@@ -1236,10 +1498,7 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 
 		fld=False
 		#fld=True
-		ContextGr=[('[B]Все каналы[/B]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name=Все каналы")'),]
-		for grn in list_gr():
-			ContextGr.append(('[B]'+grn+'[/B]','Container.Update("plugin://plugin.video.pazl.tv/?mode=context_gr&name='+urllib.quote_plus(grn)+'")'))
-		ContextGr.append(('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=tvgide")'))
+		
 
 		ContextCmd=[
 			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=select_gr")'),
@@ -1249,9 +1508,13 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 		('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=update")'),
 			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=updateepg")'),
 			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=tvgide")')]
+		if test_rec(ind): ContextCmd.append(('[COLOR FF55FF55][B]АРХИВ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=archive&name='+urllib.quote_plus(ind)+'")'))
 			
 		if __settings__.getSetting("grincm")=='true':listitem.addContextMenuItems(ContextGr, replaceItems=True)
 		else:										listitem.addContextMenuItems(ContextCmd, replaceItems=True)
+	
+	elif mode=="play2" or mode=="select_date":
+		fld=False
 	else: 
 		fld=True
 		listitem.addContextMenuItems([
@@ -1261,6 +1524,45 @@ def add_item (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
 			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=updateepg")'),
 			('[COLOR FFFFFF55][B]Управление каналами[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=grman")'),])
 	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)#, ind)
+
+def add_item_b (name, mode="", path = Pdir, ind="0", cover=None, funart=None):
+	if __settings__.getSetting("fanart")=='true':funart=cover
+	if __settings__.getSetting("icons")!='true':cover=icon
+
+	listitem = xbmcgui.ListItem(name, iconImage=cover)
+	if __settings__.getSetting("fanart")=='true': listitem.setProperty('fanart_image', funart)
+	uri = sys.argv[0] + '?mode='+mode
+	uri += '&url='  + urllib.quote_plus(repr(path))
+	uri += '&name='  + urllib.quote_plus(xt(ind))
+	uri += '&ind='  + urllib.quote_plus(str(ind))
+	if cover!=None:uri += '&cover='  + urllib.quote_plus(cover)
+	
+	if mode=="play":
+		fld=False
+		ContextCmd=[
+			('[COLOR FF55FF55][B]ГРУППА[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=select_gr")'),
+			('[COLOR FF55FF55][B]+ Добавить в группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=add&name='+urllib.quote_plus(ind)+'")'),
+			('[COLOR FFFF5555][B]- Удалить из группы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=rem&name='+urllib.quote_plus(ind)+'")'),
+			('[COLOR FF55FF55][B]<> Переместить канал[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=set_num&name='+urllib.quote_plus(ind)+'")'),
+		('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=update")'),
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=updateepg")'),
+			('[COLOR FF55FF55][B]ПЕРЕДАЧИ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=tvgide")')]
+		ContextCmd.append(('[COLOR FF55FF55][B]АРХИВ[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=archive&name='+urllib.quote_plus(ind)+'")'))
+		
+		if __settings__.getSetting("grincm")=='true':listitem.addContextMenuItems(ContextGr, replaceItems=True)
+		else:										listitem.addContextMenuItems(ContextCmd, replaceItems=True)
+	
+	elif mode=="play2" or mode=="select_date":
+		fld=False
+	else: 
+		fld=True
+		listitem.addContextMenuItems([
+			('[COLOR FF55FF55][B]+ Создать группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=addgr")'),
+			('[COLOR FFFF5555][B]- Удалить группу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=remgr")'),
+			('[COLOR FFFFFF55][B]* Обновить каналы[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=update")'),
+			('[COLOR FFFFFF55][B]* Обновить программу[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=updateepg")'),
+			('[COLOR FFFFFF55][B]Управление каналами[/B][/COLOR]', 'Container.Update("plugin://plugin.video.pazl.tv/?mode=grman")'),])
+	xbmcplugin.addDirectoryItem(handle, uri, listitem, fld)
 
 
 def root():
@@ -1287,21 +1589,24 @@ def root():
 		grinnm  =__settings__.getSetting("grinnm")
 		splitcn   =__settings__.getSetting("split")
 		
-		ct= time.time()
+		#ct= time.time()
 		if SG=='Все каналы':
 			for i in L:
 					name  = i['title']
 					url   = i['url']
 					cover = i['img']
 					id=get_idx(name)
-					if id=="": print unmark(lower(name))#.replace(" #1","")
+					name2=add_rec(name)
+					#if id=="": print unmark(lower(name))+" : "+url#.replace(" #1","")
 					if intlogo == 'true': cover = GETimg(cover, id.replace("xttv",""))
-					if grinnm =='true': name2=add_grn(name)
-					else: name2=name
+					if grinnm =='true': name2=add_grn(name2)
+					#else: name2=name
 					
 					if __settings__.getSetting("split")=='true' or nserv==1: name2=unmark(name2)#.replace(" #1","")
 					else: name2=colormark(name2)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 					
+					
+					#print cover
 					if id not in Lnm:
 						add_item ("[B]"+name2+"[/B]", 'play', [url,], name, cover)
 						if id!="" and splitcn =='true': Lnm.append(id)
@@ -1344,14 +1649,199 @@ def root():
 							if splitcn =='true' or nserv==1: name=unmark(name)#.replace(" #1","")
 							else: name=colormark(name)#.replace(" #1","[COLOR 40FFFFFF] #1[/COLOR]")
 							
+							name=add_rec(name)
 							add_item ("[B]"+name+"[/B]", 'play', urls, name2, cover)
 							if id!="" and splitcn =='true':Lnm.append(id)
 		
 		if intlogo =='true': ctd=False
 		else:                ctd=True
 		#print "------ time -----"
+		#print str(long(time.time())*100)
 		#debug (str(time.time()-nt))
 		xbmcplugin.endOfDirectory(handle, cacheToDisc=ctd)
+		__settings__.setSetting("Sel_sday",'0')
+
+
+def root_b():
+		#nt=time.time()
+		try:	SG=__settings__.getSetting("Sel_gr")
+		except: SG=''
+		if SG=='':
+			SG='Все каналы'
+			__settings__.setSetting("Sel_gr",SG)
+		add_item_b ('[COLOR FF55FF55][B]Группа: '+SG+'[/B][/COLOR]', 'select_gr')
+		
+		CL=get_gr()
+		Lnm=[]
+		L=get_all_channeles()
+		
+		intlogo =__settings__.getSetting("intlogo")
+		grinnm  =__settings__.getSetting("grinnm")
+		splitcn =__settings__.getSetting("split")
+		
+		if SG=='Все каналы':
+			for i in L:
+					name  = i['title']
+					url   = i['url']
+					cover = i['img']
+					if grinnm =='true': name2=add_grn(name2)
+					add_item_b ("[B]"+name+"[/B]", 'play', [url,], name, cover)
+			xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+
+		else: # Группы
+			NCL=[]
+			for b in CL:
+					NCL.append(unmark(b))
+			NL=[]
+			for a in L:
+					if unmark(a['title']) in NCL:
+						NL.append(a)
+			for k in CL:
+					for i in NL:
+						name  = i['title']
+						if k==name and name not in Lnm:
+							cover = i['img']
+							urls = [i['url'],]
+							add_item_b ("[B]"+name+"[/B]", 'play', urls, name, cover)
+							if splitcn =='true':Lnm.append(name)
+		#print "------ time -----"
+		#debug (str(time.time()-nt))
+		xbmcplugin.endOfDirectory(handle)
+		__settings__.setSetting("Sel_sday",'0')
+
+
+def root_test():
+	nt=time.time()
+	for i in range (1,1000):
+		name=str(i)
+		urls=str(i)
+		listitem = xbmcgui.ListItem(name, iconImage=icon)
+		uri = sys.argv[0] + '?mode=play'
+		#xbmcplugin.addDirectoryItem(handle, uri, listitem, True)
+		
+		add_item ("[B]"+name+"[/B]", 'play', urls, name)
+	debug (str(time.time()-nt))
+	xbmcplugin.endOfDirectory(handle)
+
+def add_rec(name):
+	for i in Larh:
+		serv_id=str(int(i[1:3]))
+		try: 
+			exec ("import aid"+serv_id+"; dict=aid"+serv_id+".n2id")
+			nm=lower(unmark(name))
+			#print nm
+			if nm in dict.keys():
+				return name+" [COLOR 5FFF1010][R][/COLOR]"
+		except: pass
+	return name
+
+
+
+def test_rec(name):
+	for i in Larh:
+		serv_id=str(int(i[1:3]))
+		try: 
+			exec ("import aid"+serv_id+"; dict=aid"+serv_id+".n2id")
+			nm=lower(unmark(name))
+			if nm in dict.keys():
+				return True
+		except: pass
+	return False
+
+def archive_off(name):#, sd='0'
+	try:sd=__settings__.getSetting("Sel_sday")
+	except: sd='0'
+	if sd=="":sd='0'
+	La=get_all_archive()
+	for n2id in La:
+		serv_id=n2id['srv_id']
+		#try: 
+		exec ("import "+serv_id+"; arh="+serv_id+".ARH()")
+		#except:Ds={}
+		
+
+		#import p03_1ttv
+		#arh=p03_1ttv.PZL()
+		#n2id=arh.name2id()
+		try:aid=n2id[lower(unmark(name))]
+		except: aid=""
+		#from aid3 import *
+		#n2id
+		if aid!="":
+			ssec=int(sd)*24*60*60
+			t=time.localtime(time.time() - ssec)
+			#dt=time.strftime('-%d-%m-%Y',t).replace('-0','-')[1:]
+			#print dt
+			#dt='12-7-2016'
+			add_item ('[COLOR FF10FF10][B]'+time.strftime('%d.%m.%Y',t)+" - "+unmark(name)+"[/B][/COLOR]", "select_date", 'url', '0' )
+			L=arh.Archive(aid, t)
+			for i in L:
+				url=i['url']
+				title=i['title']
+				st=i['time']
+				add_item (st+" - "+title, "play2", [url,], 'archive' )
+			xbmcplugin.endOfDirectory(handle)
+
+def archive(name):#, sd='0'
+	try:sd=__settings__.getSetting("Sel_sday")
+	except: sd='0'
+	if sd=="":sd='0'
+	La=get_all_archive()
+	ssec=int(sd)*24*60*60
+	t=time.localtime(time.time() - ssec)
+	add_item ('[COLOR FF10FF10][B]'+time.strftime('%d.%m.%Y',t)+" - "+unmark(name)+"[/B][/COLOR]", "select_date", 'url', '0' )
+	da={}
+	Lm=[]
+	for n2id in La:
+		serv_id=n2id['srv_id']
+		#try: 
+		exec ("import "+serv_id+"; arh="+serv_id+".ARH()")
+		#n2id=arh.name2id()
+		try:aid=n2id[lower(unmark(name))]
+		except: aid=""
+		#from aid3 import *
+		#n2id
+		if aid!="":
+			L=arh.Archive(aid, t)
+			for i in L:
+				#url=i['url']
+				#title=i['title']
+				st=i['time']
+				#add_item (st+" - "+title, "play2", [url,], 'archive' )
+				try: 
+					i2=da[st]
+					urls=i2['url']
+					url=i['url']
+					urls.append(url)
+					i2['url']=urls
+					da[st]=i2
+				except: 
+					url=i['url']
+					i['url']=[url,]
+					da[st]=i
+	for d in da.keys():
+			urls=da[d]['url']
+			title=da[d]['title']
+			st=da[d]['time']
+			add_item (st+" - "+title, "play2", urls, 'archive' )
+			
+	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
+	xbmcplugin.endOfDirectory(handle)
+
+
+def select_date():
+		L=[]
+		for i in range (0,10):
+			ssec=i*24*60*60
+			t=time.localtime(time.time() - ssec)
+			st=time.strftime('%d.%m.%Y',t)
+			L.append(st)
+		sel = xbmcgui.Dialog()
+		r = sel.select("Дата:", L)
+		__settings__.setSetting("Sel_sday",str(r))
+		xbmc.executebuiltin("Container.Refresh")
+
+
 
 def get_allurls_off(xid, L):
 	id=xid[1:]
@@ -1361,7 +1851,7 @@ def get_allurls_off(xid, L):
 			L2.append(i[0])
 	L3=[]
 	for j in L:
-		name = unmark(lower(j['title']))#.replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+		name = unmark(lower(j['title']))#.replace(" #1","")
 		if name in L2:
 			L3.append(j['url'])
 	return L3
@@ -1380,7 +1870,7 @@ def add_grn(name):
 	except:L=[]
 	for i in L:
 		gr=i[0]
-		if name in i[1]: name=name+"  [COLOR 40FFFFFF]["+gr+"][/COLOR]"
+		if name.replace(" [COLOR 5FFF1010][R][/COLOR]", "") in i[1]: name=name+"  [COLOR 40FFFFFF]["+gr+"][/COLOR]"
 	return name
 
 
@@ -1483,16 +1973,16 @@ def ASE_start():
 		pDialog.update(0, message='Запуск Ace Stream ...')
 		start_linux()
 		start_windows()
-		pDialog.update(25, message='Запуск Ace Stream ...')
-		xbmc.sleep(1500)
-		pDialog.update(50, message='Запуск Ace Stream ...')
-		xbmc.sleep(1500)
-		pDialog.update(75, message='Запуск Ace Stream ...')
-		xbmc.sleep(1500)
-		pDialog.update(100, message='Запуск Ace Stream ...')
-		xbmc.sleep(500)
+		for i in range (0,10):
+			pDialog.update(i*10, message='Запуск Ace Stream ...')
+			xbmc.sleep(1500)
+			try:
+				http=getURL(lnk)
+				pDialog.close()
+				return True
+			except: pass
 		pDialog.close()
-		return True
+		return False
 
 def start_linux():
         import subprocess
@@ -1520,6 +2010,7 @@ def start_windows():
             return True
         except:
             return False
+
 
 def get_params():
 	param=[]
@@ -1553,20 +2044,8 @@ except:ind ="0"
 pDialog = xbmcgui.DialogProgressBG()
 
 if mode==""         : #root
-	root()
-	if __settings__.getSetting("epgon")=='true':
-		cdata = int(time.strftime('%Y%m%d'))
-		try:
-			udata =int(get_inf_db('udata'))
-			#udata = int(__settings__.getSetting('udata'))
-		except: udata = 0
-		#print "-=-=-=-=-=-=- udata ------ - - - - - "
-		#print udata
-		#if cdata>udata and __settings__.getSetting("epgon")=='true':
-		#	add_to_db ("udata", str(cdata))
-			#__settings__.setSetting("udata",str(cdata))
-			#upepg()
-			
+	if __settings__.getSetting("boost")=='true': root_b()
+	else: root()
 
 if mode=="context_gr"  :
 		__settings__.setSetting("Sel_gr",name)
@@ -1574,20 +2053,8 @@ if mode=="context_gr"  :
 		xbmc.executebuiltin("Container.Refresh")
 
 if mode=="updateepg"   :
-			cdata = int(time.strftime('%Y%m%d'))
-			try:
-				udata =int(get_inf_db('udata'))
-				#udata = int(__settings__.getSetting('udata'))
-			except: udata = 0
 			add_to_db ("udata", str(0))
-			#__settings__.setSetting("udata",str(cdata))
-			
 			xbmcplugin.endOfDirectory(handle, False, False)
-			#xbmc.executebuiltin('Container.Update("plugin://plugin.video.viks.tv/?mode=updateepg2")')
-			#import server
-			#server.upepg()
-			#upepg()
-			#xbmc.executebuiltin("Container.Refresh")
 
 if mode=="grman"   :
 	import GrBox
@@ -1609,15 +2076,19 @@ if mode=="update"   :
 						pDialog.update(int(serv_id)*100/len(Lserv), message='Обновление списка каналов #'+serv_id+' ...')
 						Ls=upd_canals_db(i)
 			pDialog.close()
+			xbmc.executebuiltin("Container.Refresh")
 
 if mode=="select_gr": select_gr(ind)
-if mode=="play"     : play(url, name, cover)
+if mode=="play"     : 
+	if __settings__.getSetting("boost")=='true': play_b(url, name, cover)
+	else: play(url, name, cover)
+if mode=="play2"    : play_archive(url, name, cover)
 if mode=="next"     : 
 	#video=xbmc.translatePath(os.path.join(addon.getAddonInfo('path'), '1.wmv'))
 	xbmc.executebuiltin('Container.Update("plugin://plugin.video.pazl.tv/?mode=next2")')
 
 if mode=="next2"     : next ('>')
-#if mode=="rename"   : updatetc.rename_list(int(ind))
-
+if mode=="archive"   : archive(name)#, ind
+if mode=="select_date": select_date()
 c.close()
-
+#debug (str(time.time()-nt))

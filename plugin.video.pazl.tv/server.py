@@ -11,7 +11,8 @@ addon = xbmcaddon.Addon(id='plugin.video.pazl.tv')
 icon=None
 pDialog = xbmcgui.DialogProgressBG()
 
-time.sleep(10)
+#time.sleep(10)
+xbmc.sleep(10000)
 print('----- Starting PTV -----')
 start_trigger = True
 #n=0
@@ -62,6 +63,11 @@ def lower(s):
 	s=s.lower().encode('utf-8')
 	return s
 
+def debug(s):
+	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "w")
+	fl.write(s)
+	fl.close()
+
 # ================================ БД =======================================
 import sqlite3 as db
 db_name = os.path.join( addon.getAddonInfo('path'), "epg.db" )
@@ -69,6 +75,7 @@ c = db.connect(database=db_name)
 cu = c.cursor()
 
 def add_to_db(n, item):
+	if len(item)>4:
 		c = db.connect(database=db_name)
 		cu = c.cursor()
 		item=item.replace("'","XXCC").replace('"',"XXDD")
@@ -89,6 +96,7 @@ def add_to_db(n, item):
 			cu.execute('INSERT INTO '+tor_id+' (db_item, i) VALUES ("'+item+'", "1");')
 			c.commit()
 		c.close()
+		xbmc.sleep(30)
 
 
 def get_inf_db(n):
@@ -109,13 +117,55 @@ def upepg():
 			#if __settings__.getSetting('epgitv')=='true': upd_EPG_itv()
 			if __settings__.getSetting('stv')=='true': upd_stv()
 			if __settings__.getSetting('epgxml')=='true': upd_EPG_xmltv()
-			if __settings__.getSetting('epgtvx')=='true': upd_EPG()
+			if __settings__.getSetting('epgtvx')=='true': yatv()#upd_EPG()
 			if __settings__.getSetting('vsetv_ru')=='true': upd_EPG_vsetv("rubase")
 			if __settings__.getSetting('vsetv_ua')=='true': upd_EPG_vsetv("uabase")
 			if __settings__.getSetting('vsetv_by')=='true': upd_EPG_vsetv("bybase")
 			#xbmc.executebuiltin("Container.Refresh")
 			pDialog.close()
 
+
+def yatv():
+	for n in range(0,31):
+		ncrd=str(long(time.time())*1000+1080)
+		dtm=time.strftime('%Y-%m-%d')
+		url='https://m.tv.yandex.ru/ajax/i-tv-region/get?params=%7B%22channelLimit%22%3A'+str(10)+'%2C%22channelOffset%22%3A'+str(n*10)+'%2C%22fields%22%3A%22channel%2Ctitle%2Clogo%2Cchannel%2Csynonyms%2Cfavourite%2Cid%2CsiteUrl%2CbroadcastUrl%2ConlinesPlayer%2Ctitle%2Clogo%2Csizes%2Cwidth%2Cheight%2Csrc%2Ccopyright%2Cschedules%2Cchannels%2Cfinish%2Cchannel%2Cid%2Ctitle%2Cfavourite%2CchannelsCountPerGenre%2CavailableProgramTypes%2CavailableChannels%2Celement%2Cid%2Cname%2Cevents%2Cid%2CchannelId%2Clive%2Crecommended%2ChasReminder%2Cepisode%2CseasonName%2CseasonNumber%2Cid%2CprogramId%2Ctitle%2Cstart%2Cfinish%2Cprogram%2Cid%2Ctype%2Cid%2Cname%2Ctitle%2Csizes%2Ccopyright%2C100%2C120%2C160%2C200%2C300%2C400%2Cwidth%2Cheight%2Csrc%22%2C%22channelIds%22%3A%22146%2C109%2C1593%2C162%2C427%2C187%2C1683%2C740%2C1000%2C529%2C689%2C447%2C79%2C114%2C279%2C1003%2C405%2C726%2C350%2C897%2C150%2C1598%2C1649%2C898%2C323%2C1048%2C1624%2C1046%2C127%2C267%2C123%2C462%2C22%2C542%2C566%2C145%2C125%2C477%2C401%2C994%2C911%2C615%2C935%2C1371%2C1037%2C918%2C309%2C311%2C53%2C485%2C163%2C518%2C821%2C659%2C686%2C516%2C352%2C1570%2C12%2C644%2C608%2C798%2C834%2C1584%2C799%2C1674%2C1620%2C1680%2C55%2C675%2C794%2C520%2C648%2C731%2C333%2C774%2C723%2C367%2C322%2C928%2C35%2C273%2C1036%2C996%2C613%2C912%2C409%2C102%2C365%2C325%2C277%2C521%2C1394%2C1330%2C1436%2C765%2C757%2C223%2C769%2C685%2C1365%2C1562%2C16%2C669%2C1585%2C250%2C406%2C328%2C481%2C531%2C563%2C455%2C288%2C737%2C499%2C850%2C454%2C1039%2C664%2C1376%2C1667%2C1668%2C1669%2C567%2C410%2C308%2C929%2C555%2C747%2C601%2C917%2C31%2C494%2C810%2C66%2C1332%2C1578%2C76%2C828%2C743%2C502%2C278%2C831%2C384%2C214%2C921%2C313%2C1032%2C463%2C495%2C23%2C247%2C461%2C355%2C315%2C1331%2C589%2C59%2C922%2C575%2C715%2C797%2C319%2C804%2C533%2C642%2C591%2C91%2C332%2C849%2C388%2C258%2C927%2C270%2C430%2C473%2C681%2C151%2C1021%2C662%2C25%2C680%2C1561%2C156%2C491%2C257%2C1673%2C393%2C82%2C132%2C434%2C119%2C376%2C705%2C637%2C153%2C614%2C931%2C113%2C21%2C547%2C595%2C346%2C779%2C617%2C661%2C919%2C505%2C173%2C1571%2C776%2C425%2C1397%2C1660%2C1662%2C1679%2C1322%2C777%2C412%2C165%2C925%2C1026%2C1329%2C663%2C920%2C1676%2C312%2C631%2C801%2C121%2C415%2C930%2C990%2C560%2C1030%2C464%2C934%2C382%2C1033%2C124%2C807%2C987%2C983%2C1013%2C1372%2C1035%2C984%2C1031%2C1034%2C1042%2C1043%2C331%2C1012%2C1011%2C1612%2C389%2C1395%2C1377%2C138%2C741%2C1038%2C423%2C1586%2C1588%2C1589%2C1587%2C1681%2C1657%2C1663%2C1670%2C1672%2C756%2C442%2C15%2C552%2C626%2C933%2C431%2C923%2C11%2C789%2C349%2C638%2C217%2C300%2C284%2C1425%2C618%2C275%2C783%2C6%2C37%2C141%2C576%2C1396%2C1378%2C730%2C916%2C509%2C180%2C248%2C363%2C1666%2C1699%2C1700%2C1698%22%2C%22start%22%3A%22'+dtm+'T00%3A00%3A00%2B03%3A00%22%2C%22duration%22%3A86400%2C%22channelProgramsLimit%22%3A500%2C%22genresIds%22%3A%5B%5D%2C%22lang%22%3A%22ru%22%7D&cacheKey=schedule%3Fparams%3D%7B%22channelLimit%22%3A4%2C%22channelOffset%22%3A17%2C%22fields%22%3A%5B%22channel%22%2C%22title%22%2C%22logo%22%2C%22channel%22%2C%22synonyms%22%2C%22favourite%22%2C%22id%22%2C%22siteUrl%22%2C%22broadcastUrl%22%2C%22onlinesPlayer%22%2C%22title%22%2C%22logo%22%2C%22sizes%22%2C%22width%22%2C%22height%22%2C%22src%22%2C%22copyright%22%2C%22schedules%22%2C%22channels%22%2C%22finish%22%2C%22channel%22%2C%22id%22%2C%22title%22%2C%22favourite%22%2C%22channelsCountPerGenre%22%2C%22availableProgramTypes%22%2C%22availableChannels%22%2C%22element%22%2C%22id%22%2C%22name%22%2C%22events%22%2C%22id%22%2C%22channelId%22%2C%22live%22%2C%22recommended%22%2C%22hasReminder%22%2C%22episode%22%2C%22seasonName%22%2C%22seasonNumber%22%2C%22id%22%2C%22programId%22%2C%22title%22%2C%22start%22%2C%22finish%22%2C%22program%22%2C%22id%22%2C%22type%22%2C%22id%22%2C%22name%22%2C%22title%22%2C%22sizes%22%2C%22copyright%22%2C%22100%22%2C%22120%22%2C%22160%22%2C%22200%22%2C%22300%22%2C%22400%22%2C%22width%22%2C%22height%22%2C%22src%22%5D%2C%22channelIds%22%3A%22146%2C109%2C1593%2C162%2C427%2C187%2C1683%2C740%2C1000%2C529%2C689%2C447%2C79%2C114%2C279%2C1003%2C405%2C726%2C350%2C897%2C150%2C1598%2C1649%2C898%2C323%2C1048%2C1624%2C1046%2C127%2C267%2C123%2C462%2C22%2C542%2C566%2C145%2C125%2C477%2C401%2C994%2C911%2C615%2C935%2C1371%2C1037%2C918%2C309%2C311%2C53%2C485%2C163%2C518%2C821%2C659%2C686%2C516%2C352%2C1570%2C12%2C644%2C608%2C798%2C834%2C1584%2C799%2C1674%2C1620%2C1680%2C55%2C675%2C794%2C520%2C648%2C731%2C333%2C774%2C723%2C367%2C322%2C928%2C35%2C273%2C1036%2C996%2C613%2C912%2C409%2C102%2C365%2C325%2C277%2C521%2C1394%2C1330%2C1436%2C765%2C757%2C223%2C769%2C685%2C1365%2C1562%2C16%2C669%2C1585%2C250%2C406%2C328%2C481%2C531%2C563%2C455%2C288%2C737%2C499%2C850%2C454%2C1039%2C664%2C1376%2C1667%2C1668%2C1669%2C567%2C410%2C308%2C929%2C555%2C747%2C601%2C917%2C31%2C494%2C810%2C66%2C1332%2C1578%2C76%2C828%2C743%2C502%2C278%2C831%2C384%2C214%2C921%2C313%2C1032%2C463%2C495%2C23%2C247%2C461%2C355%2C315%2C1331%2C589%2C59%2C922%2C575%2C715%2C797%2C319%2C804%2C533%2C642%2C591%2C91%2C332%2C849%2C388%2C258%2C927%2C270%2C430%2C473%2C681%2C151%2C1021%2C662%2C25%2C680%2C1561%2C156%2C491%2C257%2C1673%2C393%2C82%2C132%2C434%2C119%2C376%2C705%2C637%2C153%2C614%2C931%2C113%2C21%2C547%2C595%2C346%2C779%2C617%2C661%2C919%2C505%2C173%2C1571%2C776%2C425%2C1397%2C1660%2C1662%2C1679%2C1322%2C777%2C412%2C165%2C925%2C1026%2C1329%2C663%2C920%2C1676%2C312%2C631%2C801%2C121%2C415%2C930%2C990%2C560%2C1030%2C464%2C934%2C382%2C1033%2C124%2C807%2C987%2C983%2C1013%2C1372%2C1035%2C984%2C1031%2C1034%2C1042%2C1043%2C331%2C1012%2C1011%2C1612%2C389%2C1395%2C1377%2C138%2C741%2C1038%2C423%2C1586%2C1588%2C1589%2C1587%2C1681%2C1657%2C1663%2C1670%2C1672%2C756%2C442%2C15%2C552%2C626%2C933%2C431%2C923%2C11%2C789%2C349%2C638%2C217%2C300%2C284%2C1425%2C618%2C275%2C783%2C6%2C37%2C141%2C576%2C1396%2C1378%2C730%2C916%2C509%2C180%2C248%2C363%2C1666%2C1699%2C1700%2C1698%22%2C%22start%22%3A%22'+dtm+'T00%3A00%3A00%2B03%3A00%22%2C%22duration%22%3A86400%2C%22channelProgramsLimit%22%3A500%2C%22genresIds%22%3A%5B%5D%7D&userRegion=4&resource=schedule&ncrd='+ncrd
+		
+		#1469175651563
+		try:E=getURL(url)
+		except:
+			try:E=getURL(url)
+			except:
+				print 'yatv сервер недоступен'
+				return False
+		e=E.replace('\\/','/').replace('false','False').replace('true','True').replace('\\"',"'")
+		#debug (e)
+		D=eval(e)
+		L=D['schedules']
+		#DCnl={}
+		for i in L:
+			title=i['channel']['title']
+			id=i['channel']['id']
+			idx=get_idx(title)
+			
+			if idx=="": 
+				idx='ytv'+str(id)
+				#print '"'+lower(title)+'":"'+str(id)+'",'
+			Le=[]
+			L2=i['events']
+			for j in L2:
+				ptitle=j['program']['title']
+				start =j['start']
+				
+				cdata = time.strftime('%Y%m%d')
+				pdata = start[:10].replace('-','')
+				if pdata==cdata:
+					start_at=start.replace('+03:00','').replace('T',' ')#2016-07-22T04:20:00+03:00
+					Le.append({"name":ptitle, "start_at":start_at})
+			E2=repr(Le)
+			pDialog.update(int(n*100/31), message=title)
+			if idx!="": add_to_db(idx, E2)
+			#epg[idx]=Le
 
 def upd_stv():
 	opener = urllib2.build_opener()
@@ -240,11 +290,12 @@ def upd_EPG_xmltv():
 	if xml!="":
 		d=pars_xmltv(xml)
 		j=0
-		for id in d.keys():
+		dk=d.keys()
+		for id in dk:
 			j+=1
 			#print d[id]
 			add_to_db("x"+id, repr(d[id]))
-			pDialog.update(j/4, message='xmltv ...')
+			pDialog.update(j/4, message='xmltv '+id)
 	else:
 		pDialog.update(0, message='Не удалось загрузить xml.')
 
@@ -262,6 +313,8 @@ def dload_epg_xml():
 			fl = open(fp, "wb")
 			fl.write(resp.read())
 			fl.close()
+			#time.sleep(1)
+			xbmc.sleep(1000)
 			#print "-==-=-=-=-=-=-=- unpak =-=-=-=-=-=-=-=-=-=-"
 			xml=ungz(fp)
 			#print "-==-=-=-=-=-=-=- unpak ok =-=-=-=-=-=-=-=-=-=-"
@@ -290,6 +343,7 @@ def pars_xmltv(xml):
 	epg={}
 	n=0
 	t=len(L)
+	cdata = time.strftime('%Y%m%d')
 	for i in L:
 		n+=1
 		if "<programme " in i:
@@ -299,33 +353,36 @@ def pars_xmltv(xml):
 			es=' +0300" stop="'
 			st=mfindal(i,ss,es)[0][len(ss):]
 			
-			ss='stop="'
-			es=' +0300" channel'
-			et=mfindal(i,ss,es)[0][len(ss):]
+			pdata=st[:8]
+			#print pdata+' '+cdata
+			if pdata==cdata:
+				#ss='stop="'
+				#es=' +0300" channel'
+				#et=mfindal(i,ss,es)[0][len(ss):]
+				
+				ss=' channel="'
+				es='">'
+				id=mfindal(i,ss,es)[0][len(ss):]
+				
+				ss='<title'
+				es='</title>'
+				title=mfindal(i,ss,es)[0][len(ss):].replace(' lang="ru">',"")
+				
+				try:Le=epg[id]
+				except: Le=[]
 			
-			ss=' channel="'
-			es='">'
-			id=mfindal(i,ss,es)[0][len(ss):]
+				n=len(Le)
+				start_at=xt(st[0:4]+"-"+st[4:6]+"-"+st[6:8]+" "+st[8:10]+":"+st[10:12]+":00")
 			
-			ss='<title'
-			es='</title>'
-			title=mfindal(i,ss,es)[0][len(ss):].replace(' lang="ru">',"")
-			
-			try:Le=epg[id]
-			except: Le=[]
-		
-			n=len(Le)
-			start_at=xt(st[0:4]+"-"+st[4:6]+"-"+st[6:8]+" "+st[8:10]+":"+st[10:12]+":00")
-		
-			#print start_at+" "+title
-			try:
-				Le.append({"name":title, "start_at":start_at})
-				epg[id]=Le
-				pDialog.update(int(n*100/t), message=title)
-				#print id
-			except: 
-				pass
-			#print id+"  :  "+start_at+"  :  "+title
+				#print start_at+" "+title
+				try:
+					Le.append({"name":title, "start_at":start_at})
+					epg[id]=Le
+					#pDialog.update(int(n*100/t), message=title)
+					#print id
+				except:
+					pass
+				#print id+"  :  "+start_at+"  :  "+title
 	return epg
 
 
@@ -351,7 +408,7 @@ def upd_EPG():
 				id = get_id(url)
 				if 'viks.tv' in url: serv = 'viks'
 				else:                serv = 'tivix'
-				get_epg(id, serv, name)
+				get_epg(id, 'serv', name)
 				pDialog.update(int(j*100/t), message=name+' ...')
 
 
@@ -393,7 +450,7 @@ def get_id(url):
 			return '0'
 
 def get_idx(name):
-	name=lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","")
+	name=lower(name).replace(" #1","").replace(" #2","").replace(" #3","").replace(" #4","").replace(" #5","").replace(" #6","").replace(" #7","").replace(" #8","").replace(" #9","").replace(" #10","").replace(" #11","").replace(" #12","").replace(" #13","").replace(" #14","")
 	try:
 		id="x"+xmlid[name]
 	except: 
@@ -423,7 +480,8 @@ while not xbmc.abortRequested:
 			xbmc.executebuiltin("Container.Refresh")
 		
 		for i in range(0, 10):
-			time.sleep(3)
+			xbmc.sleep(3000)
+			#time.sleep(3)
 			if xbmc.abortRequested:
 				print ('----- PTV break -----')
 				break
