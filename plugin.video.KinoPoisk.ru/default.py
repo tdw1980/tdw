@@ -3,7 +3,7 @@
 
 # *      Copyright (C) 2011 TDW
 
-import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, time, codecs, httplib
+import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, urllib2, time, codecs, httplib
 import SelectBox
 from KPmenu import *
 
@@ -860,7 +860,20 @@ def showMessage(heading, message, times = 3000):
 	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
 
-def GET(target, referer, post_params = None, accept_redirect = True, get_redirect_url = False, siteUrl='www.KinoPoisk.ru'):
+
+def GET(url,Referer = 'http://findanime.ru/'):
+	req = urllib2.Request(url)
+	req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
+	req.add_header('Accept', 'text/html, application/xml, application/xhtml+xml, */*')
+	req.add_header('Accept-Language', 'ru,en;q=0.9')
+	req.add_header('Referer', Referer)
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	return link
+
+def GET2(target, referer, post_params = None, accept_redirect = True, get_redirect_url = False, siteUrl='www.KinoPoisk.ru'):
+	#target=target.replace('http:','https:')
 	try:
 		connection = httplib.HTTPConnection(siteUrl)
 
@@ -1650,14 +1663,15 @@ def stft(text, info={}):
 
 def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			params["mode"] = mode
-			params["info"] = info
+			
 			
 			cover = info["cover"]
 			try:fanart = info["fanart"]
 			except: fanart = ''
 			try:id = info["id"]
 			except: id = ''
-
+			try:params["info"] = {'id':id, 'title':Title, "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}#info
+			except:params["info"] = {"cover":icon, 'id':id}
 			listitem = xbmcgui.ListItem(Title, iconImage=cover)#, thumbnailImage=cover
 			listitem.setInfo(type = "Video", infoLabels = info )
 			listitem.setProperty('fanart_image', fanart)
@@ -2084,7 +2098,46 @@ def New():
 
 def Future():
 	AddItem("Самые ожидаемые", "Future")
-
+def fnd(L):
+	for y in range (1970, 2018):
+		sy=" "+str(y)
+		text=text.replace(sy,"")
+	BL=['Трейлер', "Тизер"]
+	
+	qual = __settings__.getSetting("F_Qual")
+	if qual == "0": WL=[]
+	elif qual == "1": WL=["dvdrip","bdrip","hdrip","720р"]#
+	elif qual == "1": WL=["blu-ray", "hdrip", "bdrip","1080р"]
+	SL=[0,15]
+	for itm in L:
+		b=0
+		w1=0
+		z=0
+		Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+		for i in BL:
+			if Title.find(i)>0:b+=1
+		for i in WL:
+			if Title.lower().find(i)>0:w1+=1
+		
+		w=w1
+		
+		if 'ГБ' in itm[1] or 'GB' in itm[1]: 
+			szs=itm[1].replace('ГБ','').replace('GB','').replace('|','').strip()
+			sz=float(szs)
+			if sz>SL[0] and sz<SL[1]:z=1
+			
+		#elif 'МБ' in itm[1] or 'MB' in itm[1]:
+		#	z=1
+		
+		if xt(Title).find(text)>=0 and b == 0 and w > 0 and z==1:
+				#Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+				row_url = itm[3]
+				listitem = xbmcgui.ListItem(Title)
+				purl = sys.argv[0] + '?mode=OpenTorrent'\
+					+ '&url=' + urllib.quote_plus(row_url)\
+					+ '&title=' + itm[2]
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
+	
 
 Category=[]
 CategoryDict={}
@@ -2326,46 +2379,25 @@ if mode == "Torrents2":
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 	
 if mode == "Par":
-	text='Predator'
-	text=u'хищник'
+	text='Star Wars'
+	#text=u'Xищник'
 	#import rutors
 	#rtr=rutors.Tracker()
-	import dugtor
-	rtr=dugtor.Tracker()
+	import fasttor
+	rtr=fasttor.Tracker()
 
 	try:
 		L=rtr.Search(text, "0")
 	except: 
 		L=[]
-
-	for y in range (1970, 2018):
-		sy=" "+str(y)
-		text=text.replace(sy,"")
-	BL=['Трейлер', "Тизер"]
-	WL=["DVDRip","bdrip","720р"]#
-	for itm in L:
-		b=0
-		w1=0
-		for i in BL:
-			if itm[2].find(i)>0:b+=1
-		for i in WL:
-			if itm[2].lower().find(i)>0:w1+=1
-		
-		w=w1
-
-		if xt(itm[2]).find(text)>=0 and b == 0 and w > 0:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				listitem = xbmcgui.ListItem(Title)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + itm[2]
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
+	fnd(L)
 	
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
+
+
 
 if mode == "OpenTorrent":
 	url = urllib.unquote_plus(get_params()["url"])
