@@ -103,7 +103,7 @@ def save_tvshow_nfo(name, info={}):
 		nfo+="	<year>"+str(year)+"</year>"+chr(10)
 		nfo+="	<season>-1</season>"+chr(10)
 		nfo+="	<plot>"+plot+"</plot>"+chr(10)
-		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<fanart><thumb>"+fanart+"</thumb></fanart>"+chr(10)
 		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
 		nfo+="</tvshow>"+chr(10)
 		

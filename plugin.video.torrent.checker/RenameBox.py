@@ -168,6 +168,12 @@ class MyVideoAddon(AddonDialogWindow):
         
         self.list2 = xbmcgui.ControlList(1, 1, 1, 1, buttonTexture=self.list_bg_Nofocus, buttonFocusTexture=self.list_bg_focus)
         self.placeControl(self.list2, 5, 0, 8, 5)
+        
+        
+        L2=[]
+        for i in L[3]:
+                L2.append(ru(L[0][1])+'.S'+i[L[1][0]:L[1][1]]+'.E'+i[L[2][0]:L[2][1]]+'.strm')
+        L[4]=L2
         self.list2.addItems(L[4])
         #slider_label = xbmcgui.ControlLabel(1, 1, 1, 1, 'ControlSlider')
         #self.placeControl(slider_label, 13, 0)
@@ -206,7 +212,8 @@ class MyVideoAddon(AddonDialogWindow):
             Ls=[]
             Le=[]
             for i in L[3]:
-                sz=i[L[1][0]:L[1][1]]
+                if L[1][0]=='t': sz=L[1][1]
+                else: sz=i[L[1][0]:L[1][1]]
                 ep=i[L[2][0]:L[2][1]]
                 Ls.append(sz)
                 Le.append(ep)
@@ -244,10 +251,19 @@ class MyVideoAddon(AddonDialogWindow):
             elif i==1:
                 sl = xbmcgui.Dialog()
                 s=L[3][0]
-                n = sl.select("Начало диапазона:", list(s))
-                k = sl.select("Конец диапазона:", list(s))+1
-                if k<n: k=n
-                L[1]=[n,k]
+                td = sl.select("Выбор:", ['Диапазон','Текст'])
+                if td == 0:
+                    #__settings__.setSetting(id="RangeBox", value='tttttttttt444444466667777788899900')
+                    #import RangeBox
+                    #RangeBox.run("RangeBox")
+                    #L[1]=__settings__.getSetting(RangeBoxReq)
+                    n = sl.select("Начало диапазона:", list(s))
+                    k = sl.select("Конец диапазона:", list(s))+1
+                    if k<n: k=n
+                    L[1]=[n,k]
+                else:
+                    t=inputbox('01')
+                    L[1]=['t',t]
             elif i==2:
                 sl = xbmcgui.Dialog()
                 s=L[3][0]
@@ -264,7 +280,9 @@ class MyVideoAddon(AddonDialogWindow):
                     L[5]=0
                     nf="                      Нет"
             nm="                     "+L[0][1]
-            sz="                     "+repr(L[1])+' '+L[3][0][L[1][0]:L[1][1]]
+            if L[1][0]=='t':sz="                     "+repr(L[1])+' '+L[1][1]
+            else:sz="                     "+repr(L[1])+' '+L[3][0][L[1][0]:L[1][1]]
+                
             ep="                     "+repr(L[2])+' '+L[3][0][L[2][0]:L[2][1]]
             
             self.list.reset()
@@ -272,7 +290,8 @@ class MyVideoAddon(AddonDialogWindow):
             self.list.selectItem(i)
             L2=[]
             for i in L[3]:
-                L2.append(ru(L[0][1])+'.S'+i[L[1][0]:L[1][1]]+'.E'+i[L[2][0]:L[2][1]]+'.strm')
+                if L[1][0]=='t': L2.append(ru(L[0][1])+'.S'+L[1][1]+'.E'+i[L[2][0]:L[2][1]]+'.strm')
+                else: L2.append(ru(L[0][1])+'.S'+i[L[1][0]:L[1][1]]+'.E'+i[L[2][0]:L[2][1]]+'.strm')
             L[4]=L2
             self.list2.reset()
             self.list2.addItems(L2)

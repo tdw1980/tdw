@@ -2313,8 +2313,9 @@ if mode == "Torrents":
 	xbmc.executebuiltin("Container.Update("+gty+", "+gty+")")
 	
 if mode == "Torrents2":
-	info=params["info"]
+	#info=params["info"]
 	id=params["info"]["id"]
+	info=eval(xt(get_inf_db(id)))
 	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
 	except: rus=params["info"]["title"]
 	try:en=params["info"]["originaltitle"].encode('utf8')
