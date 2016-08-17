@@ -221,16 +221,16 @@ def formtext(http):
 	
 	LL=[]
 	for i in L:
-		print i
+		#print i
 		ss=' href="'
 		es='.htm" alt="'
 		url='http://torrentom.com'+mfindal(i, ss, es)[0][len(ss):]+".htm"
-		print url
+		#print url
 		
 		ss='"><b>'
 		es='</b></a>'
 		title=mfindal(i, ss, es)[0][len(ss):]
-		print title
+		#print title
 		LL.append([title.decode('cp1251'),url])
 	return LL
 

@@ -146,7 +146,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.8.6"
+       version="1.9.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -156,6 +156,7 @@
             library="default.py">
         <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>KinoPoisk.ru</summary>
     <description>Poisk torrentov</description>

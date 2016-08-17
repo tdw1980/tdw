@@ -208,7 +208,7 @@ def save_strm(params):
 		fl = open(os.path.join(ru(SaveDirectory),name+".strm"), "w")
 		fl.write(uri)
 		fl.close()
-		xbmc.executebuiltin('UpdateLibrary("video")')
+		xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
 		
 
 def save_tvshow_nfo(tts,img, info={}):
@@ -1664,7 +1664,6 @@ def stft(text, info={}):
 def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			params["mode"] = mode
 			
-			
 			cover = info["cover"]
 			try:fanart = info["fanart"]
 			except: fanart = ''
@@ -1678,10 +1677,13 @@ def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			purl = sys.argv[0] + '?mode='+mode+ '&params=' + urllib.quote_plus(repr(params))
 			if mode=="Torrents": 
 				#listitem.addContextMenuItems([('Hайти похожие', 'SrcNavi("Navigator:'+id+'")')])
-				listitem.addContextMenuItems([('Hайти похожие', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")')])
+				listitem.addContextMenuItems([('Hайти похожие', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('Буду смотреть', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&info='+urllib.quote_plus(repr(info))+'")')])
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 			elif mode=="PersonFilm":
 				listitem.addContextMenuItems([('Добавить в Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('Удалить из Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
+			elif mode=="Par":
+				listitem.addContextMenuItems([('Удалить задание', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&info='+urllib.quote_plus(repr(info))+'")'),])
+
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 			else:xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 
@@ -2019,7 +2021,8 @@ def Root():
 	AddItem("Недавние премьеры", "New")
 	AddItem("Самые ожидаемые", "Future")
 	AddItem("Персоны", "PersonList")
-	#AddItem("Параметры", "Par")
+	AddItem("Буду смотреть", "W_list")
+	#AddItem("check", "check")
 
 def Search():
 	SrcNavi(inputbox())
@@ -2098,22 +2101,35 @@ def New():
 
 def Future():
 	AddItem("Самые ожидаемые", "Future")
-def fnd(L):
-	for y in range (1970, 2018):
-		sy=" "+str(y)
-		text=text.replace(sy,"")
+def fnd(L, text):
+	#for y in range (1970, 2018):
+	#	sy=" "+str(y)
+	#	text=text.replace(sy,"")
 	BL=['Трейлер', "Тизер"]
 	
 	qual = __settings__.getSetting("F_Qual")
-	if qual == "0": WL=[]
+	if   qual == "0": WL=[]
 	elif qual == "1": WL=["dvdrip","bdrip","hdrip","720р"]#
-	elif qual == "1": WL=["blu-ray", "hdrip", "bdrip","1080р"]
-	SL=[0,15]
+	elif qual == "2": WL=["blu-ray", "hdrip", "bdrip","1080р"]
+	
+	size = __settings__.getSetting("F_Size")
+	if   size == "0": SL=[0, 999]
+	if   size == "1": SL=[0, 1.5]
+	if   size == "2": SL=[1.4, 3]
+	if   size == "3": SL=[2.5, 6]
+	if   size == "4": SL=[5, 10]
+	if   size == "5": SL=[9.9, 999]
+	#SL=[0,15]
 	for itm in L:
 		b=0
 		w1=0
 		z=0
 		Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
+		
+		try:Title=Title.encode('utf-8')
+		except: pass
+		print Title
+		
 		for i in BL:
 			if Title.find(i)>0:b+=1
 		for i in WL:
@@ -2129,7 +2145,7 @@ def fnd(L):
 		#elif 'МБ' in itm[1] or 'MB' in itm[1]:
 		#	z=1
 		
-		if xt(Title).find(text)>=0 and b == 0 and w > 0 and z==1:
+		if (xt(Title).find(text)>=0 or text =="") and b == 0 and w > 0 and z==1:
 				#Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
 				listitem = xbmcgui.ListItem(Title)
@@ -2137,7 +2153,9 @@ def fnd(L):
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + itm[2]
 				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
-	
+				return row_url
+	return ""
+
 
 Category=[]
 CategoryDict={}
@@ -2326,7 +2344,7 @@ if mode == "Torrents2":
 	#if n>0: text = text[:n-1]
 	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
 	rus=rt(rus).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
-	en=rt(en).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
+	en=rt(en).replace(' (сериал)','').replace(' (ТВ)','')#.replace("a","а")
 	
 	if __settings__.getSetting("rutor")=="true":
 		try:
@@ -2379,26 +2397,152 @@ if mode == "Torrents2":
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 	
-if mode == "Par":
-	text='Star Wars'
+if mode == "Par_off":
+	id=params["info"]["id"]
+	info=eval(xt(get_inf_db(id)))
+	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
+	except: rus=params["info"]["title"]
+	try:en=params["info"]["originaltitle"].encode('utf8')
+	except: en=params["info"]["originaltitle"]
+	if rus == en:text = rus.replace("a","а")#+" "+str(params["info"]["year"])
+	else:text = params["info"]["originaltitle"]#+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
+	n=text.find("(")
+	#if n>0: text = text[:n-1]
+	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+	print text
+
+	#text='Star Wars'
 	#text=u'Xищник'
 	#import rutors
 	#rtr=rutors.Tracker()
 	import fasttor
 	rtr=fasttor.Tracker()
-
-	try:
-		L=rtr.Search(text, "0")
-	except: 
-		L=[]
-	fnd(L)
+	try: L=rtr.Search(text, "0")
+	except: L=[]
+	
+	fnd(L,text)
 	
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 
+if mode == "check":
+	print "check"
+	SaveDirectory = __settings__.getSetting("SaveDirectory")
+	if SaveDirectory=="":SaveDirectory=LstDir
+	
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	for id in L:
+		info=eval(xt(get_inf_db(id)))
+		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")
+		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
+			title=info["originaltitle"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
+			cover=info['cover']
+			text =info['title']
+			
+			try:rus=info["title"].encode('utf8').replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
+			except: rus=info["title"].replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
+			try:en=info["originaltitle"].encode('utf8')
+			except: en=info["originaltitle"]
+			if rus == en: text = rus
+			else:text = en
+			text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+			
+			print text
+			print rus
+			L2=[]
+			url=''
+			try:#ok
+					import fasttor
+					rtr=fasttor.Tracker()
+					L2=rtr.Search(text, "0")
+					url=fnd(L2, text)
+			except: url=''
+			
+			if url=='':#ok
+				try:
+					import rutors
+					rtr=rutors.Tracker()
+					L2=rtr.Search(text, "0")
+					url=fnd(L2, text)
+				except: url=''
+			
+			if url=='':#ok
+				try:
+					import fileek
+					rtr=fileek.Tracker()
+					L2=rtr.Search(text)
+					url=fnd(L2, rus)
+				except: url=''
+			
+			if url=='':#ok
+				try:
+					import torrentom
+					rtr=torrentom.Tracker()
+					L2=rtr.Search(rus, "0")
+					url=fnd(L2, rus)
+				except: url=''
+			
+#			if url=='':
+#				try:
+#					import tfile
+#					rtr=tfile.Tracker()
+#					L2=rtr.Search(text, '0')
+#					url=fnd(L2, text)
+#				except: url=''
+			
+#			if url=='':
+#				try:
+#					import xtreme
+#					rtr=xtreme.Tracker()
+#					L2=rtr.Search(text, '0')
+#					url=fnd(L2, text)
+#				except: url=''
+			
+#			if url=='':
+#				try:
+#					import krasfs
+#					tft=krasfs.Tracker()
+#					L2=rtr.Search(text, 4)
+#					url=fnd(L2, text)
+#				except: url=''
+			
+			if url=='':#ok
+				try:
+					import tokp
+					rtr=tokp.Tracker()
+					L2=rtr.Search(text)
+					url=fnd(L2, text)
+				except: url=''
+			print url
+			if url!='':
+				save_strm({'title':title, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
 
+
+if mode == "W_list":
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	for id in L:
+		info=eval(xt(get_inf_db(id)))
+		rus=info["title"]
+		AddItem(rus, 'Par', info)
+	xbmcplugin.endOfDirectory(handle)
+
+if mode == "Add2List":
+	id=info["id"]
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	L.append(id)
+	__settings__.setSetting("W_list", repr(L))
+
+if mode == "RemItem":
+	id=info["id"]
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	L.remove(id)
+	__settings__.setSetting("W_list", repr(L))
 
 if mode == "OpenTorrent":
 	url = urllib.unquote_plus(get_params()["url"])
