@@ -9,7 +9,14 @@ __settings__ = xbmcaddon.Addon(id='plugin.video.KinoPoisk.ru')
 print('----- KinoPoisk.ru started -----')
 start_trigger = False
 xbmc.sleep(10000)
-xbmc.executebuiltin('RunPlugin("plugin://plugin.video.KinoPoisk.ru/?mode=check")')
+
+while not xbmc.abortRequested:
+		xbmc.executebuiltin('RunPlugin("plugin://plugin.video.KinoPoisk.ru/?mode=check")')
+		for i in range(0, 6000):
+				xbmc.sleep(3000)
+				if xbmc.abortRequested: break
+				xbmc.sleep(3000)
+				if xbmc.abortRequested: break
 
 print('----- KinoPoisk.ru stopped -----')
 
