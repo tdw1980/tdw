@@ -21,6 +21,7 @@ socket.setdefaulttimeout(50)
 
 icon = ""
 siteUrl = 'open-tor.org'
+siteUrl = 'new-ru.org'
 httpSiteUrl = 'http://' + siteUrl
 sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'rutors.cookies.sid')
  
@@ -90,17 +91,12 @@ def GET(target, referer, post=None):
 
 
 def upd(category, sort, text, n):
-	try: n=str(int(n))
-	except: n="0"
-	if text=='0':stext=""
-	elif text=='1':stext=inputbox()
-	elif text<>'':stext=text
-	stext=stext.replace("%", "%20").replace(" ", "%20").replace("?", "%20").replace("#", "%20")
+	stext=urllib.quote(text)#text.replace("%", "%20").replace(" ", "%20").replace("?", "%20").replace("#", "%20")
 	if stext=="":
 		categoryUrl = xt(httpSiteUrl+'/browse/'+n+'/'+category+'/0/'+sort)
 	else:
-		if text=='1':categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/000/'+sort+'/'+stext   #)xt( 0/1/110/0
-		else: categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/110/'+sort+'/'+stext
+		categoryUrl = httpSiteUrl+'/search/'+n+'/'+category+'/000/'+sort+'/'+stext
+	print categoryUrl
 	http = GET(categoryUrl, httpSiteUrl, None)
 	if http == None:
 		print'RuTor: Сервер не отвечает'

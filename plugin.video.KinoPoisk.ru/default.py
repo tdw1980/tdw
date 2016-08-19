@@ -129,6 +129,7 @@ def play_url2(params):
     #showMessage('heading', torr_link, 10000)
     TSplayer=TSengine()
     out=TSplayer.load_torrent(torr_link,'TORRENT')
+    print out
     if out=='Ok':
         lnk=TSplayer.get_link(int(params['ind']),title, img, img)
         if lnk:
@@ -156,6 +157,7 @@ def play_url2(params):
             item = xbmcgui.ListItem(path='')
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
     else:
+        print 'alter'
         try:    xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title2"])+'")')
         except: xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title"])+'")')
     TSplayer.end()
@@ -170,7 +172,7 @@ def alter(text):
 		info={"title":text}
 		#print text
 		rutor(text, info)
-		dugtor(text, info)
+		fasttor(text, info)
 		fileek(text, info)
 		s2kp(text, info)
 		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
@@ -193,13 +195,16 @@ def addplist(params):
     xbmc.PlayList(xbmc.PLAYLIST_VIDEO).add(uri,li)
 
 def save_strm(params):
+		print 'save_strm_ok'
 		SaveDirectory = __settings__.getSetting("SaveDirectory")#[:-1]
 		if SaveDirectory=="":SaveDirectory=LstDir
 		name=urllib.unquote_plus(params['title']).decode('utf-8').replace("\\","").replace("?","").replace(":","")
+		title=params['tt'].decode('utf-8')
+		print params
 		uri = construct_request({
 			'torr_url': urllib.unquote_plus(params['t']),
-			'title': params['tt'].decode('utf-8'),
-			'title2': name,
+			'title': xt(params['tt'].decode('utf-8')),
+			'title2': xt(name),
 			'ind':urllib.unquote_plus(params['i']),
 			'img':urllib.unquote_plus(urllib.unquote_plus(params['ii'])),
 			'func': 'play_url2',
@@ -1162,17 +1167,20 @@ def rem_inf_db(n):
 		except: pass
 
 def get_name(info):
-	id=params["info"]["id"]
-	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-	except: rus=params["info"]["title"]
-	try:en=params["info"]["originaltitle"].encode('utf8')
-	except: en=params["info"]["originaltitle"]
-	if rus == en:text = rus.replace("a","а")
-	else:text = params["info"]["originaltitle"]
-	#n=text.find("(")
-	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-	#rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
-	return text
+	try:
+		id=params["info"]["id"]
+		try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
+		except: rus=params["info"]["title"]
+		try:en=params["info"]["originaltitle"].encode('utf8')
+		except: en=params["info"]["originaltitle"]
+		if rus == en:text = rus.replace("a","а")
+		else:text = params["info"]["originaltitle"]
+		#n=text.find("(")
+		text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+		#rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
+		return text
+	except:
+		return urllib.unquote_plus(get_params()["title"])[1:]
 
 
 def s2kp(id, info):
@@ -1850,7 +1858,9 @@ def SrcNavi(md="Navigator"):
 	#debug (str(L2))
 	for i in L2[:-1]:#
 		FilmID=i[len(ss):]
+		info=get_info(FilmID)
 		#info=eval(xt(get_inf_db(FilmID)))
+		'''
 		try:
 			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(FilmID)
 			info=eval(xt(get_inf_db(FilmID)))
@@ -2009,9 +2019,174 @@ def SrcNavi(md="Navigator"):
 				except:
 					print "ERR: " + FilmID
 					#print repr(info)
+		'''
+		rkp=str(info['rating'])[:3]
+		nru=info['title']
 		try: AddItem("[ "+rkp+" ] "+ nru, "Torrents", info, len(L2)-2)
 		except: pass
 
+
+def get_info(FilmID):
+		try:
+			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(FilmID)
+			info=eval(xt(get_inf_db(FilmID)))
+			nru=info["title"]
+			rating_kp=info["rating"]
+			if rating_kp>0: rkp=str(rating_kp)[:3]
+			else: rkp= " - - "
+			info["id"] = FilmID
+			return info
+			#AddItem("[ "+rkp+" ] "+nru, "Torrents", info, len(L2)-2)
+			#print " OK: "+nru 
+		except:
+#		if len(i)>10:
+			url="http://m.kinopoisk.ru/movie/"+FilmID
+			http = GET (url, httpSiteUrl)
+			http = rt(http)
+			#debug (http)
+			# ------------- ищем описание -----------------
+			s='<div id="content">'
+			e='<br><div class="city">'
+			try: Info=mfindal(http, s, e)[0]
+			except: Info=""
+			#debug (Info)
+			# ------------- название -----------------
+			s='<p class="title">'
+			e='<img src="http://m.kinopoisk.ru/images/star'
+			if Info.find(e)<0: e='<div class="block film">'
+			try: 
+				nbl=mfindal(Info, s, e)[0][len(s):]
+			except:
+				nbl=""
+			if nbl <> "":
+				# ---------------- ru -------------------
+				s='<b>'
+				e='</b>'
+				nru=mfindal(nbl, s, e)[0][len(s):]
+				
+				# ---------------- en year time -------------------
+				s='<span>'
+				e='</span>'
+				nen=mfindal(nbl, s, e)[0][len(s):]
+				vrn=nen.replace("'","#^").replace(",", "','")
+				tmps="['"+vrn+"']"
+				Lt=eval(tmps)
+				n=len(Lt)
+				year=0
+				duration=""
+				for i in Lt:
+					try: year=int(i)
+					except: pass
+					if i[-1:]==".": duration=i
+				if year>0: n2= nen.find(str(year))
+				else: n2=-1
+				if duration<>"":n3=nen.find(duration)
+				else: n3=-1
+				if n3>0 and n3<n2: n2=n3
+				if n2>1: nen=nen[:n2-2]
+				else: nen=nru
+				
+				# ---------------- жанр  страна ----------
+				s='<div class="block film">'
+				e='<span class="clear"'
+				try:
+					b2=mfindal(Info, s, e)[0][len(s):]
+					s='<span>'
+					e='</span>'
+					genre=mfindal(b2, s, e)[0][len(s):]
+					studio=mfindal(b2, s, e)[1][len(s):]
+				except:
+					genre=""
+					studio=""
+				# ---------------- режисер ----------
+				s='<span class="clear">'
+				e='</a></span>'
+				try:
+					directors=mfindal(Info, s, e)[0][len(s):]
+					s='/">'
+					e='</a>'
+					try: 
+						director1=mfindal(directors, s, e)[0][len(s):]
+						nn=directors.rfind('/">')
+						director=director1+", "+directors[nn+3:]
+					except:
+						nn=directors.rfind('/">')
+						director=directors[nn+3:]
+				except:
+					director=""
+					
+				# --------------- актеры ------------
+				if director!="":
+					s=directors#'<span class="clear">'
+					e='<p class="descr">'
+					if Info.find(e)<0:e='">...</a>'
+					
+					try:bcast=mfindal(Info, s, e)[0][len(s):]
+					except: bcast=""
+					s='/">'
+					e='</a>,'
+					lcast=mfindal(bcast, s, e)
+					cast=[]
+					for i in lcast:
+						cast.append(fs(i[3:]))
+				else:
+					cast=[]
+				# ----------------  описание ----------
+				s='<p class="descr">'
+				e='<span class="link">'
+				if Info.find(e)<0: e='<p class="margin"'
+				#debug (Info)
+				try:plotand=mfindal(Info, s, e)[0][len(s):]
+				except:plotand=""# -----------------------------------------------------------  доделать ----------
+				nn=plotand.find("</p>")
+				plot=plotand[:nn].replace("<br>","").replace("<br />","")
+				# ----------------- оценки ------------
+				tale=plotand[nn:]
+				s='</b> <i>'
+				e='</i> ('
+				ratings=mfindal(Info, s, e)
+				try:rating_kp=float(ratings[0][len(s):])
+				except:rating_kp=0
+				try:rating_IMDB=float(ratings[1][len(s):])
+				except: rating_IMDB=0
+				
+				
+				# ------------------ обложка ----------
+				s='//st.kp.yandex.net/images/sm_'
+				e='.jpg" width="'
+				try:cover='http:'+mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
+				except:cover="http://st.kp.yandex.net/images/image_none_no_border.gif"
+				# ------------------ фанарт ----------
+				s='//st.kp.yandex.net/images/kadr'
+				e='.jpg"/></div>'
+				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
+				except:fanart=""
+				
+				info = {"title":fs(nru), 
+						"originaltitle":fs(nen), 
+						"year":year, 
+						"duration":duration[:-5], 
+						"genre":fs(genre), 
+						"studio":fs(studio),
+						"director":fs(director),
+						"cast":cast,
+						"rating":rating_kp,
+						"cover":cover,
+						"fanart":fanart,
+						"plot":fs(plot)
+						}
+				info["id"] = FilmID
+				if rating_kp>0: rkp=str(rating_kp)[:3]
+				else: rkp= " - - "
+				nru=fs(nru)
+				#AddItem("[ "+rkp+" ] "+fs(nru), "Torrents", info, len(L2)-2)
+				try:
+					if rating_kp>0: add_to_db(FilmID, repr(info))
+					#print "ADD: " + FilmID
+				except:
+					print "ERR: " + FilmID
+					#print repr(info)
+				return info
 
 #==============  Menu  ====================
 def Root():
@@ -2101,16 +2276,112 @@ def New():
 
 def Future():
 	AddItem("Самые ожидаемые", "Future")
-def fnd(L, text):
-	#for y in range (1970, 2018):
-	#	sy=" "+str(y)
-	#	text=text.replace(sy,"")
+	
+def check():
+	print "check"
+	SaveDirectory = __settings__.getSetting("SaveDirectory")
+	if SaveDirectory=="":SaveDirectory=LstDir
+	
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	for id in L:
+		info=eval(xt(get_inf_db(id)))
+		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")
+		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
+			#get_name(info)
+			#text =info['title']
+			
+			try:rus=info["title"].encode('utf8').replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
+			except: rus=info["title"].replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
+			try:en=info["originaltitle"].encode('utf8')
+			except: en=info["originaltitle"]
+			if rus == en.replace("a","а"): text = rus
+			else:text = en
+			text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
+			year=info["year"]
+			print text
+			print rus
+			L2=[]
+			url=''
+			try:#ok
+					import fasttor
+					rtr=fasttor.Tracker()
+					L2=rtr.Search(text, "0")
+					url=fnd(L2, text, year)
+			except: url=''
+			
+			if url=='':#ok
+				try:
+					import rutors
+					rtr=rutors.Tracker()
+					L2=rtr.Search(text, "0")
+					url=fnd(L2, text, year)
+				except: url=''
+			
+			if url=='':#ok
+				#try:
+					import fileek
+					rtr=fileek.Tracker()
+					L2=rtr.Search(text)
+					url=fnd(L2, rus, year)
+				#except: url=''
+			
+			if url=='':#ok
+				try:
+					import torrentom
+					rtr=torrentom.Tracker()
+					L2=rtr.Search(rus, "0")
+					url=fnd(L2, rus, year)
+				except: url=''
+			'''
+#			if url=='':
+#				try:
+#					import tfile
+#					rtr=tfile.Tracker()
+#					L2=rtr.Search(text, '0')
+#					url=fnd(L2, text, year)
+#				except: url=''
+			
+#			if url=='':
+#				try:
+#					import xtreme
+#					rtr=xtreme.Tracker()
+#					L2=rtr.Search(text, '0')
+#					url=fnd(L2, text, year)
+#				except: url=''
+			
+#			if url=='':
+#				try:
+#					import krasfs
+#					tft=krasfs.Tracker()
+#					L2=rtr.Search(text, 4)
+#					url=fnd(L2, text, year)
+#				except: url=''
+			'''
+			
+			if url=='':#ok
+				try:
+					import tokp
+					rtr=tokp.Tracker()
+					L2=rtr.Search(text)
+					url=fnd(L2, text, year)
+				except: url=''
+			print 'url : ' + url
+			if url!='':
+				print 'save'
+				title=info["originaltitle"]
+				cover=info['cover']
+				save_strm({'title':title, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
+
+def fnd(L, text, year):
+	s_year=str(year)
 	BL=['Трейлер', "Тизер"]
 	
 	qual = __settings__.getSetting("F_Qual")
 	if   qual == "0": WL=[]
 	elif qual == "1": WL=["dvdrip","bdrip","hdrip","720р"]#
 	elif qual == "2": WL=["blu-ray", "hdrip", "bdrip","1080р"]
+	elif qual == "3": WL=["1080р",]
 	
 	size = __settings__.getSetting("F_Size")
 	if   size == "0": SL=[0, 999]
@@ -2135,7 +2406,8 @@ def fnd(L, text):
 		for i in WL:
 			if Title.lower().find(i)>0:w1+=1
 		
-		w=w1
+		if qual == "0": w=1
+		else:           w=w1
 		
 		if 'ГБ' in itm[1] or 'GB' in itm[1]: 
 			szs=itm[1].replace('ГБ','').replace('GB','').replace('|','').strip()
@@ -2144,15 +2416,18 @@ def fnd(L, text):
 			
 		#elif 'МБ' in itm[1] or 'MB' in itm[1]:
 		#	z=1
-		
-		if (xt(Title).find(text)>=0 or text =="") and b == 0 and w > 0 and z==1:
+		if b == 0: print 'Черный список ok'
+		if w > 0: print 'Качество ok'
+		if z==1: print 'Размер ok'
+		if (xt(Title).find(text)>=0 or text =="") and b == 0 and w > 0 and z==1 and s_year in Title:
+				print 'Файл найден'
 				#Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
 				row_url = itm[3]
-				listitem = xbmcgui.ListItem(Title)
+				#listitem = xbmcgui.ListItem(Title)
 				purl = sys.argv[0] + '?mode=OpenTorrent'\
 					+ '&url=' + urllib.quote_plus(row_url)\
 					+ '&title=' + itm[2]
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
+				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
 				return row_url
 	return ""
 
@@ -2334,14 +2609,16 @@ if mode == "Torrents2":
 	#info=params["info"]
 	id=params["info"]["id"]
 	info=eval(xt(get_inf_db(id)))
-	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-	except: rus=params["info"]["title"]
-	try:en=params["info"]["originaltitle"].encode('utf8')
-	except: en=params["info"]["originaltitle"]
+	try:rus=info["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
+	except: rus=info["title"]
+	try:en=info["originaltitle"].encode('utf8')
+	except: en=info["originaltitle"]
 	if rus == en:text = rus.replace("a","а")+" "+str(params["info"]["year"])
-	else:text = params["info"]["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
+	else:text = info["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
 	n=text.find("(")
 	#if n>0: text = text[:n-1]
+	print rus
+	print en
 	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
 	rus=rt(rus).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
 	en=rt(en).replace(' (сериал)','').replace(' (ТВ)','')#.replace("a","а")
@@ -2428,104 +2705,14 @@ if mode == "Par_off":
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 
 if mode == "check":
-	print "check"
-	SaveDirectory = __settings__.getSetting("SaveDirectory")
-	if SaveDirectory=="":SaveDirectory=LstDir
-	
-	try:L=eval(__settings__.getSetting("W_list"))
-	except: L=[]
-	for id in L:
-		info=eval(xt(get_inf_db(id)))
-		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")
-		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
-			title=info["originaltitle"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-			cover=info['cover']
-			text =info['title']
-			
-			try:rus=info["title"].encode('utf8').replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
-			except: rus=info["title"].replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
-			try:en=info["originaltitle"].encode('utf8')
-			except: en=info["originaltitle"]
-			if rus == en: text = rus
-			else:text = en
-			text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-			
-			print text
-			print rus
-			L2=[]
-			url=''
-			try:#ok
-					import fasttor
-					rtr=fasttor.Tracker()
-					L2=rtr.Search(text, "0")
-					url=fnd(L2, text)
-			except: url=''
-			
-			if url=='':#ok
-				try:
-					import rutors
-					rtr=rutors.Tracker()
-					L2=rtr.Search(text, "0")
-					url=fnd(L2, text)
-				except: url=''
-			
-			if url=='':#ok
-				try:
-					import fileek
-					rtr=fileek.Tracker()
-					L2=rtr.Search(text)
-					url=fnd(L2, rus)
-				except: url=''
-			
-			if url=='':#ok
-				try:
-					import torrentom
-					rtr=torrentom.Tracker()
-					L2=rtr.Search(rus, "0")
-					url=fnd(L2, rus)
-				except: url=''
-			
-#			if url=='':
-#				try:
-#					import tfile
-#					rtr=tfile.Tracker()
-#					L2=rtr.Search(text, '0')
-#					url=fnd(L2, text)
-#				except: url=''
-			
-#			if url=='':
-#				try:
-#					import xtreme
-#					rtr=xtreme.Tracker()
-#					L2=rtr.Search(text, '0')
-#					url=fnd(L2, text)
-#				except: url=''
-			
-#			if url=='':
-#				try:
-#					import krasfs
-#					tft=krasfs.Tracker()
-#					L2=rtr.Search(text, 4)
-#					url=fnd(L2, text)
-#				except: url=''
-			
-			if url=='':#ok
-				try:
-					import tokp
-					rtr=tokp.Tracker()
-					L2=rtr.Search(text)
-					url=fnd(L2, text)
-				except: url=''
-			print url
-			if url!='':
-				save_strm({'title':title, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
-
+	check()
 
 if mode == "W_list":
 	try:L=eval(__settings__.getSetting("W_list"))
 	except: L=[]
 	for id in L:
-		info=eval(xt(get_inf_db(id)))
+		info=get_info(id)
+		#info=eval(xt(get_inf_db(id)))
 		rus=info["title"]
 		AddItem(rus, 'Par', info)
 	xbmcplugin.endOfDirectory(handle)
