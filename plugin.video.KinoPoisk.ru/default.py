@@ -1689,12 +1689,14 @@ def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			except: fanart = ''
 			try:id = info["id"]
 			except: id = ''
-			info["plot"] = ''
-			try:params["info"] = info#{'id':id, 'title': info["title"], "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}
-			except:params["info"] = {"cover":icon, 'id':id}
 			listitem = xbmcgui.ListItem(Title, iconImage=cover)#, thumbnailImage=cover
 			listitem.setInfo(type = "Video", infoLabels = info )
 			listitem.setProperty('fanart_image', fanart)
+			
+			info["plot"] = ''
+			try:params["info"] = info#{'id':id, 'title': info["title"], "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}
+			except:params["info"] = {"cover":icon, 'id':id}
+			
 			purl = sys.argv[0] + '?mode='+mode+ '&params=' + urllib.quote_plus(repr(params))
 			if mode=="Torrents":
 				#listitem.addContextMenuItems([('Hайти похожие', 'SrcNavi("Navigator:'+id+'")')])
