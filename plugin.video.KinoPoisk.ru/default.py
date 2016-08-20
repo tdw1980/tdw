@@ -33,6 +33,8 @@ try:
 except:
 	print "Error import t2http"
 
+
+
 def t2http_list(url, info={}):
 		L=tthp.list(url)
 	#if len (L)<2:
@@ -121,6 +123,11 @@ def play_url2(params):
     torr_link=urllib.unquote(params["torr_url"]).replace("ru-ru.org","open-tor.org")
     Engine = __settings__.getSetting("Engine")
     if Engine=="2":
+        
+        item = xbmcgui.ListItem()#path=url
+        xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+        xbmc.sleep(3000)
+        xbmcplugin.endOfDirectory(handle)
         tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
         return False
     
@@ -867,15 +874,20 @@ def showMessage(heading, message, times = 3000):
 
 
 def GET(url,Referer = 'http://findanime.ru/'):
-	req = urllib2.Request(url)
-	req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
-	req.add_header('Accept', 'text/html, application/xml, application/xhtml+xml, */*')
-	req.add_header('Accept-Language', 'ru,en;q=0.9')
-	req.add_header('Referer', Referer)
-	response = urllib2.urlopen(req)
-	link=response.read()
-	response.close()
-	return link
+	try:
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
+		req.add_header('Accept', 'text/html, application/xml, application/xhtml+xml, */*')
+		req.add_header('Accept-Language', 'ru,en;q=0.9')
+		req.add_header('Referer', Referer)
+		response = urllib2.urlopen(req)
+		link=response.read()
+		response.close()
+		return link
+	except:
+		import requests
+		s = requests.session()
+		return s.get(url).text
 
 def GET2(target, referer, post_params = None, accept_redirect = True, get_redirect_url = False, siteUrl='www.KinoPoisk.ru'):
 	#target=target.replace('http:','https:')
@@ -1671,29 +1683,30 @@ def stft(text, info={}):
 
 def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			params["mode"] = mode
-			
+			#print Title
 			cover = info["cover"]
 			try:fanart = info["fanart"]
 			except: fanart = ''
 			try:id = info["id"]
 			except: id = ''
-			try:params["info"] = {'id':id, 'title':Title, "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}#info
+			info["plot"] = ''
+			try:params["info"] = info#{'id':id, 'title': info["title"], "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}
 			except:params["info"] = {"cover":icon, 'id':id}
 			listitem = xbmcgui.ListItem(Title, iconImage=cover)#, thumbnailImage=cover
 			listitem.setInfo(type = "Video", infoLabels = info )
 			listitem.setProperty('fanart_image', fanart)
 			purl = sys.argv[0] + '?mode='+mode+ '&params=' + urllib.quote_plus(repr(params))
-			if mode=="Torrents": 
+			if mode=="Torrents":
 				#listitem.addContextMenuItems([('Hайти похожие', 'SrcNavi("Navigator:'+id+'")')])
-				listitem.addContextMenuItems([('Hайти похожие', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('Буду смотреть', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&info='+urllib.quote_plus(repr(info))+'")')])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
+				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&info='+urllib.quote_plus(repr(info))+'")')])
+				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 			elif mode=="PersonFilm":
-				listitem.addContextMenuItems([('Добавить в Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('Удалить из Персоны', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
+				listitem.addContextMenuItems([('[B]Добавить в Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('[B]Удалить из Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
 			elif mode=="Par":
-				listitem.addContextMenuItems([('Удалить задание', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&info='+urllib.quote_plus(repr(info))+'")'),])
+				listitem.addContextMenuItems([('[B]Удалить задание[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&info='+urllib.quote_plus(repr(info))+'")'),])
 
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
-			else:xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
+				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
+			xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 
 def FC(s, color="FFFFFF00"):
 	s="[COLOR "+color+"]"+s+"[/COLOR]"
@@ -1726,13 +1739,14 @@ def Person():
 	try:id = urllib.unquote_plus(get_params()["id"])
 	except: id = ''
 	link="http://m.kinopoisk.ru/cast/"+id+"/"
-
+	print link
 	ss='<dt>'
 	se='</dd><dt>'
 	http = GET (link, httpSiteUrl)
 	L=mfindal(http, ss, se)
 	
 	for i in L:
+		
 		ss='<dt>'
 		se='</dt><dd>'
 		tb=mfindal(i, ss, se)[0][4:]
@@ -1749,6 +1763,7 @@ def Person():
 			cover="http://st.kp.yandex.net/images/actor_iphone/iphone360_"+id+".jpg"
 			#.replace('sm_film/','film_iphone/iphone360_')+'.jpg'
 			info={"cover":cover, "title":nm, "id":id}
+			#print info
 			AddItem(fs(nm), "PersonFilm", info, len(L))
 
 
@@ -2020,7 +2035,9 @@ def SrcNavi(md="Navigator"):
 					print "ERR: " + FilmID
 					#print repr(info)
 		'''
-		rkp=str(info['rating'])[:3]
+		rating_kp = info['rating']
+		if rating_kp>0: rkp=str(rating_kp)[:3]
+		else: rkp= " - - "
 		nru=info['title']
 		try: AddItem("[ "+rkp+" ] "+ nru, "Torrents", info, len(L2)-2)
 		except: pass
@@ -2204,9 +2221,9 @@ def Search():
 
 def PersonSearch():
 	PS=inputbox()
-	link='http://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+formatKP(PS)
+	link='https://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+formatKP(PS)
 	http = GET (link, httpSiteUrl)
-	ss='http://st.kp.yandex.net/images/sm_actor/'
+	ss='https://st.kp.yandex.net/images/sm_actor/'
 	es='" title="'
 	l1=mfindal(http,ss,es)
 	for i in l1:
@@ -2214,7 +2231,7 @@ def PersonSearch():
 			n=i.find('.jpg" alt="')
 			id=i[len(ss):n]
 			nm=i[n+11:]
-			cover='http://st.kp.yandex.net/images/actor_iphone/iphone360_'+id+".jpg"
+			cover='https://st.kp.yandex.net/images/actor_iphone/iphone360_'+id+".jpg"
 			info={"cover":cover, "title":nm, "id":id}
 			if len(nm)>0 and len(id)>0 :AddItem(fs(nm), "PersonFilm", info, len(l1))
 	#debug (http)
@@ -2285,7 +2302,8 @@ def check():
 	try:L=eval(__settings__.getSetting("W_list"))
 	except: L=[]
 	for id in L:
-		info=eval(xt(get_inf_db(id)))
+		info=get_info(id)
+		#info=eval(xt(get_inf_db(id)))
 		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")
 		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
 			#get_name(info)
@@ -2608,7 +2626,8 @@ if mode == "Torrents":
 if mode == "Torrents2":
 	#info=params["info"]
 	id=params["info"]["id"]
-	info=eval(xt(get_inf_db(id)))
+	info=get_info(id)
+	#info=eval(xt(get_inf_db(id)))
 	try:rus=info["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
 	except: rus=info["title"]
 	try:en=info["originaltitle"].encode('utf8')
@@ -2676,7 +2695,8 @@ if mode == "Torrents2":
 	
 if mode == "Par_off":
 	id=params["info"]["id"]
-	info=eval(xt(get_inf_db(id)))
+	info=get_info(id)
+	#info=eval(xt(get_inf_db(id)))
 	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
 	except: rus=params["info"]["title"]
 	try:en=params["info"]["originaltitle"].encode('utf8')
@@ -2766,5 +2786,6 @@ elif mode == 't2http_play':
 	try:url = urllib.unquote_plus(get_params()["url"])
 	except:url = info['url']
 	tthp.play(url, handle, ind, __settings__.getSetting("DownloadDirectory"))
+
 
 c.close()

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys, os
-import xbmc, xbmcgui
+import xbmc, xbmcgui, xbmcplugin
 
 sys.path.append(os.path.join(xbmc.translatePath("special://home/"),"addons","script.module.torrent2http","lib"))
 from torrent2http import State, Engine, MediaType
@@ -100,10 +100,12 @@ def play(uri, handle, file_id=0, DDir=""):
     progressBar.close()
     if ready:
         # Resolve URL to XBMC
-        #listitem = xbmcgui.ListItem()
+        #listitem = xbmcgui.ListItem(path=file_status.url)
         #listitem.SetPath(file_status.url)
         #xbmcplugin.SetResolvedUrl(handle, True, listitem)
         xbmc.Player().play(file_status.url)
+        #xbmc.executebuiltin('"PlayMedia('+file_status.url+',isdir,1)"')
+        
         # Wait until playing finished or abort requested
         while not xbmc.abortRequested and xbmc.Player().isPlaying():
             xbmc.sleep(500)
