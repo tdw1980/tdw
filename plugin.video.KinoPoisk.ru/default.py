@@ -85,7 +85,7 @@ def play_url(torr_link,img, info={}):
     out=TSplayer.load_torrent(torr_link,'TORRENT')
     if out=='Ok':
         for k,v in TSplayer.files.iteritems():
-            li = xbmcgui.ListItem(urllib.unquote(k))
+            li = xbmcgui.ListItem(urllib.unquote(k), thumbnailImage=img, iconImage=img)
             #fokus(urllib.unquote(k))# -----------------========================:::::::::::::::::: ТУТ
             li.setProperty('IsPlayable', 'true')
             
@@ -170,9 +170,28 @@ def play_url2(params):
     TSplayer.end()
     xbmc.Player().stop
 
+def play_url2_off(params):
+	torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
+	torr_link=torr_link.replace("ru-ru.org","open-tor.org")
+	Engine = __settings__.getSetting("Engine")
+	if Engine=="2":
+			item = xbmcgui.ListItem()#path=url
+			xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+			xbmc.sleep(3000)
+			xbmcplugin.endOfDirectory(handle)
+			tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
+			return False
 
+	img=urllib.unquote_plus(params["img"])
+	title=urllib.unquote_plus(params["title"])
+	#showMessage('heading', torr_link, 10000)
+	TSplayer=tsengine()
+	out=TSplayer.load_torrent(torr_link,'TORRENT')
+	if out=='Ok':
+		TSplayer.play_url_ind(int(params['ind']),title, img, img, True)
+	TSplayer.end()
 
-#--------------tsengine----by-nuismons--------------
+#--------------tsengine------------------
 
 
 def alter(text):
@@ -202,12 +221,12 @@ def addplist(params):
     xbmc.PlayList(xbmc.PLAYLIST_VIDEO).add(uri,li)
 
 def save_strm(params):
-		print 'save_strm_ok'
+		#print 'save_strm_ok'
 		SaveDirectory = __settings__.getSetting("SaveDirectory")#[:-1]
 		if SaveDirectory=="":SaveDirectory=LstDir
-		name=urllib.unquote_plus(params['title']).decode('utf-8').replace("\\","").replace("?","").replace(":","")
+		name=urllib.unquote_plus(params['title']).replace("\\","").replace("?","").replace(":","")#.decode('utf-8')
 		title=params['tt'].decode('utf-8')
-		print params
+		#print params
 		uri = construct_request({
 			'torr_url': urllib.unquote_plus(params['t']),
 			'title': xt(params['tt'].decode('utf-8')),
@@ -221,7 +240,75 @@ def save_strm(params):
 		fl.write(uri)
 		fl.close()
 		xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
+
+def save_film_nfo(info):
 		
+		title=info['title']
+		fanart=info['fanart']
+		cover=info['cover']
+		try: fanarts=info["fanarts"]
+		except: fanarts=[fanart,cover]
+		year=info['year']
+		plot=info['plot']
+		rating=info['rating']
+		originaltitle=info['originaltitle']
+
+		duration=info["duration"]
+		genre=info["genre"].replace(', ', '</genre><genre>')
+		studio=info["studio"]
+		director=info["director"]
+		cast=info["cast"]
+		try: actors=info["actors"]
+		except: actors={}
+		
+		name=ru(info['originaltitle']).replace("\\","").replace("?","").replace(":","")
+		cn=name.find(" (")
+		if cn>0:
+			name=name[:cn]
+			rus=1
+		else: rus=0
+		
+		name=name+" ("+str(year)+")"
+		SaveDirectory = __settings__.getSetting("SaveDirectory")
+		if SaveDirectory=="":SaveDirectory=LstDir
+		
+		nfo='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+chr(10)
+		nfo+='<movie>'+chr(10)
+		
+		nfo+="	<title>"+title+"</title>"+chr(10)
+		nfo+="	<originaltitle>"+originaltitle+"</originaltitle>"+chr(10)
+		nfo+="	<genre>"+genre+"</genre>"+chr(10)
+		nfo+="	<studio>"+studio+"</studio>"+chr(10)
+		nfo+="	<director>"+director+"</director>"+chr(10)
+		nfo+="	<year>"+str(year)+"</year>"+chr(10)
+		nfo+="	<plot>"+plot+"</plot>"+chr(10)
+		nfo+='	<rating>'+str(rating)+'</rating>'+chr(10)
+		nfo+='	<runtime>'+duration+' min.</runtime>'+chr(10)
+		
+		nfo+="	<fanart>"+chr(10)
+		for fan in fanarts:
+			nfo+="		<thumb>"+fan+"</thumb>"+chr(10)
+		nfo+="		<thumb>"+cover+"</thumb>"+chr(10)
+		nfo+="	</fanart>"+chr(10)
+		
+		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
+		
+		for actor in cast:
+			nfo+="	<actor>"+chr(10)
+			nfo+="		<name>"+actor+"</name>"+chr(10)
+			try:
+				aid=actors[actor]
+				actor_img="http://st.kp.yandex.net/images/actor_iphone/iphone360_"+aid+".jpg"
+				nfo+="		<thumb>"+actor_img+"</thumb>"+chr(10)
+			except: pass
+			nfo+="	</actor>"+chr(10)
+		
+		nfo+="</movie>"+chr(10)
+		
+		fl = open(os.path.join(ru(SaveDirectory),name+".nfo"), "w")
+		fl.write(nfo)
+		fl.close()
+
 
 def save_tvshow_nfo(tts,img, info={}):
 		title=info['title']
@@ -250,7 +337,7 @@ def save_tvshow_nfo(tts,img, info={}):
 		nfo+="	<year>"+str(year)+"</year>"+chr(10)
 		nfo+="	<season>-1</season>"+chr(10)
 		nfo+="	<plot>"+plot+"</plot>"+chr(10)
-		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<fanart><thumb>"+fanart+"</thumb></fanart>"+chr(10)
 		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
 		nfo+="</tvshow>"+chr(10)
 		
@@ -303,7 +390,7 @@ def save_nfo(tts,img, info={}):
 		nfo+="	<season>"+str(s)+"</season>"+chr(10)
 		nfo+="	<episode>"+str(e)+"</episode>"+chr(10)
 		nfo+="	<plot>"+plot+"</plot>"+chr(10)
-		nfo+="	<fanart>"+fanart+"</fanart>"+chr(10)
+		nfo+="	<fanart><thumb>"+fanart+"</thumb></fanart>"+chr(10)
 		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
 		nfo+="</episodedetails>"+chr(10)
 		
@@ -320,178 +407,6 @@ def save_nfo(tts,img, info={}):
 
 def fokus(txt):
 	pass
-
-def find_se(txt):
-	txt=txt.lower()
-	
-	txt=txt.replace(".","")
-	LE=mfindal(txt,"s","e")
-	s=-1
-	e=-1
-	for i in LE:
-		print i
-		if len(i)<4:
-			try: 
-				s=int(i[1:])
-				ss=i
-			except: pass
-	if s>0:
-		n=txt.find(ss)
-		try: e=int(txt[n+len(ss)+1:n+len(ss)+3])
-		except: e=-1
-			
-	if e<0: e=find_e(txt)
-	if s<0: s=find_s(txt)
-			
-	return (s,e)
-	
-def find_se(txt):
-	txt=txt.lower()
-	for i in range (2000,2020):
-		txt=txt.replace(str(i),"")
-
-	F=["480","720","1080",".mp4",".ts","5.1","264"]
-	for i in F:
-		txt=txt.replace(i,"")
-
-	SL=['.sezon','.Сезон','.сезон',  'sezon','Сезон','сезон']
-	for i in SL:
-		try:txt=txt.replace(i,"^")
-		except: pass
-
-	EL=['seriya','serija','Серия','серия','vypusk']
-	for i in EL:
-		try:txt=txt.replace(i,"#")
-		except: pass
-			
-	EL2=['.e',' e','e','x']
-	for i in EL2:
-		for j in range (0,9):
-			r=i+str(j)
-			try:txt=txt.replace(r,"@"+str(j))
-			except: pass
-
-	SL2=['.s',' s','s']
-	for i in SL2:
-		for j in range (0,9):
-			r=i+str(j)
-			try:txt=txt.replace(r,"*"+str(j))
-			except: pass
-
-
-	T=["0","1","2","3","4","5","6","7","8","9",".","-","\\",  "#","@","^","*"]#,"x","s","e"
-	L=tuple(txt)
-	nst=""
-	for i in L:
-		if i in T: nst+=i
-			
-	nst=nst.replace("-",".")
-	nst=nst.replace("#.","#").replace(".#","#")
-	nst=nst.replace("@.","@").replace(".@","@")
-	nst=nst.replace("^.","^").replace(".^","^")
-	nst=nst.replace("*.","*").replace(".*","*")
-	nst=nst.replace("......",".").replace(".....",".").replace("....",".").replace("...",".").replace("..",".")
-	if nst[:1]==".": nst=nst[1:]
-	if nst[-1:]==".": nst=nst[:-1]
-	nc=nst.find("\\")
-	if nc>0: 
-		nst1=nst[:nc]
-		nst2=nst[nc+1:]
-		n1=nst2.find("*")
-		n2=nst2.find("^")
-		if n1>-1 or n2>-1:nst=nst2
-		else:
-			#print nst1
-			try:nst1="^"+str(int(nst1.replace(".","").replace("^","").replace("*","")))
-			except:
-				nss=nst1.find("^")
-				if nss>-1:nst1=nst1[:nss+2]
-				else:nst1=""
-			try:nst2="@"+str(int(nst2))
-			except:nst2=">"+nst2
-			nst=nst1+nst2
-	sez="!?!"
-	if 1==1:
-		ns=nst.find("*")
-		if ns>-1:
-			try: sez="s"+str(int(nst[ns+1:ns+3]))
-			except:
-				try:sez="s"+str(int(nst[ns+1:ns+2]))
-				except:sez="!*!"
-			#print sez
-			
-	if sez=="!?!" or sez=="!*!":
-		ns=nst.find("^")
-		if ns>-1:
-			try: sez="s"+str(int(nst[ns-2:ns]))
-			except:
-				try:sez="s"+str(int(nst[ns-1:ns]))
-				except:
-					try: sez="s"+str(int(nst[ns+1:ns+3]))
-					except:
-						try:sez="s"+str(int(nst[ns+1:ns+2]))
-						except:sez="!^!"
-
-	epd="!?!"
-	if 1==1:
-		ns=nst.find("@")
-		if ns>-1:
-			try: epd="e"+str(int(nst[ns+1:ns+4]))
-			except:
-				try:epd="e"+str(int(nst[ns+1:ns+3]))
-				except:
-					try:epd="e"+str(int(nst[ns+1:ns+2]))
-					except:epd="!@!"
-			
-			if sez=="!?!":
-					try: sez="s"+str(int(nst[ns-2:ns]))
-					except:
-						try:sez="s"+str(int(nst[ns-1:ns]))
-						except:sez=="!?@!"
-			#print sez
-			
-	if epd=="!?!" or epd=="!@!":
-		ns=nst.find("#")
-		if ns>-1:
-			try: epd="e"+str(int(nst[ns-3:ns]))
-			except:
-				try:epd="e"+str(int(nst[ns-2:ns]))
-				except:
-					try:epd="e"+str(int(nst[ns-1:ns]))
-					except:
-						try: epd="e"+str(int(nst[ns+1:ns+4]))
-						except:
-							try:epd="e"+str(int(nst[ns+1:ns+3]))
-							except:
-								try:epd="e"+str(int(nst[ns+1:ns+2]))
-								except:epd="!#!"
-	
-	if sez=="!?!" and epd!="!?!":
-		if ns>3:
-					try: sez="s"+str(int(nst[:2]))
-					except:
-						try:sez="s"+str(int(nst[:1]))
-						except:sez=="!?!"
-
-	if sez=="!?!" and epd=="!?!":
-					try:epd="e"+str(int(nst))
-					except:
-						try:
-							tmp=float(nst)
-							sez="s"+str(int(tmp))
-							sss,eee=divmod(tmp, 1)
-							epd="e"+str(eee*100).replace(".0","")
-						except: pass
-
-	if sez!="!?!" and epd=="!?!":
-			ns=nst.find(">")
-			if ns>0:
-					try:epd="e"+str(int(nst[ns+1:].replace(".","")))
-					except:epd=="!?!"
-
-	print sez+"\t:\t"+epd+"\t:\t"+nst
-	return (sez,epd)
-
 
 
 def find_se(txt):
@@ -854,7 +769,7 @@ def mfindal(http, ss, es):
 		http=http[e+2:]
 	return L
 def debug(s):
-	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "w")
+	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "wb")
 	fl.write(s)
 	fl.close()
 
@@ -887,7 +802,9 @@ def GET(url,Referer = 'http://findanime.ru/'):
 	except:
 		import requests
 		s = requests.session()
-		return s.get(url).text
+		r=s.get(url).text
+		rd=r.encode('windows-1251')
+		return rd
 
 def GET2(target, referer, post_params = None, accept_redirect = True, get_redirect_url = False, siteUrl='www.KinoPoisk.ru'):
 	#target=target.replace('http:','https:')
@@ -1689,8 +1606,19 @@ def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
 			except: fanart = ''
 			try:id = info["id"]
 			except: id = ''
+				
+			
+			Linf=['genre', 'year', 'rating', 'cast', 'director', 'plot', 'title', 'originaltitle', 'studio']#, 'duration'
+			Labels={}
+			for inf in Linf:
+				try:Labels[inf] = info[inf]
+				except: pass
+			
+			try:Labels['duration'] = str(int(info['duration'])*60)
+			except: pass
+			
 			listitem = xbmcgui.ListItem(Title, iconImage=cover)#, thumbnailImage=cover
-			listitem.setInfo(type = "Video", infoLabels = info )
+			listitem.setInfo(type = "Video", infoLabels = Labels )
 			listitem.setProperty('fanart_image', fanart)
 			
 			info["plot"] = ''
@@ -1877,166 +1805,6 @@ def SrcNavi(md="Navigator"):
 		FilmID=i[len(ss):]
 		info=get_info(FilmID)
 		#info=eval(xt(get_inf_db(FilmID)))
-		'''
-		try:
-			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(FilmID)
-			info=eval(xt(get_inf_db(FilmID)))
-			nru=info["title"]
-			rating_kp=info["rating"]
-			if rating_kp>0: rkp=str(rating_kp)[:3]
-			else: rkp= " - - "
-			info["id"] = FilmID
-			#AddItem("[ "+rkp+" ] "+nru, "Torrents", info, len(L2)-2)
-			#print " OK: "+nru 
-		except:
-#		if len(i)>10:
-			url="http://m.kinopoisk.ru/movie/"+i[len(ss):]
-			http = GET (url, httpSiteUrl)
-			http = rt(http)
-			#debug (http)
-			# ------------- ищем описание -----------------
-			s='<div id="content">'
-			e='<br><div class="city">'
-			try: Info=mfindal(http, s, e)[0]
-			except: Info=""
-			#debug (Info)
-			# ------------- название -----------------
-			s='<p class="title">'
-			e='<img src="http://m.kinopoisk.ru/images/star'
-			if Info.find(e)<0: e='<div class="block film">'
-			try: 
-				nbl=mfindal(Info, s, e)[0][len(s):]
-			except:
-				nbl=""
-			if nbl <> "":
-				# ---------------- ru -------------------
-				s='<b>'
-				e='</b>'
-				nru=mfindal(nbl, s, e)[0][len(s):]
-				
-				# ---------------- en yar time -------------------
-				s='<span>'
-				e='</span>'
-				nen=mfindal(nbl, s, e)[0][len(s):]
-				vrn=nen.replace("'","#^").replace(",", "','")
-				tmps="['"+vrn+"']"
-				Lt=eval(tmps)
-				n=len(Lt)
-				year=0
-				duration=""
-				for i in Lt:
-					try: year=int(i)
-					except: pass
-					if i[-1:]==".": duration=i
-				if year>0: n2= nen.find(str(year))
-				else: n2=-1
-				if duration<>"":n3=nen.find(duration)
-				else: n3=-1
-				if n3>0 and n3<n2: n2=n3
-				if n2>1: nen=nen[:n2-2]
-				else: nen=nru
-				
-				# ---------------- жанр  страна ----------
-				s='<div class="block film">'
-				e='<span class="clear"'
-				try:
-					b2=mfindal(Info, s, e)[0][len(s):]
-					s='<span>'
-					e='</span>'
-					genre=mfindal(b2, s, e)[0][len(s):]
-					studio=mfindal(b2, s, e)[1][len(s):]
-				except:
-					genre=""
-					studio=""
-				# ---------------- режисер ----------
-				s='<span class="clear">'
-				e='</a></span>'
-				try:
-					directors=mfindal(Info, s, e)[0][len(s):]
-					s='/">'
-					e='</a>'
-					try: 
-						director1=mfindal(directors, s, e)[0][len(s):]
-						nn=directors.rfind('/">')
-						director=director1+", "+directors[nn+3:]
-					except:
-						nn=directors.rfind('/">')
-						director=directors[nn+3:]
-				except:
-					director=""
-					
-				# --------------- актеры ------------
-				if director!="":
-					s=directors#'<span class="clear">'
-					e='<p class="descr">'
-					if Info.find(e)<0:e='">...</a>'
-					
-					try:bcast=mfindal(Info, s, e)[0][len(s):]
-					except: bcast=""
-					s='/">'
-					e='</a>,'
-					lcast=mfindal(bcast, s, e)
-					cast=[]
-					for i in lcast:
-						cast.append(fs(i[3:]))
-				else:
-					cast=[]
-				# ----------------  описание ----------
-				s='<p class="descr">'
-				e='<span class="link">'
-				if Info.find(e)<0: e='<p class="margin"'
-				#debug (Info)
-				try:plotand=mfindal(Info, s, e)[0][len(s):]
-				except:plotand=""# -----------------------------------------------------------  доделать ----------
-				nn=plotand.find("</p>")
-				plot=plotand[:nn].replace("<br>","").replace("<br />","")
-				# ----------------- оценки ------------
-				tale=plotand[nn:]
-				s='</b> <i>'
-				e='</i> ('
-				ratings=mfindal(Info, s, e)
-				try:rating_kp=float(ratings[0][len(s):])
-				except:rating_kp=0
-				try:rating_IMDB=float(ratings[1][len(s):])
-				except: rating_IMDB=0
-				
-				
-				# ------------------ обложка ----------
-				s='//st.kp.yandex.net/images/sm_'
-				e='.jpg" width="'
-				try:cover='http:'+mfindal(Info, s, e)[0].replace('sm_film/','film_iphone/iphone360_')+'.jpg'
-				except:cover="http://st.kp.yandex.net/images/image_none_no_border.gif"
-				# ------------------ фанарт ----------
-				s='//st.kp.yandex.net/images/kadr'
-				e='.jpg"/></div>'
-				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
-				except:fanart=""
-				
-				info = {"title":fs(nru), 
-						"originaltitle":fs(nen), 
-						"year":year, 
-						"duration":duration[:-5], 
-						"genre":fs(genre), 
-						"studio":fs(studio),
-						"director":fs(director),
-						"cast":cast,
-						"rating":rating_kp,
-						"cover":cover,
-						"fanart":fanart,
-						"plot":fs(plot)
-						}
-				info["id"] = FilmID
-				if rating_kp>0: rkp=str(rating_kp)[:3]
-				else: rkp= " - - "
-				nru=fs(nru)
-				#AddItem("[ "+rkp+" ] "+fs(nru), "Torrents", info, len(L2)-2)
-				try:
-					if rating_kp>0: add_to_db(FilmID, repr(info))
-					#print "ADD: " + FilmID
-				except:
-					print "ERR: " + FilmID
-					#print repr(info)
-		'''
 		rating_kp = info['rating']
 		if rating_kp>0: rkp=str(rating_kp)[:3]
 		else: rkp= " - - "
@@ -2061,8 +1829,9 @@ def get_info(FilmID):
 #		if len(i)>10:
 			url="http://m.kinopoisk.ru/movie/"+FilmID
 			http = GET (url, httpSiteUrl)
-			http = rt(http)
-			#debug (http)
+			try:http = rt(http)
+			except: pass
+			#debug(http)
 			# ------------- ищем описание -----------------
 			s='<div id="content">'
 			e='<br><div class="city">'
@@ -2143,13 +1912,25 @@ def get_info(FilmID):
 					try:bcast=mfindal(Info, s, e)[0][len(s):]
 					except: bcast=""
 					s='/">'
+					s2='/person/'
 					e='</a>,'
-					lcast=mfindal(bcast, s, e)
+					#lcast=mfindal(bcast, s, e)
+					lactors=mfindal(bcast, s2, e)
 					cast=[]
-					for i in lcast:
-						cast.append(fs(i[3:]))
+					actors={}
+					for a in lactors:
+						sep=a.find('/">')
+						actor_name=fs(a[sep+3:])
+						actor_id=fs(a[len(s2):sep])
+						
+						cast.append(actor_name)
+						actors[actor_name]= actor_id
+					
+					#for i in lcast:
+					#	cast.append(fs(i[3:]))
 				else:
 					cast=[]
+					actors={}
 				# ----------------  описание ----------
 				s='<p class="descr">'
 				e='<span class="link">'
@@ -2181,17 +1962,26 @@ def get_info(FilmID):
 				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
 				except:fanart=""
 				
+				try:
+					F1=mfindal(Info, s, e)
+					fanarts=[]
+					for fnr in F1:
+						fanarts.append('http:'+fnr.replace('sm_','')+'.jpg')
+				except:fanarts=[]
+				
 				info = {"title":fs(nru), 
-						"originaltitle":fs(nen), 
+						"originaltitle":fs(nen),
 						"year":year, 
-						"duration":duration[:-5], 
-						"genre":fs(genre), 
+						"duration":duration[:-5],
+						"genre":fs(genre),
 						"studio":fs(studio),
 						"director":fs(director),
 						"cast":cast,
+						"actors":actors,
 						"rating":rating_kp,
 						"cover":cover,
 						"fanart":fanart,
+						"fanarts":fanarts,
 						"plot":fs(plot)
 						}
 				info["id"] = FilmID
@@ -2305,8 +2095,9 @@ def check():
 	except: L=[]
 	for id in L:
 		info=get_info(id)
+		year=info["year"]
 		#info=eval(xt(get_inf_db(id)))
-		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")
+		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")+" ("+str(year)+")"
 		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
 			#get_name(info)
 			#text =info['title']
@@ -2318,7 +2109,7 @@ def check():
 			if rus == en.replace("a","а"): text = rus
 			else:text = en
 			text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-			year=info["year"]
+			
 			print text
 			print rus
 			L2=[]
@@ -2391,7 +2182,8 @@ def check():
 				print 'save'
 				title=info["originaltitle"]
 				cover=info['cover']
-				save_strm({'title':title, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
+				if __settings__.getSetting("NFO2")=='true': save_film_nfo(info)
+				save_strm({'title':name, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
 
 def fnd(L, text, year):
 	s_year=str(year)
@@ -2745,6 +2537,8 @@ if mode == "Add2List":
 	except: L=[]
 	L.append(id)
 	__settings__.setSetting("W_list", repr(L))
+	xbmc.sleep(3000)
+	check()
 
 if mode == "RemItem":
 	id=info["id"]

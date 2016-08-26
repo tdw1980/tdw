@@ -20,6 +20,7 @@
     <category label="Буду смотреть">
         <setting id="F_Qual" type="enum" label="Качество" default="0" values="Любое|Хорошее|Высокое|1080p"/>
         <setting id="F_Size" type="enum" label="Размер" default="0" values="Любой|до 1,5 ГБ|1,4-3 ГБ|2,5-6 ГБ|5-10 ГБ| болше 10 ГБ"/>
+        <setting id="NFO2"   type="bool" label="Соxранять NFO"       default="true"/>
     </category>
 </settings>
         <setting id="SaveDirectory2" type="folder" label="30010" default=""/>
