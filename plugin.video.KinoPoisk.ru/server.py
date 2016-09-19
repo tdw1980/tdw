@@ -6,7 +6,7 @@ import sys
 import xbmc, xbmcgui, xbmcaddon
 __settings__ = xbmcaddon.Addon(id='plugin.video.KinoPoisk.ru')
 
-print('----- KinoPoisk.ru started -----')
+print('----- KinoPoisk.ru 2.0 started -----')
 start_trigger = False
 xbmc.sleep(10000)
 
@@ -18,5 +18,5 @@ while not xbmc.abortRequested:
 				xbmc.sleep(3000)
 				if xbmc.abortRequested: break
 
-print('----- KinoPoisk.ru stopped -----')
+print('----- KinoPoisk.ru 2.0 stopped -----')
 

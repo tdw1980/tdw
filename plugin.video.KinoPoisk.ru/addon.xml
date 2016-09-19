@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="1.9.6"
+       version="2.0.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -14,7 +14,7 @@
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>KinoPoisk.ru</summary>
-    <description>Poisk torrentov</description>
+    <description>Поиск фильмов и сериалов</description>
     <platform>all</platform>
   </extension>
 </addon>

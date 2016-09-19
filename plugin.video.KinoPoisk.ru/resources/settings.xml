@@ -1,28 +1,29 @@
 <settings>
     <category label="Настройки">
-        <setting id="Title Mode" type="enum" label="30001" default="1" values="Ru/En|Ru"/>
-        <setting id="Engine"  type="enum" label="30005" default="0" values="ACE engine|Libtorrents|T2Http"/>
-        <setting id="UpdLib"  type="bool" label="Переписывать кэш(исправить ошибки в описнии)" default="false"/>
-        <setting id="DownloadDirectory" type="folder" label="30008" default=""/>
-        <setting id="SaveDirectory" type="folder" label="30009" default=""/>
-        <setting id="label" type="folder" label="Сериалы сохраняются через torrent checker! Настройки там." default=""/>
+        <setting id="SaveDirectory" type="folder" label="Путь сохранения фильмов (STRM)"         default=""/>
+        <setting id="NFO2"          type="bool"   label="Соxранять описание фильмов (NFO)"       default="true"/>
+        <setting id="UpdLib"        type="bool"   label="Переписывать кэш(исправить ошибки в описнии)"              default="false"/>
+        <setting id="label"         type="folder" label="Сериалы сохраняются через torrent checker! Настройки там." default=""/>
     </category>
-    <category label="Поиск">
-        <setting id="rutor"     type="bool" label="rutor.org"       default="true"/>
-        <setting id="fasttor"   type="bool" label="fast-torrent.ru" default="true"/>
-        <setting id="torrentom" type="bool" label="torrentom.com"   default="true"/>
-        <setting id="tfile"     type="bool" label="new-tfile.org"   default="true"/>
-        <setting id="xtreme"    type="bool" label="xtreme.ws"       default="true"/>
-        <setting id="fileek"    type="bool" label="fileek.com"      default="true"/>
-        <setting id="tracker"   type="bool" label="tracker.ru"      default="true"/>
-        <setting id="krasfs"    type="bool" label="krasfs.ru"       default="true"/>
+    <category label="Предпочтения">
+        <setting id="CutSize"  type="bool"  label="Отбрасывать раздачи одинакового размера"  default="false"/>
+        <setting id="SortLst" type="bool"  label="Сортировать раздачи по предпочтениям"  default="true"/>
+        <setting id="F_Size1"  type="enum"  label="Размер мин."  default="0"     values="0|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ"/>
+        <setting id="F_Size2"  type="enum"  label="Размер макс." default="0" values="Любой|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ|10 ГБ|11 ГБ|12 ГБ"/>
+        <setting id="F_Qual"   type="enum"  label="Качество"    default="0" values="Любое|Выбор"/>
+        <setting id="F_Qual1"  type="bool"  label="DVDrip"   visible="eq(-1,1)"  default="false"/>
+        <setting id="F_Qual2"  type="bool"  label="WEBRip"   visible="eq(-2,1)"  default="false"/>
+        <setting id="F_Qual3"  type="bool"  label="WEB-DL"   visible="eq(-3,1)"  default="false"/>
+        <setting id="F_Qual4"  type="bool"  label="BDRip"    visible="eq(-4,1)"  default="false"/>
+        <setting id="F_Qual5"  type="bool"  label="HDRip"    visible="eq(-5,1)"  default="false"/>
+        <setting id="F_Qual6"  type="bool"  label="TVRip"    visible="eq(-6,1)"  default="false"/>
+        <setting id="F_Qual7"  type="bool"  label="HDTV"     visible="eq(-7,1)"  default="false"/>
+        <setting id="F_Qual8"  type="bool"  label="Blu-Ray"  visible="eq(-8,1)"  default="false"/>
+        <setting id="F_Qual9"  type="bool"  label="720p"     visible="eq(-9,1)"  default="false"/>
+        <setting id="F_Qual10" type="bool"  label="1080p"    visible="eq(-10,1)" default="false"/>
     </category>
-    <category label="Буду смотреть">
-        <setting id="F_Qual" type="enum" label="Качество" default="0" values="Любое|Хорошее|Высокое|1080p"/>
-        <setting id="F_Size" type="enum" label="Размер" default="0" values="Любой|до 1,5 ГБ|1,4-3 ГБ|2,5-6 ГБ|5-10 ГБ| болше 10 ГБ"/>
-        <setting id="NFO2"   type="bool" label="Соxранять NFO"       default="true"/>
+    <category label="P2P">
+        <setting id="Engine" type="enum" label="Плеер" default="0" values="ACE engine|T2Http|YATP"/>
+        <setting id="DownloadDirectory" type="folder" label="Кэш T2Http" visible="eq(-1,1)" default=""/>
     </category>
 </settings>
-        <setting id="SaveDirectory2" type="folder" label="30010" default=""/>
-        <setting id="NFO" type="enum" label="30011" default="0" values="Русских|Всех|Нет"/>
-        <setting id="dugtor" type="bool" label="dugtor.ru" default="false"/>

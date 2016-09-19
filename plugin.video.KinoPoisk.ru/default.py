@@ -1,15 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# *      Copyright (C) 2011 TDW
+# *  Copyright (C) 2016 TDW
 
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon, os, urllib, urllib2, time, codecs, httplib
-import SelectBox
-from KPmenu import *
 
-PLUGIN_NAME   = 'KinoPoisk.ru'
+PLUGIN_NAME   = 'KinoPoisk-2.0'
 siteUrl = 'www.KinoPoisk.ru'
-httpSiteUrl = 'http://' + siteUrl
+httpSiteUrl = 'https://' + siteUrl
 handle = int(sys.argv[1])
 addon = xbmcaddon.Addon(id='plugin.video.KinoPoisk.ru')
 __settings__ = xbmcaddon.Addon(id='plugin.video.KinoPoisk.ru')
@@ -19,235 +17,151 @@ icon  = os.path.join( addon.getAddonInfo('path'), 'icon.png')
 dbDir = os.path.join( addon.getAddonInfo('path'), "db" )
 LstDir = addon.getAddonInfo('path')
 
-headers  = {
-	'User-Agent' : 'Opera/9.80 (X11; Linux i686; U; ru) Presto/2.7.62 Version/11.00',
-	'Accept'     :' text/html, application/xml, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*',
-	'Accept-Language':'ru-RU,ru;q=0.9,en;q=0.8',
-	'Accept-Charset' :'utf-8, utf-16, *;q=0.1',
-	'Accept-Encoding':'identity, *;q=0'
-}
+#======================== стандартные функции ==========================
+def fs_enc(path):
+	sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+	return path.decode('utf-8').encode(sys_enc)
 
-# -------- Torrent2Http---by-Anteo---
-try:
-	import tthp
-except:
-	print "Error import t2http"
+def fs_dec(path):
+	sys_enc = sys.getfilesystemencoding() if sys.getfilesystemencoding() else 'utf-8'
+	return path.decode(sys_enc).encode('utf-8')
 
+def fs(s):return s.decode('windows-1251').encode('utf-8')
+def ru(x):return unicode(x,'utf8', 'ignore')
+def xt(x):return xbmc.translatePath(x)
+def rt(x):
+	L=[('&#34;','&'), ('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y'), ('&laquo;','"'), ('&raquo;','"')]
+	for i in L:
+		x=x.replace(i[0], i[1])
+	return x
 
+def lower(s):
+	try:s=s.decode('utf-8')
+	except: pass
+	try:s=s.decode('windows-1251')
+	except: pass
+	s=s.lower().encode('utf-8')
+	return s
 
-def t2http_list(url, info={}):
-		L=tthp.list(url)
-	#if len (L)<2:
-	#	tthp.play(url, handle, 0, __settings__.getSetting("DownloadDirectory"))
-	#else:
-		for i in L:
-			#print i
-			listitem = xbmcgui.ListItem(i.name)
-			purl = sys.argv[0] + '?mode=t2http_play'\
-				+ '&url=' + urllib.quote_plus(url)\
-				+ '&ind=' + urllib.quote_plus(str(i.index))
-			
-			try:title=info['originaltitle']+' ('+str(info['year'])+')'
-			except:
-				try:title=info['namef']
-				except:title="error"
+def mid(s, n):
+	try:s=s.decode('utf-8')
+	except: pass
+	try:s=s.decode('windows-1251')
+	except: pass
+	s=s.center(n)
+	try:s=s.encode('utf-8')
+	except: pass
+	return s
 
-			uri2 = construct_request({
-				't': url,
-				'tt': i.name,
-				'title': title,
-				'i':str(i.index),
-				'ii':"",
-				'mode': 'save_strm'
-				})
-			listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),])
-			
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-			
+def FC(s, color="FFFFFF00"):
+	s="[COLOR "+color+"]"+s+"[/COLOR]"
+	return s
 
-		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-		xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
-		xbmcplugin.endOfDirectory(handle)
+def mfindal(http, ss, es):
+	L=[]
+	while http.find(es)>0:
+		s=http.find(ss)
+		e=http.find(es)
+		i=http[s:e]
+		L.append(i)
+		http=http[e+2:]
+	return L
 
-def t2http_play(uri, id):
-	tthp.play(uri, handle, id, __settings__.getSetting("DownloadDirectory"))
+def debug(s):
+	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "wb")
+	fl.write(s)
+	fl.close()
 
+def inputbox():
+	skbd = xbmc.Keyboard()
+	skbd.setHeading('Поиск:')
+	skbd.doModal()
+	if skbd.isConfirmed():
+		SearchStr = skbd.getText()
+		return SearchStr
+	else:
+		return ""
 
+def showMessage(heading, message, times = 3000):
+	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
 
-#---------asengine----by-nuismons-----
+#====================== подготовка данных для интерфейса ================
 
-from ASCore import TSengine,_TSPlayer
+from KPmenu import *
 
-def play_url(torr_link,img, info={}):
-    #print torr_link
+Category=[]
+CategoryDict={}
+for i in TypeList:
+	Category.append(i[1])
+	CategoryDict[i[1]]=i[0]
 
-    TSplayer=TSengine()
-    out=TSplayer.load_torrent(torr_link,'TORRENT')
-    if out=='Ok':
-        for k,v in TSplayer.files.iteritems():
-            li = xbmcgui.ListItem(urllib.unquote(k), thumbnailImage=img, iconImage=img)
-            #fokus(urllib.unquote(k))# -----------------========================:::::::::::::::::: ТУТ
-            li.setProperty('IsPlayable', 'true')
-            
-            #li.addContextMenuItems([('Добавить в плейлист', 'XBMC.RunPlugin(%s)' % uri),])
-            try:title=info['originaltitle']+' ('+str(info['year'])+')'
-            except:
-                try:title=info['namef']
-                except:title="error"
-            uri2 = construct_request({
-                't': torr_link,
-                'tt': k,#.encode('utf-8')
-                'title': title,
-                'i':v,
-                'ii':img,
-                'mode': 'save_strm'
-            })
-            li.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'XBMC.RunPlugin(%s)' % uri2),])
-            uri = construct_request({
-                'torr_url': torr_link,
-                'title': k,
-                'ind':v,
-                'img':img,
-                'func': 'play_url2',
-                'mode': 'play_url2'
-            })
-            xbmcplugin.addDirectoryItem(int(sys.argv[1]), uri, li)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_LABEL)
-    xbmcplugin.setContent(int(sys.argv[1]), 'movies')
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
-    TSplayer.end()
+Genre=[]
+GenreDict={}
+for i in GenreList:
+	Genre.append(i[1])
+	GenreDict[i[1]]=i[0]
 
-def play_url2(params):
-    #print 'play'
-    torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
-    torr_link=urllib.unquote(params["torr_url"]).replace("ru-ru.org","open-tor.org")
-    Engine = __settings__.getSetting("Engine")
-    if Engine=="2":
-        
-        item = xbmcgui.ListItem()#path=url
-        xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-        xbmc.sleep(3000)
-        xbmcplugin.endOfDirectory(handle)
-        tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
-        return False
-    
-    img=urllib.unquote_plus(params["img"])
-    title=urllib.unquote_plus(params["title"])
-    #showMessage('heading', torr_link, 10000)
-    TSplayer=TSengine()
-    out=TSplayer.load_torrent(torr_link,'TORRENT')
-    print out
-    if out=='Ok':
-        lnk=TSplayer.get_link(int(params['ind']),title, img, img)
-        if lnk:
-           
-            item = xbmcgui.ListItem(path=lnk, thumbnailImage=img, iconImage=img)
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)  
+Cantry=[]
+CantryDict={}
+for i in CantryList:
+	Cantry.append(i[1])
+	CantryDict[i[1]]=i[0]
 
-            while not xbmc.Player().isPlaying:
-                xbmc.sleep(300)
-            while TSplayer.player.active and not TSplayer.local: 
-                TSplayer.loop()
-                xbmc.sleep(300)
-                if xbmc.abortRequested:
-                    TSplayer.log.out("XBMC is shutting down")
-                    break
-            if TSplayer.local and xbmc.Player().isPlaying: 
-                try: time1=TSplayer.player.getTime()
-                except: time1=0
-                
-                i = xbmcgui.ListItem("***%s"%title)
-                i.setProperty('StartOffset', str(time1))
-                xbmc.Player().play(TSplayer.filename.decode('utf-8'),i)
+Year=[]
+YearDict={}
+for i in YearList:
+	Year.append(i[1])
+	YearDict[i[1]]=i[0]
 
-        else:
-            item = xbmcgui.ListItem(path='')
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, item) 
-    else:
-        print 'alter'
-        try:    xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title2"])+'")')
-        except: xbmc.executebuiltin('Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=alter&title="'+urllib.unquote_plus(get_params()["title"])+'")')
-    TSplayer.end()
-    xbmc.Player().stop
+Old=[]
+OldDict={}
+for i in OldList:
+	Old.append(i[1])
+	OldDict[i[1]]=i[0]
 
-def play_url2_off(params):
-	torr_link=urllib.unquote(params["torr_url"]).replace("www.rutor.org","open-tor.org")
-	torr_link=torr_link.replace("ru-ru.org","open-tor.org")
-	Engine = __settings__.getSetting("Engine")
-	if Engine=="2":
-			item = xbmcgui.ListItem()#path=url
-			xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-			xbmc.sleep(3000)
-			xbmcplugin.endOfDirectory(handle)
-			tthp.play(torr_link, handle, int(params['ind']), __settings__.getSetting("DownloadDirectory"))
-			return False
+Sort=[]
+SortDict={}
+for i in SortList:
+	Sort.append(i[1])
+	SortDict[i[1]]=i[0]
 
-	img=urllib.unquote_plus(params["img"])
-	title=urllib.unquote_plus(params["title"])
-	#showMessage('heading', torr_link, 10000)
-	TSplayer=tsengine()
-	out=TSplayer.load_torrent(torr_link,'TORRENT')
-	if out=='Ok':
-		TSplayer.play_url_ind(int(params['ind']),title, img, img, True)
-	TSplayer.end()
-
-#--------------tsengine------------------
+Rating=[]
+RatingDict={}
+for i in RatingList:
+	Rating.append(i[1])
+	RatingDict[i[1]]=i[0]
 
 
-def alter(text):
-		info={"title":text}
-		#print text
-		rutor(text, info)
-		fasttor(text, info)
-		fileek(text, info)
-		s2kp(text, info)
-		xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-		xbmcplugin.endOfDirectory(handle)
-		xbmc.sleep(300)
-		xbmc.executebuiltin("Container.SetViewMode(51)")
+#============================== основная часть ============================
 
-
-
-
-def addplist(params):
-    li = xbmcgui.ListItem(params['tt'])
-    uri = construct_request({
-        'torr_url': params['t'],
-        'title': params['tt'].decode('utf-8'),
-        'ind':urllib.unquote_plus(params['i']),
-        'img':urllib.unquote_plus(params['ii']),
-        'mode': 'play_url2'
-    })
-    xbmc.PlayList(xbmc.PLAYLIST_VIDEO).add(uri,li)
-
-def save_strm(params):
-		#print 'save_strm_ok'
-		SaveDirectory = __settings__.getSetting("SaveDirectory")#[:-1]
+def save_strm(url, ind=0, id='0'):
+		info=get_info(str(id))
+		SaveDirectory = __settings__.getSetting("SaveDirectory")
 		if SaveDirectory=="":SaveDirectory=LstDir
-		name=urllib.unquote_plus(params['title']).replace("\\","").replace("?","").replace(":","")#.decode('utf-8')
-		title=params['tt'].decode('utf-8')
-		#print params
-		uri = construct_request({
-			'torr_url': urllib.unquote_plus(params['t']),
-			'title': xt(params['tt'].decode('utf-8')),
-			'title2': xt(name),
-			'ind':urllib.unquote_plus(params['i']),
-			'img':urllib.unquote_plus(urllib.unquote_plus(params['ii'])),
-			'func': 'play_url2',
-			'mode': 'play_url2'
-		})
-		fl = open(os.path.join(ru(SaveDirectory),name+".strm"), "w")
+		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
+		
+		uri = sys.argv[0] + '?mode=PlayTorrent'
+		uri = uri+ '&url='+urllib.quote_plus(url)
+		uri = uri+ '&ind='+str(ind)
+		uri = uri+ '&id='+str(id)
+		
+		fl = open(os.path.join(fs_enc(SaveDirectory),fs_enc(name+".strm")), "w")
 		fl.write(uri)
 		fl.close()
+		
 		xbmc.executebuiltin('UpdateLibrary("video", "", "false")')
 
-def save_film_nfo(info):
-		
+def save_film_nfo(id):
+		get_posters(id)
+		info=get_info(str(id))
 		title=info['title']
 		fanart=info['fanart']
 		cover=info['cover']
 		try: fanarts=info["fanarts"]
 		except: fanarts=[fanart,cover]
+		posters=get_posters(id)
+		fanarts.extend(posters)
+		
 		year=info['year']
 		plot=info['plot']
 		rating=info['rating']
@@ -261,14 +175,15 @@ def save_film_nfo(info):
 		try: actors=info["actors"]
 		except: actors={}
 		
-		name=ru(info['originaltitle']).replace("\\","").replace("?","").replace(":","")
+		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
 		cn=name.find(" (")
-		if cn>0:
-			name=name[:cn]
-			rus=1
-		else: rus=0
+		#if cn>0:
+		#	name=name[:cn]
+		#	rus=1
+		#else: rus=0
 		
-		name=name+" ("+str(year)+")"
+		#trailer=get_trailer(id)
+		
 		SaveDirectory = __settings__.getSetting("SaveDirectory")
 		if SaveDirectory=="":SaveDirectory=LstDir
 		
@@ -305,490 +220,167 @@ def save_film_nfo(info):
 		
 		nfo+="</movie>"+chr(10)
 		
-		fl = open(os.path.join(ru(SaveDirectory),name+".nfo"), "w")
+		fl = open(os.path.join(fs_enc(SaveDirectory),fs_enc(name+".nfo")), "w")
 		fl.write(nfo)
 		fl.close()
 
+def get_posters(id):
+	try:
+		url='http://plus.kinopoisk.ru/film/'+id+'/details/art/poster/'
+		http=GET(url)
+		ss='src="//avatars.mds.yandex.net/get-kino-vod-films-gallery/'
+		es='" data-bem'
+		es='x538'
+		L=mfindal(http,ss,es)
+		L2=[]
+		for i in L:
+			if len(i)<120 and len(i)>80:
+				img=i.replace('src="//', 'http://')+es#.replace('x80', 'x538').replace('x120', 'x538').replace('120x', 'x538').replace('x80', 'x538').replace('80x', 'x538')
+				L2.append(img)
+		return L2
+	except: return []
 
-def save_tvshow_nfo(tts,img, info={}):
-		title=info['title']
-		cn=title.find(" (")
-		title=title[:cn]
-		name=ru(info['originaltitle'])#.replace(" (сериал)","")
-		cn=name.find(" (")
-		if cn>0:
-			name=name[:cn]
-			rus=1
-		else: rus=0
+def get_trailer(id):
+	try:
+		url='https://www.kinopoisk.ru/film/'+id+'/video/type/1/'
+		http=GET(url)
+		ss='kinoplayer-loader.swf?file='
+		es='&amp;autostart=true&amp;link='
+		link=urllib.unquote_plus(mfindal(http,ss,es)[0][len(ss):])
+		return link
+	except: return ""
 
-		fanart=info['fanart']
-		cover=info['cover']
-		year=info['year']
-		plot=info['plot']
-		
-		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
-		if SaveDirectory=="":SaveDirectory=LstDir
-		nfo='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+chr(10)
-		nfo='<tvshow>'+chr(10)
-		
-		nfo+="	<title>"+title+"</title>"+chr(10)
-		nfo+="	<showtitle>"+title+"</showtitle>"+chr(10)
-		nfo+="	<year>"+str(year)+"</year>"+chr(10)
-		nfo+="	<season>-1</season>"+chr(10)
-		nfo+="	<plot>"+plot+"</plot>"+chr(10)
-		nfo+="	<fanart><thumb>"+fanart+"</thumb></fanart>"+chr(10)
-		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
-		nfo+="</tvshow>"+chr(10)
-		
-		nf=__settings__.getSetting("NFO")
-		nfowr="no"
-		if nf=="0" and rus==1: nfowr="ok"
-		if nf=="1": nfowr="ok"
-		
-		if nfowr=="ok":
-			fl = open(os.path.join(SaveDirectory, "tvshow.nfo"), "w")
-			fl.write(nfo)
-			fl.close()
-
-
-def save_nfo(tts,img, info={}):
-		sts,ste=find_se(tts)
-		try: s=int(sts.replace("s",""))
-		except: s=0
-		try: e=int(ste.replace("e",""))
-		except: e=0
-		
-		title="season "+str(s)+" episode "+str(e)
-		name=ru(info['originaltitle'])#.replace(" (сериал)","")
-		cn=name.find(" (")
-		rus=0
-		if cn>0:
-			name=name[:cn]
-			rus=1
-		
-		plot=xt(tts)
-		cover=info['cover']
-		fanart=info['fanart']
-		if s>0:
-			if s<10: ss=".S0"+str(s)
-			else:ss=".S"+str(s)
-		else: ss=".0"
-		
-		if e>0:
-			if e<10: es=".E0"+str(e)
-			else:es=".E"+str(e)
-		else: es=""
-
-		if es!="":tts=name+ss+es
-		
-		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
-		if SaveDirectory=="":SaveDirectory=LstDir
-		nfo="<episodedetails>"+chr(10)
-		nfo+="	<title>"+title+"</title>"+chr(10)
-		nfo+="	<season>"+str(s)+"</season>"+chr(10)
-		nfo+="	<episode>"+str(e)+"</episode>"+chr(10)
-		nfo+="	<plot>"+plot+"</plot>"+chr(10)
-		nfo+="	<fanart><thumb>"+fanart+"</thumb></fanart>"+chr(10)
-		nfo+="	<thumb>"+cover+"</thumb>"+chr(10)
-		nfo+="</episodedetails>"+chr(10)
-		
-		nfo=__settings__.getSetting("NFO")
-		nfowr="no"
-		if nfo=="0" and rus==1: nfowr="ok"
-		if nfo=="1": nfowr="ok"
-		
-		if nfowr=="ok":
-			fl = open(os.path.join(SaveDirectory, tts+".nfo"), "w")
-			fl.write(nfo)
-			fl.close()
-		return tts
-
-def fokus(txt):
-	pass
-
-
-def find_se(txt):
-	txt=txt.lower()
-	for i in range (2000,2020):
-		txt=txt.replace(str(i),"")
-
-	F=["480","720","1080",".mp4",".ts","5.1","264"]
-	for i in F:
-		txt=txt.replace(i,"")
-
-	SL=['.sezon','.Сезон','.сезон',  'sezon','Сезон','сезон']
-	for i in SL:
-		try:txt=txt.replace(i,"^")
-		except: pass
-
-	EL=['seriya','serija','Серия','серия','vypusk']
-	for i in EL:
-		try:txt=txt.replace(i,"#")
-		except: pass
-			
-	EL2=['.e',' e','e','x']
-	for i in EL2:
-		for j in range (0,9):
-			r=i+str(j)
-			try:txt=txt.replace(r,"@"+str(j))
-			except: pass
-
-	SL2=['.s',' s','s']
-	for i in SL2:
-		for j in range (0,9):
-			r=i+str(j)
-			try:txt=txt.replace(r,"*"+str(j))
-			except: pass
-
-
-	T=["0","1","2","3","4","5","6","7","8","9",".","-","\\",  "#","@","^","*"]#,"x","s","e"
-	L=tuple(txt)
-	nst=""
+def getList(id):
+	try:L = eval(__settings__.getSetting(id))
+	except:L =[]
+	S=""
 	for i in L:
-		if i in T: nst+=i
-			
-	nst=nst.replace("-",".")
-	nst=nst.replace("#.","#").replace(".#","#")
-	nst=nst.replace("@.","@").replace(".@","@")
-	nst=nst.replace("^.","^").replace(".^","^")
-	nst=nst.replace("*.","*").replace(".*","*")
-	nst=nst.replace("......",".").replace(".....",".").replace("....",".").replace("...",".").replace("..",".")
-	if nst[:1]==".": nst=nst[1:]
-	if nst[-1:]==".": nst=nst[:-1]
-	nc=nst.find("\\")
-	if nc>0: 
-		nst1=nst[:nc]
-		nst2=nst[nc+1:]
-		n1=nst2.find("*")
-		n2=nst2.find("^")
-		if n1>-1 or n2>-1:nst=nst2
-		else:
-			#print nst1
-			try:nst1="^"+str(int(nst1.replace(".","").replace("^","").replace("*","")))
-			except:
-				nss=nst1.find("^")
-				if nss>-1:nst1=nst1[:nss+2]
-				else:nst1=""
-			try:nst2="@"+str(int(nst2))
-			except:nst2=">"+nst2
-			nst=nst1+nst2
-	sez="!?!"
-	if 1==1:
-		ns=nst.find("*")
-		if ns>-1:
-			try: sez="s"+str(int(nst[ns+1:ns+3]))
-			except:
-				try:sez="s"+str(int(nst[ns+1:ns+2]))
-				except:sez="!*!"
-			#print sez
-			
-	if sez=="!?!" or sez=="!*!":
-		ns=nst.find("^")
-		if ns>-1:
-			try: sez="s"+str(int(nst[ns-2:ns]))
-			except:
-				try:sez="s"+str(int(nst[ns-1:ns]))
-				except:
-					try: sez="s"+str(int(nst[ns+1:ns+3]))
-					except:
-						try:sez="s"+str(int(nst[ns+1:ns+2]))
-						except:sez="!^!"
+		if i[:1]=="[": S=S+", "+i
+	return S[1:]
 
-	epd="!?!"
-	if 1==1:
-		ns=nst.find("@")
-		if ns>-1:
-			try: epd="e"+str(int(nst[ns+1:ns+4]))
-			except:
-				try:epd="e"+str(int(nst[ns+1:ns+3]))
-				except:
-					try:epd="e"+str(int(nst[ns+1:ns+2]))
-					except:epd="!@!"
-			
-			if sez=="!?!":
-					try: sez="s"+str(int(nst[ns-2:ns]))
-					except:
-						try:sez="s"+str(int(nst[ns-1:ns]))
-						except:sez=="!?@!"
-			#print sez
-			
-	if epd=="!?!" or epd=="!@!":
-		
-		ns=nst.find("#")
-		if ns>-1:
-			try: epd="e"+str(int(nst[ns-3:ns]))
-			except:
-				try:epd="e"+str(int(nst[ns-2:ns]))
-				except:
-					try:epd="e"+str(int(nst[ns-1:ns]))
-					except:epd=="!?!"
-
-		if ns>-1 and ns<len(nst)-2:
-				pb=0
-				try:
-					epd="e"+str(int(nst[ns+1:ns+4]))
-					pb=1
-				except:
-							try:
-								epd="e"+str(int(nst[ns+1:ns+3]))
-								pb=1
-							except:
-								try:
-									epd="e"+str(int(nst[ns+1:ns+2]))
-									pb=1
-								except:epd="!#!"
-	
-				if sez=="!?!" and epd!="!?!" and pb==1:
-					try:sez="s"+str(int(nst[ns-2:ns]))
-					except:
-						try:sez="s"+str(int(nst[ns-1:ns]))
-						except:pass
-
-	if sez=="!?!" and epd!="!?!":
-		if ns>3:
-					try: sez="s"+str(int(nst[:2]))
-					except:
-						try:sez="s"+str(int(nst[:1]))
-						except:sez=="!?!"
-
-	if sez=="!?!" and epd=="!?!":
-					try:epd="e"+str(int(nst))
-					except:
-						try:
-							tmp=float(nst)
-							sez="s"+str(int(tmp))
-							sss,eee=divmod(tmp, 1)
-							epd="e"+str(eee*100).replace(".0","")
-						except: pass
-
-	if sez!="!?!" and epd=="!?!":
-			ns=nst.find(">")
-			if ns>0:
-					try:epd="e"+str(int(nst[ns+1:].replace(".","")))
-					except:epd=="!?!"
-
-
-	if sez=="!?!" and epd!="!?!":
-						try:
-							e1=epd.replace("e","")+"#"
-							tmp=float(nst.replace(e1,"0"))
-							sez="s"+str(int(tmp))
-						except: pass
-
-
-	print sez+"\t:\t"+epd+"\t:\t"+nst
-	return (sez,epd)
-
-
-
-def find_e(txt):
-	txt=txt.replace(" ","")
-	L=['seriya#','#seriya','serija#','#serija', 'e#']
+def getList2(id):
+	try:L = eval(__settings__.getSetting(id))
+	except:L =[]
+	S=[]
 	for i in L:
-		for i1 in range (0,200):
-					n=200-i1
-					sn1='00'+str(n)
-					sn2='0'+str(n)
-					sn3=str(n)
-					n1=txt.find(i.replace("#",sn1))
-					n2=txt.find(i.replace("#",sn2))
-					n3=txt.find(i.replace("#",sn3))
-					if n1>-1: return n
-					if n2>-1: return n
-					if n3>-1: return n
-	if txt.find("sezon")<0 and txt.find("сезон")<0:
-		for i in range (2000,2020):
-			txt=txt.replace(str(i),"")
-		txt=txt[:-3]
-		for i in range (0,300):
-			n=300-i
-			n1=txt.find(str(n))
-			if n1>-1: return n
-
-	return -1
-	
-
-def find_s(txt):
-	txt=txt.replace(" ","")
-	
-	L=['#sezon','sezon#','s#',eval(repr("#Сезон"))]#'#Сезон',u'Сезон#',u'#сезон',u'сезон#',
-	for i in L:
-		for i1 in range (0,20):
-					n=20-i1
-					sn1='0'+str(n)
-					sn2=str(n)
-					n1=txt.find(i.replace("#",sn1))
-					n2=txt.find(i.replace("#",sn2))
-					#print i.replace("#",sn2)
-					if n1>-1: return n
-					if n2>-1: return n
-	return -1
-	
-
-def save_all(torr_link,img, info={}):
-	TSplayer=TSengine()
-	out=TSplayer.load_torrent(torr_link,'TORRENT')
-	if out=='Ok':
-		name=ru(info['originaltitle'])
-		cn=name.find(" (")
-		if cn>0:name=name[:cn]
-		#+' ('+str(info['year'])+')'ru(urllib.unquote_plus(info['title']))#.decode('utf-8')
-		SaveDirectory = os.path.join(ru(__settings__.getSetting("SaveDirectory2")), name)
-		if os.path.isdir(SaveDirectory)==0: os.mkdir(SaveDirectory)
-		if SaveDirectory=="":SaveDirectory=LstDir
-		for k,v in TSplayer.files.iteritems():
-			li = xbmcgui.ListItem(urllib.unquote(k))
-			uri = construct_request({
-				'torr_url': torr_link,
-				'title': k.encode('utf-8'),
-				'ind':v,
-				'img':img,
-				'func': 'play_url2',
-				'mode': 'play_url2'
-			})
-			tts=urllib.unquote_plus(k)#.encode('utf-8')
-			tts=tts.replace("\\",' ')
-			try:tts=ru(os.path.basename(tts))#[nf+1:]
-			except: tts=xt(os.path.basename(tts))
-			tts=save_nfo(tts,img, info)
-			fl = open(os.path.join(SaveDirectory, tts+".strm"), "w")
-			fl.write(uri)
-			fl.close()
-			
-		save_tvshow_nfo(tts,img, info)
-	TSplayer.end()
-	xbmc.executebuiltin('UpdateLibrary("video")')
+		if i[:1]=="[": S.append(i.replace("[COLOR FFFFFF00]","").replace("[/COLOR]",""))
+	return S
 
 
+def setList(idw, L):
+	__settings__.setSetting(id=idw, value=repr(L))
 
-from TSCore import TSengine as tsengine
+def play(url, ind=0, id='0'):
+	#print url
+	engine=__settings__.getSetting("Engine")
+	if engine=="0": 
+		if play_ace (url, ind) != 'Ok':
+			if ind == 0: 
+				if play_ace (alter (id, url), 0) != 'Ok': xbmc.executebuiltin('ActivateWindow(10025,"plugin://plugin.video.KinoPoisk.ru/?mode=Torrents&id='+id+'", return)')
+			else: xbmc.executebuiltin('ActivateWindow(10025,"plugin://plugin.video.KinoPoisk.ru/?mode=Torrents&id='+id+'", return)')
+	if engine=="1": play_t2h (url, ind, __settings__.getSetting("DownloadDirectory"))
+	if engine=="2": play_yatp(url, ind)
 
-def construct_request(params):
-	return '%s?%s' % (sys.argv[0], urllib.urlencode(params))
-
-def play_url_old(params):
-	torr_link=params['file']
-	img=urllib.unquote_plus(params["img"])
-	#showMessage('heading', torr_link, 10000)
+def play_ace(torr_link, ind=0):
+	title=get_item_name(torr_link, ind)
+	from TSCore import TSengine as tsengine
 	TSplayer=tsengine()
 	out=TSplayer.load_torrent(torr_link,'TORRENT')
-	if out=='Ok':
-		for k,v in TSplayer.files.iteritems():
-			li = xbmcgui.ListItem(urllib.unquote(k))
-			uri = construct_request({
-				'torr_url': torr_link,
-				'title': k,
-				'ind':v,
-				'img':img,
-				'mode': 'play_url2'
-			})
-			xbmcplugin.addDirectoryItem(handle, uri, li, False)
-	xbmcplugin.endOfDirectory(handle)
+	#print out
+	if out=='Ok': TSplayer.play_url_ind(int(ind),title, icon, icon, True)
 	TSplayer.end()
-	
-def play_url2_old(params):
-	#torr_link=params['torr_url']
-	torr_link=urllib.unquote_plus(params["torr_url"])
-	img=urllib.unquote_plus(params["img"])
-	title=urllib.unquote_plus(params["title"])
-	#showMessage('heading', torr_link, 10000)
-	TSplayer=tsengine()
-	out=TSplayer.load_torrent(torr_link,'TORRENT')
-	if out=='Ok':
-		TSplayer.play_url_ind(int(params['ind']),title, icon, img)
-	TSplayer.end()
+	return out
 
-#-----------------------libtorrents-torrenter-by-slng--------------------------------
-import Downloader
-try:import Downloader
-except: pass
-def playTorrent(url, StorageDirectory):
-		torrentUrl = url#__settings__.getSetting("lastTorrent")
-		if 0 != len(torrentUrl):
-			contentId = 0#int(urllib.unquote_plus(url))
-			torrent = Downloader.Torrent(torrentUrl, StorageDirectory)
-			torrent.startSession(contentId)
-			iterator = 0
-			progressBar = xbmcgui.DialogProgress()
-			progressBar.create('Подождите', 'Идёт поиск сидов.')
-			downloadedSize = 0
-			while downloadedSize < (44 * 1024 * 1024): #not torrent.canPlay:
-				time.sleep(0.1)
-				progressBar.update(iterator)
-				iterator += 1
-				if iterator == 100:
-					iterator = 0
-				downloadedSize = torrent.torrentHandle.file_progress()[contentId]
-				dialogText = 'Preloaded: ' + str(downloadedSize / 1024 / 1024) + ' MB / ' + str(torrent.getContentList()[contentId].size / 1024 / 1024) + ' MB'
-				peersText = ' [%s: %s; %s: %s]' % ('Seeds', str(torrent.torrentHandle.status().num_seeds), 'Peers', str(torrent.torrentHandle.status().num_peers))
-				speedsText = '%s: %s Mbit/s; %s: %s Mbit/s' % ('Downloading', str(torrent.torrentHandle.status().download_payload_rate * 8/ 1000000), 'Uploading', str(torrent.torrentHandle.status().upload_payload_rate * 8 / 1000000))
-				progressBar.update(iterator, 'Seeds searching.' + peersText, dialogText, speedsText)
+def play_t2h(uri, file_id=0, DDir=""):
+	try:
+		sys.path.append(os.path.join(xbmc.translatePath("special://home/"),"addons","script.module.torrent2http","lib"))
+		from torrent2http import State, Engine, MediaType
+		progressBar = xbmcgui.DialogProgress()
+		from contextlib import closing
+		if DDir=="": DDir=os.path.join(xbmc.translatePath("special://home/"),"userdata")
+		progressBar.create('Torrent2Http', 'Запуск')
+		# XBMC addon handle
+		# handle = ...
+		# Playable list item
+		# listitem = ...
+		# We can know file_id of needed video file on this step, if no, we'll try to detect one.
+		# file_id = None
+		# Flag will set to True when engine is ready to resolve URL to XBMC
+		ready = False
+		# Set pre-buffer size to 15Mb. This is a size of file that need to be downloaded before we resolve URL to XMBC 
+		pre_buffer_bytes = 15*1024*1024
+		engine = Engine(uri, download_path=DDir)
+		with closing(engine):
+			# Start engine and instruct torrent2http to begin download first file, 
+			# so it can start searching and connecting to peers  
+			engine.start(file_id)
+			progressBar.update(0, 'Torrent2Http', 'Загрузка торрента', "")
+			while not xbmc.abortRequested and not ready:
+				xbmc.sleep(500)
+				status = engine.status()
+				# Check if there is loading torrent error and raise exception 
+				engine.check_torrent_error(status)
+				# Trying to detect file_id
+				if file_id is None:
+					# Get torrent files list, filtered by video file type only
+					files = engine.list(media_types=[MediaType.VIDEO])
+					# If torrent metadata is not loaded yet then continue
+					if files is None:
+						continue
+					# Torrent has no video files
+					if not files:
+						break
+						progressBar.close()
+					# Select first matching file                    
+					file_id = files[0].index
+					file_status = files[0]
+				else:
+					# If we've got file_id already, get file status
+					file_status = engine.file_status(file_id)
+					# If torrent metadata is not loaded yet then continue
+					if not file_status:
+						continue
+				if status.state == State.DOWNLOADING:
+					# Wait until minimum pre_buffer_bytes downloaded before we resolve URL to XBMC
+					if file_status.download >= pre_buffer_bytes:
+						ready = True
+						break
+					#print file_status
+					progressBar.update(100*file_status.download/pre_buffer_bytes, 'Torrent2Http', xt('Предварительная буферизация: '+str(file_status.download/1024/1024)+" MB"), "")
+					
+				elif status.state in [State.FINISHED, State.SEEDING]:
+					#progressBar.update(0, 'T2Http', 'We have already downloaded file', "")
+					# We have already downloaded file
+					ready = True
+					break
+				
 				if progressBar.iscanceled():
 					progressBar.update(0)
 					progressBar.close()
-					torrent.threadComplete = True
-					return
+					break
+				# Here you can update pre-buffer progress dialog, for example.
+				# Note that State.CHECKING also need waiting until fully finished, so it better to use resume_file option
+				# for engine to avoid CHECKING state if possible.
+				# ...
 			progressBar.update(0)
 			progressBar.close()
-			playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-			playlist.clear()
-			listitem = xbmcgui.ListItem(torrent.getContentList()[contentId].path)
-			playlist.add('file:///' + torrent.getFilePath(contentId), listitem)
-			progressBar.close()
-			xbmc.Player().play(playlist)
-			progressBar.close()
-			time.sleep(15)
-			while 1 == xbmc.Player().isPlayingVideo():
-				torrent.fetchParts()
-				torrent.checkThread()
-				time.sleep(1)
-			xbmc.executebuiltin("Notification(%s, %s)" % ('Информация', 'Загрузка торрента прекращена.'))
-			torrent.threadComplete = True
-		else:
-			print " Unexpected access to method playTorrent() without torrent content"
-
-#===========================================================
-
-def ru(x):return unicode(x,'utf8', 'ignore')
-def xt(x):return xbmc.translatePath(x)
-def rt(x):
-	L=[('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y')]
-	for i in L:
-		x=x.replace(i[0], i[1])
-	return x
-
-def mfindal(http, ss, es):
-	L=[]
-	while http.find(es)>0:
-		s=http.find(ss)
-		e=http.find(es)
-		i=http[s:e]
-		L.append(i)
-		http=http[e+2:]
-	return L
-def debug(s):
-	fl = open(ru(os.path.join( addon.getAddonInfo('path'),"test.txt")), "wb")
-	fl.write(s)
-	fl.close()
-
-def inputbox():
-	skbd = xbmc.Keyboard()
-	skbd.setHeading('Поиск:')
-	skbd.doModal()
-	if skbd.isConfirmed():
-		SearchStr = skbd.getText()
-		return SearchStr
-	else:
-		return ""
-
-def showMessage(heading, message, times = 3000):
-	xbmc.executebuiltin('XBMC.Notification("%s", "%s", %s, "%s")'%(heading, message, times, icon))
+			if ready:
+				# Resolve URL to XBMC
+				item = xbmcgui.ListItem(path=file_status.url)
+				xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+				xbmc.sleep(3000)
+				# Wait until playing finished or abort requested
+				while not xbmc.abortRequested and xbmc.Player().isPlaying():
+					xbmc.sleep(500)
+	except: pass
 
 
+def play_yatp(url, ind):
+	purl ="plugin://plugin.video.yatp/?action=play&torrent="+ urllib.quote_plus(url)+"&file_index="+str(ind)
+	item = xbmcgui.ListItem(path=purl)
+	xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
 
-def GET(url,Referer = 'http://findanime.ru/'):
+def GET(url,Referer = 'http://www.KinoPoisk.ru/'):
 	try:
 		req = urllib2.Request(url)
 		req.add_header('User-Agent', 'Opera/10.60 (X11; openSUSE 11.3/Linux i686; U; ru) Presto/2.6.30 Version/10.60')
@@ -806,240 +398,15 @@ def GET(url,Referer = 'http://findanime.ru/'):
 		rd=r.encode('windows-1251')
 		return rd
 
-def GET2(target, referer, post_params = None, accept_redirect = True, get_redirect_url = False, siteUrl='www.KinoPoisk.ru'):
-	#target=target.replace('http:','https:')
+def GETtorr(target):
 	try:
-		connection = httplib.HTTPConnection(siteUrl)
-
-		if post_params == None:
-			method = 'GET'
-			post = None
-		else:
-			method = 'POST'
-			post = urllib.urlencode(post_params)
-			headers['Content-Type'] = 'application/x-www-form-urlencoded'
-		
-		sid_file = os.path.join(xbmc.translatePath('special://temp/'), 'plugin.video.KinoPoisk.ru.cookies.sid')
-		if os.path.isfile(sid_file):
-			fh = open(sid_file, 'r')
-			csid = fh.read()
-			fh.close()
-			headers['Cookie'] = 'session=%s' % csid
-
-		headers['Referer'] = referer
-		connection.request(method, target, post, headers = headers)
-		response = connection.getresponse()
-
-		if response.status == 403:
-			raise Exception("Forbidden, check credentials")
-		if response.status == 404:
-			raise Exception("File not found")
-		if accept_redirect and response.status in (301, 302):
-			target = response.getheader('location', '')
-			if target.find("://") < 0:
-				target = httpSiteUrl + target
-			if get_redirect_url:
-				return target
-			else:
-				return GET(target, referer, post_params, False)
-
-		try:
-			sc = Cookie.SimpleCookie()
-			sc.load(response.msg.getheader('Set-Cookie'))
-			fh = open(sid_file, 'w')
-			fh.write(sc['session'].value)
-			fh.close()
-		except: pass
-
-		if get_redirect_url:
-			return False
-		else:
-			http = response.read()
-			return http
-
+			req = urllib2.Request(url = target)
+			req.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)')
+			resp = urllib2.urlopen(req)
+			return resp.read()
 	except Exception, e:
-		showMessage('Error', e, 5000)
-		return None
-
-
-def fs(s):
-	s=str(repr(s))[1:-1]
-	s=s.replace('\\xb8','ё')
-	s=s.replace('\\xe0','a')
-	s=s.replace('\\xe1','б')
-	s=s.replace('\\xe2','в')
-	s=s.replace('\\xe3','г')
-	s=s.replace('\\xe4','д')
-	s=s.replace('\\xe5','е')
-	s=s.replace('\\xe6','ж')
-	s=s.replace('\\xe7','з')
-	s=s.replace('\\xe8','и')
-	s=s.replace('\\xe9','й')
-	s=s.replace('\\xea','к')
-	s=s.replace('\\xeb','л')
-	s=s.replace('\\xec','м')
-	s=s.replace('\\xed','н')
-	s=s.replace('\\xee','о')
-	s=s.replace('\\xef','п')
-	s=s.replace('\\xf0','р')
-	s=s.replace('\\xf1','с')
-	s=s.replace('\\xf2','т')
-	s=s.replace('\\xf3','у')
-	s=s.replace('\\xf4','ф')
-	s=s.replace('\\xf5','х')
-	s=s.replace('\\xf6','ц')
-	s=s.replace('\\xf7','ч')
-	s=s.replace('\\xf8','ш')
-	s=s.replace('\\xf9','щ')
-	s=s.replace('\\xfa','ъ')
-	s=s.replace('\\xfb','ы')
-	s=s.replace('\\xfc','ь')
-	s=s.replace('\\xfd','э')
-	s=s.replace('\\xfe','ю')
-	s=s.replace('\\xff','я')
-	
-	s=s.replace('\\xa8','Ё')
-	s=s.replace('\\xc0','А')
-	s=s.replace('\\xc1','Б')
-	s=s.replace('\\xc2','В')
-	s=s.replace('\\xc3','Г')
-	s=s.replace('\\xc4','Д')
-	s=s.replace('\\xc5','Е')
-	s=s.replace('\\xc6','Ж')
-	s=s.replace('\\xc7','З')
-	s=s.replace('\\xc8','И')
-	s=s.replace('\\xc9','Й')
-	s=s.replace('\\xca','К')
-	s=s.replace('\\xcb','Л')
-	s=s.replace('\\xcc','М')
-	s=s.replace('\\xcd','Н')
-	s=s.replace('\\xce','О')
-	s=s.replace('\\xcf','П')
-	s=s.replace('\\xd0','Р')
-	s=s.replace('\\xd1','С')
-	s=s.replace('\\xd2','Т')
-	s=s.replace('\\xd3','У')
-	s=s.replace('\\xd4','Ф')
-	s=s.replace('\\xd5','Х')
-	s=s.replace('\\xd6','Ц')
-	s=s.replace('\\xd7','Ч')
-	s=s.replace('\\xd8','Ш')
-	s=s.replace('\\xd9','Щ')
-	s=s.replace('\\xda','Ъ')
-	s=s.replace('\\xdb','Ы')
-	s=s.replace('\\xdc','Ь')
-	s=s.replace('\\xdd','Э')
-	s=s.replace('\\xde','Ю')
-	s=s.replace('\\xdf','Я')
-	
-	s=s.replace('\\xab','"')
-	s=s.replace('\\xbb','"')
-	s=s.replace('\\r','')
-	s=s.replace('\\n','\n')
-	s=s.replace('\\t','\t')
-	s=s.replace("\\x85",'...')
-	s=s.replace("\\x97",'-')
-	s=s.replace("\\xb7","·")
-	s=s.replace("\\x96",'-')
-	s=s.replace("\\x92",'')
-	s=s.replace("\\xb9",'№')
-	s=s.replace("\\xa0",' ')
-	s=s.replace('&laquo;','"')
-	s=s.replace('&raquo;','"')
-	s=s.replace('&#38;','&')
-	s=s.replace('&#233;','é')
-	s=s.replace('&#232;','è')
-	s=s.replace('&#224;','à')
-	s=s.replace('&#244;','ô')
-	s=s.replace('&#246;','ö')
-	return s
-
-def formatKP(str):
-	str=str.strip()
-	str=str.replace('%','%25')
-	str=str.replace('&','%26')
-	str=str.replace('?','%3F')
-	str=str.replace('&','%26')
-	str=str.replace('!','%21')
-	str=str.replace(':','%3A')
-	str=str.replace('#','%23')
-	str=str.replace(',','%2C')
-	str=str.replace(';','%3B')
-	str=str.replace('@','%40')
-	str=str.replace('(','%28')
-	str=str.replace(')','%29')
-	str=str.replace('"','%22')
-	
-	str=str.replace('а','%E0')
-	str=str.replace('б','%E1')
-	str=str.replace('в','%E2')
-	str=str.replace('г','%E3')
-	str=str.replace('д','%E4')
-	str=str.replace('е','%E5')
-	str=str.replace('ё','%b8')
-	str=str.replace('ж','%E6')
-	str=str.replace('з','%E7')
-	str=str.replace('и','%E8')
-	str=str.replace('й','%E9')
-	str=str.replace('к','%EA')
-	str=str.replace('л','%EB')
-	str=str.replace('м','%EC')
-	str=str.replace('н','%ED')
-	str=str.replace('о','%EE')
-	str=str.replace('п','%EF')
-	str=str.replace('р','%F0')
-	str=str.replace('с','%F1')
-	str=str.replace('т','%F2')
-	str=str.replace('у','%F3')
-	str=str.replace('ф','%F4')
-	str=str.replace('х','%F5')
-	str=str.replace('ц','%F6')
-	str=str.replace('ч','%F7')
-	str=str.replace('ш','%F8')
-	str=str.replace('щ','%F9')
-	str=str.replace('ъ','%FA')
-	str=str.replace('ы','%FB')
-	str=str.replace('ь','%FC')
-	str=str.replace('э','%FD')
-	str=str.replace('ю','%FE')
-	str=str.replace('я','%FF')
-	
-	str=str.replace('А','%C0')
-	str=str.replace('Б','%C1')
-	str=str.replace('В','%C2')
-	str=str.replace('Г','%C3')
-	str=str.replace('Д','%C4')
-	str=str.replace('Е','%C5')
-	str=str.replace('Ё','%A8')
-	str=str.replace('Ж','%C6')
-	str=str.replace('З','%C7')
-	str=str.replace('И','%C8')
-	str=str.replace('Й','%C9')
-	str=str.replace('К','%CA')
-	str=str.replace('Л','%CB')
-	str=str.replace('М','%CC')
-	str=str.replace('Н','%CD')
-	str=str.replace('О','%CE')
-	str=str.replace('П','%CF')
-	str=str.replace('Р','%D0')
-	str=str.replace('С','%D1')
-	str=str.replace('Т','%D2')
-	str=str.replace('У','%D3')
-	str=str.replace('Ф','%D4')
-	str=str.replace('Х','%D5')
-	str=str.replace('Ц','%D6')
-	str=str.replace('Ч','%D7')
-	str=str.replace('Ш','%D8')
-	str=str.replace('Щ','%D9')
-	str=str.replace('Ь','%DA')
-	str=str.replace('Ы','%DB')
-	str=str.replace('Ъ','%DC')
-	str=str.replace('Э','%DD')
-	str=str.replace('Ю','%DE')
-	str=str.replace('Я','%DF')
-
-	str=str.replace(' ','+')
-	return str
+			print 'HTTP ERROR ' + str(e)
+			return None
 
 def get_params():
 	param=[]
@@ -1095,581 +462,88 @@ def rem_inf_db(n):
 			c.commit()
 		except: pass
 
-def get_name(info):
-	try:
-		id=params["info"]["id"]
-		try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-		except: rus=params["info"]["title"]
-		try:en=params["info"]["originaltitle"].encode('utf8')
-		except: en=params["info"]["originaltitle"]
-		if rus == en:text = rus.replace("a","а")
-		else:text = params["info"]["originaltitle"]
-		#n=text.find("(")
-		text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-		#rus=rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
-		return text
-	except:
-		return urllib.unquote_plus(get_params()["title"])[1:]
+def get_labels(info):
+	Linf=['genre', 'year', 'rating', 'cast', 'director', 'plot', 'title', 'originaltitle', 'studio']
+	Labels={}
+	for inf in Linf:
+		try:Labels[inf] = info[inf]
+		except: pass
+	try:Labels['duration'] = str(int(info['duration'])*60)
+	except: pass
+	return Labels
 
 
-def s2kp(id, info):
-	try:
-		
-		import tokp
-		skp=tokp.Tracker()
-		RL = skp.Search(id)
-		if len(RL)>0:
-			Title = "[COLOR F050F050]"+"[--------------  «Tracker.ru»  "+id+" --------------]"+"[/COLOR]"
-			row_url = Title
-			listitem = xbmcgui.ListItem(Title)
-			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-			purl = sys.argv[0] + '?mode=Search'\
-				+ '&url=' + urllib.quote_plus(row_url)\
-				+ '&title=' + urllib.quote_plus(Title)\
-				+ '&text=' + urllib.quote_plus('0')
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-			
-			for itm in RL:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				#print row_url
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, False, len(RL))
-		return len(RL)
-	except:
-		return 0
-
-
-def fileek(qury, info):
-	try:
-		
-		import fileek
-		skp=fileek.Tracker()
-		RL = skp.Search(qury)
-		if len(RL)>0:
-			Title = "[COLOR F050F050]"+"[--------------  «Fileek.com»  "+qury+" --------------]"+"[/COLOR]"
-			row_url = Title
-			listitem = xbmcgui.ListItem(Title)
-			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-			purl = sys.argv[0] + '?mode=Search'\
-				+ '&url=' + urllib.quote_plus(row_url)\
-				+ '&title=' + urllib.quote_plus(Title)\
-				+ '&text=' + urllib.quote_plus('0')
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-			
-			for itm in RL:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				#print row_url
-				cover=""
-				dict={}
-				info['url']=row_url
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-		return len(RL)
-	except:
-		return 0
-
-
-
-def srr(text, info={}):
-	import RuTrackerOrg
-	rtr=RuTrackerOrg.RuTrackerOrg()
-	
-	RL=rtr.search(text)
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «RuTracker.Org»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-		
-	for itm in RL:
-				Title = "|"+str(itm[0])+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-
-	return len(RL)
-
-def rutor(text, info={}):
-	#try:
-	import rutors
-	rtr=rutors.Tracker()
-	#except: pass
-	
-	RL=rtr.Search(text, "0")
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Rutor»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	for y in range (1970, 2018):
-		sy=" "+str(y)
-		text=text.replace(sy,"")
-	tt=0
-	for itm in RL:
-		if itm[2].find(text)>=0:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				tt+=1
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return tt
-
-
-def rutor_id(text, info={}):
-	#try:
-	import rutor2
-	rtr=rutor2.Tracker()
-	#except: pass
-	
-	RL=rtr.Search('film '+text+":", "0")
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Rutor»  id"+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-	
-	try:en=info["originaltitle"].encode('utf8')[:3]
-	except:en=info["originaltitle"][:3]
-
-	for itm in RL:
-		if itm[2].find(en)>=0:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-def rutoris(text, info={}):
-	#try:
-	import rutor_is
-	rtr=rutor_is.Tracker()
-	#except: pass
-	
-	RL=rtr.Search(text, "0")
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Rutor.is»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-
-	for itm in RL:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(info['title'])\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-
-def dugtors(text, info={}):
-	import dugtor
-	rtr=dugtor.Tracker()
-	#except: pass
-	RL=rtr.Search(text, "0")
-	#try:RL=rtr.Search(text, "0")
-	#except: RL=[]
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Dugtor.ru»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	for y in range (1970, 2018):
-		sy=" "+str(y)
-		text=text.replace(sy,"")
-
-	for itm in RL:
-		if xt(itm[2]).find(text)>=0:
-				#print itm
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + info['title']\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-def torrentom(text, info={}):
-	#try:
-	import torrentom
-	rtr=torrentom.Tracker()
-	#except: pass
-	RL=rtr.Search(text, "0")
-	#try:RL=rtr.Search(text, "0")
-	#except: RL=[]
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Torrentom.ru»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	#for y in range (1970, 2018):
-	#	sy=" "+str(y)
-	#	text=text.replace(sy,"")
-
-	for itm in RL:
-		#if xt(itm[2]).find(text)>=0:
-				#print itm
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + info['title']\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-
-def fasttor(text, info={}):
-	#try:
-	import fasttor
-	rtr2=fasttor.Tracker()
-	#except: pass
-	RL=rtr2.Search(text, "0")
-	#try:RL=rtr.Search(text, "0")
-	#except: RL=[]
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Fast-Torrent.ru»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	#for y in range (1970, 2018):
-	#	sy=" "+str(y)
-	#	text=text.replace(sy,"")
-
-	for itm in RL:
-		#if xt(itm[2]).find(text)>=0:
-				#print itm
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + info['title']\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-def tfile(text, info={}):
-	#try:
-	import tfile
-	rtr=tfile.Tracker()
-	#except: pass
-	RL=rtr.Search(text, "0")
-	#try:RL=rtr.Search(text, "0")
-	#except: RL=[]
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Tfile.org»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	#for y in range (1970, 2018):
-	#	sy=" "+str(y)
-	#	text=text.replace(sy,"")
-
-	for itm in RL:
-		#if xt(itm[2]).find(text)>=0:
-				#print itm
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + info['title']\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-def xtreme(text, info={}):
-	#try:
-	import xtreme
-	rtr=xtreme.Tracker()
-	#except: pass
-	RL=rtr.Search(text, "0")
-	#try:RL=rtr.Search(text, "0")
-	#except: RL=[]
-	if len(RL)>0:
-		Title = "[COLOR F050F050]"+"[------- «Xtreme.ws»  "+text+" ---------]"+"[/COLOR]"
-		row_url = Title
-		listitem = xbmcgui.ListItem(Title)
-		listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-		purl = sys.argv[0] + '?mode=Search'\
-			+ '&url=' + urllib.quote_plus(row_url)\
-			+ '&title=' + urllib.quote_plus(Title)\
-			+ '&text=' + urllib.quote_plus('0')
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, False)
-		
-	#for y in range (1970, 2018):
-	#	sy=" "+str(y)
-	#	text=text.replace(sy,"")
-
-	for itm in RL:
-		#if xt(itm[2]).find(text)>=0:
-				#print itm
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + info['title']\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+row_url+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-	return len(RL)
-
-
-def stft(text, info={}):
-	try:
-		import krasfs
-		tft=krasfs.Tracker()
-	
-		RL=tft.Search(text, 4)
-		if len(RL)>0:
-			Title = "[COLOR F050F050]"+"[------- «KrasFS.ru»  "+text+" ---------]"+"[/COLOR]"
-			row_url = Title
-			listitem = xbmcgui.ListItem(Title)
-			listitem.setInfo(type = "Video", infoLabels = {"Title": Title} )
-			purl = sys.argv[0] + '?mode=Search'\
-				+ '&url=' + urllib.quote_plus(row_url)\
-				+ '&title=' + urllib.quote_plus(Title)\
-				+ '&text=' + urllib.quote_plus('0')
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-
-			for itm in RL:
-				Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				cover=""
-				dict={}
-				info['url']=itm[3]
-				listitem = xbmcgui.ListItem(Title, thumbnailImage=cover, iconImage=cover)
-				try:listitem.setInfo(type = "Video", infoLabels = dict)
-				except: pass
-				listitem.setProperty('fanart_image', cover)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + urllib.quote_plus(Title)\
-					+ '&info=' + urllib.quote_plus(repr(info))
-				#listitem.addContextMenuItems([('Сохранить все', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_all&url='+itm[3]+'&info='+urllib.quote_plus(repr(info))+'")'),])
-				listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(get_name(info))+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
-				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
-		return len(RL)
-	except:
-		return 0
-
-
-def AddItem(Title = "", mode = "", info = {"cover":icon}, total=100):
-			params["mode"] = mode
-			#print Title
-			cover = info["cover"]
-			try:fanart = info["fanart"]
-			except: fanart = ''
-			try:id = info["id"]
-			except: id = ''
-				
-			
-			Linf=['genre', 'year', 'rating', 'cast', 'director', 'plot', 'title', 'originaltitle', 'studio']#, 'duration'
-			Labels={}
-			for inf in Linf:
-				try:Labels[inf] = info[inf]
-				except: pass
-			
-			try:Labels['duration'] = str(int(info['duration'])*60)
-			except: pass
-			
-			listitem = xbmcgui.ListItem(Title, iconImage=cover)#, thumbnailImage=cover
-			listitem.setInfo(type = "Video", infoLabels = Labels )
+def AddItem(Title = "", mode = "", id='0', url='', total=100):
+			if id !='0':
+				if mode=="PersonFilm":
+					cover='https://st.kp.yandex.net/images/actor_iphone/iphone360_'+id+".jpg"
+					fanart = ''
+					info={"cover":cover, "title":Title, "id":id}
+				else:
+					info=get_info(id)
+					try:    cover = info["cover"]
+					except: cover = icon
+					try:    fanart = info["fanart"]
+					except: fanart = ''
+			else:
+				cover = icon
+				fanart = ''
+				info={}
+			listitem = xbmcgui.ListItem(Title, iconImage=cover, thumbnailImage=cover)
+			listitem.setInfo(type = "Video", infoLabels = get_labels(info))
 			listitem.setProperty('fanart_image', fanart)
 			
-			info["plot"] = ''
-			try:params["info"] = info#{'id':id, 'title': info["title"], "originaltitle": info["originaltitle"], 'cover':cover, "year":info["year"]}
-			except:params["info"] = {"cover":icon, 'id':id}
+			purl = sys.argv[0] + '?mode='+mode+'&id='+id
+			if url !="": purl = purl +'&url='+urllib.quote_plus(url)
 			
-			purl = sys.argv[0] + '?mode='+mode+ '&params=' + urllib.quote_plus(repr(params))
 			if mode=="Torrents":
-				#listitem.addContextMenuItems([('Hайти похожие', 'SrcNavi("Navigator:'+id+'")')])
-				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&info='+urllib.quote_plus(repr(info))+'")')])
-				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
-			elif mode=="PersonFilm":
+				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Трейлер[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=PlayTrailer&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&id='+id+'")')])
+			if mode=="PlayTorrent":
+				listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_strm&id='+id+'&url='+urllib.quote_plus(url)+'")'),])
+			if mode=="OpenTorrent":
+				try:type=info["type"]
+				except:type=''
+				if type != '': listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(url)+'&name='+urllib.quote_plus(info['originaltitle'])+ '&info=' + urllib.quote_plus(repr(info))+'")'),])
+				else: listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Save_strm&id='+id+'&url='+urllib.quote_plus(url)+'")'),])
+				
+			if mode=="PersonFilm":
 				listitem.addContextMenuItems([('[B]Добавить в Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('[B]Удалить из Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
-			elif mode=="Par":
-				listitem.addContextMenuItems([('[B]Удалить задание[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&info='+urllib.quote_plus(repr(info))+'")'),])
-
-				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
+			if mode=="Wish":
+				listitem.addContextMenuItems([('[B]Удалить задание[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&&id='+id+'")'),])
+			#if __settings__.getSetting("Autoplay") == 'true' and mode=="Torrents":
+			#	listitem.setProperty('IsPlayable', 'true')
+			#	purl = sys.argv[0] + '?mode=Autoplay&id='+id
+			#	xbmcplugin.addDirectoryItem(handle, purl, listitem, False, total)
+			#else:
 			xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 
-def FC(s, color="FFFFFF00"):
-	s="[COLOR "+color+"]"+s+"[/COLOR]"
-	return s
-
 def AddPerson(info):
-		try:PL=eval(__settings__.getSetting("PersonList"))
+		try:PL=eval(__settings__.getSetting("PersonLst"))
 		except: PL=[]
 		if info not in PL: 
 			PL.append(info)
-			__settings__.setSetting(id="PersonList", value=repr(PL))
+			__settings__.setSetting(id="PersonLst", value=repr(PL))
 
 def RemovePerson(info):
-		try:PL=eval(__settings__.getSetting("PersonList"))
+		try:PL=eval(__settings__.getSetting("PersonLst"))
 		except: PL=[]
 		NL=[]
 		for i in PL:
 				if i!=info: NL.append(i)
-		__settings__.setSetting(id="PersonList", value=repr(NL))
+		__settings__.setSetting(id="PersonLst", value=repr(NL))
 
 def PersonList():
-		try:PL=eval(__settings__.getSetting("PersonList"))
+		try:PL=eval(__settings__.getSetting("PersonLst"))
 		except: PL=[]
 		for i in PL:
-			AddItem(fs(i["title"]), "PersonFilm", i, len(PL))
-
-		#__settings__.setSetting(id="PersonList", value=repr(PL))
+			id = i['id']
+			AddItem(i["title"], "PersonFilm", id, '',len(PL))
 
 def Person():
 	try:id = urllib.unquote_plus(get_params()["id"])
 	except: id = ''
 	link="http://m.kinopoisk.ru/cast/"+id+"/"
-	print link
+	#print link
 	ss='<dt>'
 	se='</dd><dt>'
 	http = GET (link, httpSiteUrl)
@@ -1680,7 +554,7 @@ def Person():
 		ss='<dt>'
 		se='</dt><dd>'
 		tb=mfindal(i, ss, se)[0][4:]
-		AddItem(FC(fs(tb)), "", {"cover":icon}, len(L))
+		AddItem(FC(fs(tb)), "", '0', '', len(L))
 		
 		ss='/person/'
 		se='</a>'
@@ -1689,12 +563,12 @@ def Person():
 			n=j.find('/">')
 			nm=j[n+3:]
 			id=j[8:n]
-			cover="http://st.kp.yandex.net/images/sm_actor/"+id+".jpg"
+			#cover="http://st.kp.yandex.net/images/sm_actor/"+id+".jpg"
 			cover="http://st.kp.yandex.net/images/actor_iphone/iphone360_"+id+".jpg"
 			#.replace('sm_film/','film_iphone/iphone360_')+'.jpg'
-			info={"cover":cover, "title":nm, "id":id}
+			#info={"cover":cover, "title":nm, "id":id}
 			#print info
-			AddItem(fs(nm), "PersonFilm", info, len(L))
+			AddItem(fs(nm), "PersonFilm", id, '', len(L))
 
 
 
@@ -1775,7 +649,7 @@ def SrcNavi(md="Navigator"):
 		link="http://www.kinopoisk.ru/film/"+id+"/like/"
 		#print link
 	elif md=="PersonFilm":
-		id = params["info"]["id"]
+		id = get_params()["id"]
 		#try:id = eval(urllib.unquote_plus(get_params()["info"]))["id"]
 		#except: id = ''
 		link="http://m.kinopoisk.ru/person/"+id+"/"
@@ -1784,50 +658,36 @@ def SrcNavi(md="Navigator"):
 		#print link
 
 	else: 
-		link='http://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+formatKP(md)
+		link='http://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+urllib.quote(md)
 		ss="/level/1/film/"
 		se='/sr/1/"'
 	
 	http = GET (link, httpSiteUrl)
-	#debug (http)
-	
-	#ss="/level/1/film/"
-	#ss='id="film_eye_'
-	#se='/">'
-	#se='"></div>'
 	L=mfindal(http, ss, se)
-	#debug (str(L))
 	L2=[]
 	for i in L:
 		if i not in L2 and i<>"": L2.append(i)
-	#debug (str(L2))
-	for i in L2[:-1]:#
-		FilmID=i[len(ss):]
-		info=get_info(FilmID)
-		#info=eval(xt(get_inf_db(FilmID)))
+	for i in L2[:-1]:
+		id = i[len(ss):]
+		info = get_info(id)
 		rating_kp = info['rating']
-		if rating_kp>0: rkp=str(rating_kp)[:3]
+		if rating_kp>0: rkp = str(rating_kp)[:3]
 		else: rkp= " - - "
-		nru=info['title']
-		try: AddItem("[ "+rkp+" ] "+ nru, "Torrents", info, len(L2)-2)
+		nru = info['title']
+		
+		if info['type'] !="": type = " ("+info['type']+")"
+		else: type = ''
+		
+		try: AddItem("[ "+rkp+" ] "+nru+type, "Torrents", id, total=len(L2)-2)
 		except: pass
 
-
-def get_info(FilmID):
-		try:
-			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(FilmID)
-			info=eval(xt(get_inf_db(FilmID)))
-			nru=info["title"]
-			rating_kp=info["rating"]
-			if rating_kp>0: rkp=str(rating_kp)[:3]
-			else: rkp= " - - "
-			info["id"] = FilmID
+def get_info(ID):
+	try:
+			if __settings__.getSetting('UpdLib')=='true': rem_inf_db(ID)
+			info=eval(xt(get_inf_db(ID)))
 			return info
-			#AddItem("[ "+rkp+" ] "+nru, "Torrents", info, len(L2)-2)
-			#print " OK: "+nru 
-		except:
-#		if len(i)>10:
-			url="http://m.kinopoisk.ru/movie/"+FilmID
+	except:
+			url="http://m.kinopoisk.ru/movie/"+ID
 			http = GET (url, httpSiteUrl)
 			try:http = rt(http)
 			except: pass
@@ -1969,7 +829,25 @@ def get_info(FilmID):
 						fanarts.append('http:'+fnr.replace('sm_','')+'.jpg')
 				except:fanarts=[]
 				
-				info = {"title":fs(nru), 
+				rus = fs(nru)
+				type = ''
+				if ' (сериал)' in rus: 
+					type='сериал'
+					rus = rus.replace(' (сериал)', '')
+				
+				if ' (мини-сериал)' in rus: 
+					type='мини-сериал'
+					rus = rus.replace(' (мини-сериал)', '')
+				
+				if ' (ТВ)' in rus:
+					type='ТВ'
+					rus = rus.replace(' (ТВ)', '')
+				
+				if ' (видео)' in rus:
+					type='видео'
+					rus = rus.replace(' (видео)', '')
+				
+				info = {"title": rus, 
 						"originaltitle":fs(nen),
 						"year":year, 
 						"duration":duration[:-5],
@@ -1982,38 +860,44 @@ def get_info(FilmID):
 						"cover":cover,
 						"fanart":fanart,
 						"fanarts":fanarts,
-						"plot":fs(plot)
+						"plot":fs(plot),
+						"type":type,
+						"id":ID
 						}
-				info["id"] = FilmID
 				if rating_kp>0: rkp=str(rating_kp)[:3]
 				else: rkp= " - - "
 				nru=fs(nru)
 				#AddItem("[ "+rkp+" ] "+fs(nru), "Torrents", info, len(L2)-2)
 				try:
-					if rating_kp>0: add_to_db(FilmID, repr(info))
+					if rating_kp>0: add_to_db(ID, repr(info))
 					#print "ADD: " + FilmID
 				except:
-					print "ERR: " + FilmID
+					print "ERR: " + ID
 					#print repr(info)
 				return info
 
 #==============  Menu  ====================
 def Root():
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
 	AddItem("Поиск", "Search")
 	AddItem("Навигатор", "Navigator")
 	AddItem("Популярные", "Popular")
 	AddItem("Недавние премьеры", "New")
 	AddItem("Самые ожидаемые", "Future")
 	AddItem("Персоны", "PersonList")
-	AddItem("Буду смотреть", "W_list")
+	if len(L)>0: AddItem("Буду смотреть", "Wish_list")
 	#AddItem("check", "check")
+	
+	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+	xbmcplugin.endOfDirectory(handle)
 
 def Search():
 	SrcNavi(inputbox())
 
 def PersonSearch():
 	PS=inputbox()
-	link='https://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+formatKP(PS)
+	link='https://www.kinopoisk.ru/index.php?first=no&what=&kp_query='+urllib.quote(PS)
 	http = GET (link, httpSiteUrl)
 	ss='https://st.kp.yandex.net/images/sm_actor/'
 	es='" title="'
@@ -2023,32 +907,10 @@ def PersonSearch():
 			n=i.find('.jpg" alt="')
 			id=i[len(ss):n]
 			nm=i[n+11:]
-			cover='https://st.kp.yandex.net/images/actor_iphone/iphone360_'+id+".jpg"
-			info={"cover":cover, "title":nm, "id":id}
-			if len(nm)>0 and len(id)>0 :AddItem(fs(nm), "PersonFilm", info, len(l1))
+			#cover='https://st.kp.yandex.net/images/actor_iphone/iphone360_'+id+".jpg"
+			#info={"cover":cover, "title":nm, "id":id}
+			if len(nm)>0 and len(id)>0 :AddItem(fs(nm), "PersonFilm", id,'', len(l1))
 	#debug (http)
-
-
-def getList(id):
-	try:L = eval(__settings__.getSetting(id))
-	except:L =[]
-	S=""
-	for i in L:
-		if i[:1]=="[": S=S+", "+i
-	return S[1:]
-
-def getList2(id):
-	try:L = eval(__settings__.getSetting(id))
-	except:L =[]
-	S=[]
-	for i in L:
-		if i[:1]=="[": S.append(i.replace("[COLOR FFFFFF00]","").replace("[/COLOR]",""))
-	return S
-
-
-
-def setList(idw, L):
-	__settings__.setSetting(id=idw, value=repr(L))
 
 def Navigator():
 	Cats=getList("CatList")
@@ -2077,15 +939,88 @@ def Navigator():
 	
 	AddItem("[B][COLOR FF00FF00][ Искать ][/COLOR][/B]", "SrcNavi")
 
-def Popular():
-	AddItem("Популярные", "Popular")
+def Torrents(id, additm=True):
+	info=get_info(id)
+	sys.path.append(os.path.join(addon.getAddonInfo('path'),"src"))
+	ld=os.listdir(os.path.join(addon.getAddonInfo('path'),"src"))
+	L2=[]
+	Lz=[]
+	for i in ld:
+		if i[-3:]=='.py': 
+			#Lserv.append(i[:-3])
+			try:
+				exec ("import "+i[:-3]+"; skp="+i[:-3]+".Tracker()")
+				L = skp.Search(info)
+			except: L=[]
+			for D in L:
+				url = D['url']
+				try:    tor_title=D['title'].encode('utf-8').replace("«",'').replace("»",'').replace('"', '')
+				except: tor_title=D['title'].replace("«",'').replace("»",'').replace('"', '')
+				#print tor_title
+				ru_title=info['title'].replace("«",'').replace("»",'').replace('"', '')
+				#print ru_title
+				en_title=info['originaltitle'].replace("«",'').replace("»",'').replace('"', '')
+				year=str(info['year'])
+				year2=str(info['year']+1)
+				
+				if (ru_title in tor_title or ru_title in tor_title) and (year in tor_title or year2 in tor_title or info['type']!=''):
+					size = D['size']
+					if 'MB' in size and '.' in size: size=size[:size.find('.')]
+					size = size.replace('GB','').replace('MB','').strip()
+					if size not in Lz or __settings__.getSetting("CutSize") == 'false':
+						Lz.append(size)
+						title=xt(mid(D['size'], 10))+" | "+xt(D['title'])
+						
+						if additm: 
+							if __settings__.getSetting("SortLst") == 'true' and info['type']=='':
+								pr=fnd(D)
+								if pr: title=FC(title, 'FEFFFFFF')
+								else:  title=FC(title, 'FF777777')
+							AddItem(title, "OpenTorrent", id, url)
+						L2.append(D)
+				#print D
+	return L2
 
-def New():
-	AddItem("Недавние премьеры", "New")
+def OpenTorrent(url, id):
+	torrent_data = GETtorr(url)
+	if torrent_data != None:
+		import bencode
+		torrent = bencode.bdecode(torrent_data)
+		cover = get_info(id)['cover']
+		try:
+			L = torrent['info']['files']
+			ind=0
+			for i in L:
+				name=i['path'][-1]
+				#size=i['length']
+				listitem = xbmcgui.ListItem(name, iconImage=cover, thumbnailImage=cover)
+				listitem.setProperty('IsPlayable', 'true')
+				uri = sys.argv[0]+'?mode=PlayTorrent&id='+id+'&ind='+str(ind)+'&url='+urllib.quote_plus(url)
+				xbmcplugin.addDirectoryItem(handle, uri, listitem)
+				ind+=1
+		except:
+				ind=0
+				name=torrent['info']['name']
+				listitem = xbmcgui.ListItem(name, iconImage=cover, thumbnailImage=cover)
+				listitem.setProperty('IsPlayable', 'true')
+				listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Save_strm&id='+id+'&url='+urllib.quote_plus(url)+'")'),])
+				uri =sys.argv[0]+'?mode=PlayTorrent&id='+id+'&ind='+str(ind)+'&url='+urllib.quote_plus(url)
+				xbmcplugin.addDirectoryItem(handle, uri, listitem)
 
-def Future():
-	AddItem("Самые ожидаемые", "Future")
-	
+def get_item_name(url, ind):
+	torrent_data = GETtorr(url)
+	if torrent_data != None:
+		import bencode
+		torrent = bencode.bdecode(torrent_data)
+		try:
+			L = torrent['info']['files']
+			name=L[ind]['path'][-1]
+		except:
+			name=torrent['info']['name']
+		return name
+	else:
+		return ' '
+
 def check():
 	print "check"
 	SaveDirectory = __settings__.getSetting("SaveDirectory")
@@ -2096,211 +1031,110 @@ def check():
 	for id in L:
 		info=get_info(id)
 		year=info["year"]
-		#info=eval(xt(get_inf_db(id)))
-		name=info["originaltitle"].decode('utf-8').replace("\\","").replace("?","").replace(":","")+" ("+str(year)+")"
-		if os.path.isfile(os.path.join(ru(SaveDirectory),name+".strm"))==False:
-			#get_name(info)
-			#text =info['title']
-			
-			try:rus=info["title"].encode('utf8').replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
-			except: rus=info["title"].replace("a","а").replace(' (сериал)','').replace(' (ТВ)','')
-			try:en=info["originaltitle"].encode('utf8')
-			except: en=info["originaltitle"]
-			if rus == en.replace("a","а"): text = rus
-			else:text = en
-			text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-			
-			print text
-			print rus
-			L2=[]
-			url=''
-			try:#ok
-					import fasttor
-					rtr=fasttor.Tracker()
-					L2=rtr.Search(text, "0")
-					url=fnd(L2, text, year)
-			except: url=''
-			
-			if url=='':#ok
-				try:
-					import rutors
-					rtr=rutors.Tracker()
-					L2=rtr.Search(text, "0")
-					url=fnd(L2, text, year)
-				except: url=''
-			
-			if url=='':#ok
-				#try:
-					import fileek
-					rtr=fileek.Tracker()
-					L2=rtr.Search(text)
-					url=fnd(L2, rus, year)
-				#except: url=''
-			
-			if url=='':#ok
-				try:
-					import torrentom
-					rtr=torrentom.Tracker()
-					L2=rtr.Search(rus, "0")
-					url=fnd(L2, rus, year)
-				except: url=''
-			'''
-#			if url=='':
-#				try:
-#					import tfile
-#					rtr=tfile.Tracker()
-#					L2=rtr.Search(text, '0')
-#					url=fnd(L2, text, year)
-#				except: url=''
-			
-#			if url=='':
-#				try:
-#					import xtreme
-#					rtr=xtreme.Tracker()
-#					L2=rtr.Search(text, '0')
-#					url=fnd(L2, text, year)
-#				except: url=''
-			
-#			if url=='':
-#				try:
-#					import krasfs
-#					tft=krasfs.Tracker()
-#					L2=rtr.Search(text, 4)
-#					url=fnd(L2, text, year)
-#				except: url=''
-			'''
-			
-			if url=='':#ok
-				try:
-					import tokp
-					rtr=tokp.Tracker()
-					L2=rtr.Search(text)
-					url=fnd(L2, text, year)
-				except: url=''
-			print 'url : ' + url
-			if url!='':
-				print 'save'
-				title=info["originaltitle"]
-				cover=info['cover']
-				if __settings__.getSetting("NFO2")=='true': save_film_nfo(info)
-				save_strm({'title':name, 'i': '0', 'tt':title, 't': urllib.quote_plus(url), 'ii':urllib.quote_plus(cover)})
+		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
+		if os.path.isfile(os.path.join(fs_enc(SaveDirectory),fs_enc(name+".strm")))==False:
+			L=Torrents(id, False)
+			for i in L:
+				if fnd(i):
+					if __settings__.getSetting("NFO2")=='true': save_film_nfo(id)
+					save_strm (i['url'], 0, id)
+					break
 
-def fnd(L, text, year):
-	s_year=str(year)
+def alter(id, url=''):
+		SaveDirectory = __settings__.getSetting("SaveDirectory")
+		if SaveDirectory=="":SaveDirectory=LstDir
+		info=get_info(id)
+		year=info["year"]
+		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
+		L=Torrents(id, False)
+		try:W_list=eval(__settings__.getSetting("W_list"))
+		except: W_list=[]
+		for i in L:
+			newurl=i['url'].replace('new-ru.org','').replace('open-tor.org','')
+			oldurl=url.replace('new-ru.org','').replace('open-tor.org','')
+			if fnd(i) and newurl!=oldurl:
+				if id in W_list:
+					if __settings__.getSetting("NFO2")=='true': save_film_nfo(id)
+					save_strm (i['url'], 0, id)
+				return i['url']
+
+def autoplay_off(id):
+		info=get_info(id)
+		year=info["year"]
+		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
+		L=Torrents(id, False)
+		for i in L:
+			if fnd(i): play(i['url'],0,id)
+
+
+def fnd(D):
 	BL=['Трейлер', "Тизер"]
 	
-	qual = __settings__.getSetting("F_Qual")
-	if   qual == "0": WL=[]
-	elif qual == "1": WL=["dvdrip","bdrip","hdrip","720р"]#
-	elif qual == "2": WL=["blu-ray", "hdrip", "bdrip","1080р"]
-	elif qual == "3": WL=["1080р",]
+	WL=[]
+	if __settings__.getSetting("F_Qual1") == 'true': WL.append("dvdrip")
+	if __settings__.getSetting("F_Qual2") == 'true': WL.append("webrip")
+	if __settings__.getSetting("F_Qual3") == 'true': WL.append("web-dl")
+	if __settings__.getSetting("F_Qual4") == 'true': WL.append("bdrip")
+	if __settings__.getSetting("F_Qual5") == 'true': WL.append("hdrip")
+	if __settings__.getSetting("F_Qual6") == 'true': WL.append("tvrip")
+	if __settings__.getSetting("F_Qual7") == 'true': WL.append("hdtv")
+	if __settings__.getSetting("F_Qual8") == 'true': WL.append("blu-ray")
+	if __settings__.getSetting("F_Qual9") == 'true': WL.append("720p")
+	if __settings__.getSetting("F_Qual10")== 'true': WL.append("1080p")
+	if __settings__.getSetting("F_Qual") == '0': WL=[]
+
+	size1 = int(__settings__.getSetting("F_Size1"))
+	size2 = int(__settings__.getSetting("F_Size2"))
+	if size2 == 0: size2 = 999
 	
-	size = __settings__.getSetting("F_Size")
-	if   size == "0": SL=[0, 999]
-	if   size == "1": SL=[0, 1.5]
-	if   size == "2": SL=[1.4, 3]
-	if   size == "3": SL=[2.5, 6]
-	if   size == "4": SL=[5, 10]
-	if   size == "5": SL=[9.9, 999]
-	#SL=[0,15]
-	for itm in L:
-		b=0
-		w1=0
-		z=0
-		Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-		
-		try:Title=Title.encode('utf-8')
-		except: pass
-		print Title
-		
-		for i in BL:
-			if Title.find(i)>0:b+=1
+	b=0
+	q=0
+	z=0
+	Title = D['title']
+	try:Title=Title+' '+D['quality']
+	except:pass
+	
+	try:Title=Title.encode('utf-8')
+	except: Title=xt(Title)
+	
+	for i in BL:
+		if Title.find(i)>0:b+=1
+	
+	if __settings__.getSetting("F_Qual") == "0":
+		q=1
+	else:
 		for i in WL:
-			if Title.lower().find(i)>0:w1+=1
+			if Title.lower().find(i)>0:q+=1
 		
-		if qual == "0": w=1
-		else:           w=w1
-		
-		if 'ГБ' in itm[1] or 'GB' in itm[1]: 
-			szs=itm[1].replace('ГБ','').replace('GB','').replace('|','').strip()
+	if 'ГБ' in xt(D['size']) or 'GB' in xt(D['size']):
+			szs=xt(D['size']).replace('ГБ','').replace('GB','').replace('|','').strip()
 			sz=float(szs)
-			if sz>SL[0] and sz<SL[1]:z=1
-			
-		#elif 'МБ' in itm[1] or 'MB' in itm[1]:
-		#	z=1
-		if b == 0: print 'Черный список ok'
-		if w > 0: print 'Качество ok'
-		if z==1: print 'Размер ok'
-		if (xt(Title).find(text)>=0 or text =="") and b == 0 and w > 0 and z==1 and s_year in Title:
-				print 'Файл найден'
-				#Title = "|"+itm[0]+"|"+itm[1]+"|  "+itm[2]
-				row_url = itm[3]
-				#listitem = xbmcgui.ListItem(Title)
-				purl = sys.argv[0] + '?mode=OpenTorrent'\
-					+ '&url=' + urllib.quote_plus(row_url)\
-					+ '&title=' + itm[2]
-				#xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(L))
-				return row_url
-	return ""
+			if sz>size1 and sz<size2 : z=1
+	else: z=0
+	
+	#print Title
+	#if b <> 0: print 'Попал в Черный список'
+	#if q == 0: print 'Низкое Качество'
+	#if z == 0: print 'Не тот Размер'
+	
+	if b == 0 and q > 0 and z > 0:
+	#	print 'Файл найден'
+		return True
+	else: 
+		return False
 
 
-Category=[]
-CategoryDict={}
-for i in TypeList:
-	Category.append(i[1])
-	CategoryDict[i[1]]=i[0]
 
-Genre=[]
-GenreDict={}
-for i in GenreList:
-	Genre.append(i[1])
-	GenreDict[i[1]]=i[0]
-
-Cantry=[]
-CantryDict={}
-for i in CantryList:
-	Cantry.append(i[1])
-	CantryDict[i[1]]=i[0]
-
-Year=[]
-YearDict={}
-for i in YearList:
-	Year.append(i[1])
-	YearDict[i[1]]=i[0]
-
-Old=[]
-OldDict={}
-for i in OldList:
-	Old.append(i[1])
-	OldDict[i[1]]=i[0]
-
-Sort=[]
-SortDict={}
-for i in SortList:
-	Sort.append(i[1])
-	SortDict[i[1]]=i[0]
-
-Rating=[]
-RatingDict={}
-for i in RatingList:
-	Rating.append(i[1])
-	RatingDict[i[1]]=i[0]
-
-try:    url = eval(urllib.unquote_plus(get_params()["url"]))
-except: url = ""
+try:    mode = urllib.unquote_plus(get_params()["mode"])
+except: mode = None
+try:    url = urllib.unquote_plus(get_params()["url"])
+except: url = None
 try:    info = eval(urllib.unquote_plus(get_params()["info"]))
 except: info = {}
-
-try:    params = eval(urllib.unquote_plus(get_params()["params"]))
-except: params = {}
-
-try: mode = urllib.unquote_plus(get_params()["mode"])
-except: 
-	try:mode = params["mode"]
-	except:mode = None
-
-try:ind = int(params["ind"])
-except:ind = 0
+try:    id = str(get_params()["id"])
+except: id = '0'
+try:    ind = int(get_params()["ind"])
+except: ind = 0
 
 
 if mode == None:
@@ -2311,16 +1145,13 @@ if mode == None:
 	__settings__.setSetting(id="OldList", value="")
 	__settings__.setSetting(id="SortList", value="")
 	__settings__.setSetting(id="RatingList", value="")
-
 	Root()
-	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-	xbmcplugin.endOfDirectory(handle)
-		
+
 if mode == "Search":
 	Search()
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
-		
+
 if mode == "Navigator":
 	Navigator()
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
@@ -2340,11 +1171,8 @@ if mode == "Future":
 	SrcNavi("Future")
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
-	
+
 if mode == "Recomend":
-	#xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-	#xbmcplugin.endOfDirectory(handle)
-	#xbmc.sleep(1000)
 	SrcNavi("Recomend")
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
@@ -2366,16 +1194,15 @@ if mode == "PersonList":
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 
-if mode=="PersonSearch": 
+if mode == "PersonSearch": 
 	PersonSearch()
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 
-if mode=="AddPerson": 
+if mode == "AddPerson": 
 	AddPerson(info)
 
-
-if mode=="RemovePerson": 
+if mode == "RemovePerson": 
 	RemovePerson(info)
 	xbmc.executebuiltin("Container.Refresh()")
 	
@@ -2385,12 +1212,15 @@ if mode == "SrcNavi":
 	xbmcplugin.endOfDirectory(handle)
 
 if mode == "SelCat":
+	import SelectBox
 	SelectBox.run("CatList")
 
 if mode == "SelGenre":
+	import SelectBox
 	SelectBox.run("GenreList")
-	
+
 if mode == "SelCantry":
+	import SelectBox
 	SelectBox.run("CantryList")
 	
 if mode == "SelYear":
@@ -2414,174 +1244,67 @@ if mode == "SelRating":
 	__settings__.setSetting(id="RatingList", value=Rating[r])
 
 if mode == "Torrents":
-	gty=sys.argv[0] + '?mode=Torrents2&params='+ urllib.quote_plus(repr(params))
-	xbmc.executebuiltin("Container.Update("+gty+", "+gty+")")
-	
-if mode == "Torrents2":
-	#info=params["info"]
-	id=params["info"]["id"]
-	info=get_info(id)
-	#info=eval(xt(get_inf_db(id)))
-	try:rus=info["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-	except: rus=info["title"]
-	try:en=info["originaltitle"].encode('utf8')
-	except: en=info["originaltitle"]
-	if rus == en:text = rus.replace("a","а")+" "+str(params["info"]["year"])
-	else:text = info["originaltitle"]+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
-	n=text.find("(")
-	#if n>0: text = text[:n-1]
-	print rus
-	print en
-	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-	rus=rt(rus).replace(' (сериал)','').replace(' (ТВ)','').replace("a","а")
-	en=rt(en).replace(' (сериал)','').replace(' (ТВ)','')#.replace("a","а")
-	
-	if __settings__.getSetting("rutor")=="true":
-		try:
-			ttl=rutor(text, info)
-			if ttl<1: ttl=rutoris(text, info)
-			if ttl<1: rutor(rus, info)
-			if ttl<14: ttl=rutor_id(id, info)
-		except: pass
-	
-#	if __settings__.getSetting("dugtor")=="true":
-#		try:dugtors(rus.replace("a","а"), info)
-#		except: pass
-
-	if __settings__.getSetting("fasttor")=="true":
-		ttl6=0
-		try:ttl6=fasttor(en.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-		except: ttl6=0
-		if ttl6<2:
-			try:fasttor(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-			except: pass
-	
-	if __settings__.getSetting("torrentom")=="true":
-		try:torrentom(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-		except: pass
-	
-	if __settings__.getSetting("tfile")=="true":
-		ttl4=tfile(text, info)
-		try:
-			if ttl4<1:tfile(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-		except: pass
-	
-	if __settings__.getSetting("xtreme")=="true":
-		try:xtreme(text, info)
-		except: pass
-	
-	if __settings__.getSetting("fileek")=="true":
-		try:fileek(text, info)
-		except: pass
-	
-	if __settings__.getSetting("tracker")=="true":
-		try:s2kp(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-		except: pass
-	
-	if __settings__.getSetting("krasfs")=="true":
-		try:ttl=stft(rus.replace(' (сериал)','').replace(' (ТВ)','').replace("a","а"), info)
-		except: pass
-		
+	Torrents(id)
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
-	xbmcplugin.endOfDirectory(handle)
-	xbmc.sleep(300)
-	xbmc.executebuiltin("Container.SetViewMode(51)")
-	
-if mode == "Par_off":
-	id=params["info"]["id"]
-	info=get_info(id)
-	#info=eval(xt(get_inf_db(id)))
-	try:rus=params["info"]["title"].encode('utf8').replace(' (сериал)','').replace(' (ТВ)','')
-	except: rus=params["info"]["title"]
-	try:en=params["info"]["originaltitle"].encode('utf8')
-	except: en=params["info"]["originaltitle"]
-	if rus == en:text = rus.replace("a","а")#+" "+str(params["info"]["year"])
-	else:text = params["info"]["originaltitle"]#+" "+str(params["info"]["year"])#+" "+rus.replace("a","а")
-	n=text.find("(")
-	#if n>0: text = text[:n-1]
-	text=rt(text).replace(' (сериал)','').replace(' (ТВ)','')
-	print text
-
-	#text='Star Wars'
-	#text=u'Xищник'
-	#import rutors
-	#rtr=rutors.Tracker()
-	import fasttor
-	rtr=fasttor.Tracker()
-	try: L=rtr.Search(text, "0")
-	except: L=[]
-	
-	fnd(L,text)
-	
-	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
 	xbmcplugin.endOfDirectory(handle)
 	xbmc.sleep(300)
 	xbmc.executebuiltin("Container.SetViewMode(51)")
 
-if mode == "check":
-	check()
-
-if mode == "W_list":
-	try:L=eval(__settings__.getSetting("W_list"))
-	except: L=[]
-	for id in L:
-		info=get_info(id)
-		#info=eval(xt(get_inf_db(id)))
-		rus=info["title"]
-		AddItem(rus, 'Par', info)
+if mode == "OpenTorrent":
+	OpenTorrent(url, id)
+	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
+
+if mode == "PlayTorrent":
+	play(url, ind, id)
+
+if mode == "play_url2": #совместимость с 1.0
+	url = urllib.unquote_plus(get_params()["torr_url"])
+	play(url, ind, id)
 
 if mode == "Add2List":
-	id=info["id"]
 	try:L=eval(__settings__.getSetting("W_list"))
 	except: L=[]
 	L.append(id)
 	__settings__.setSetting("W_list", repr(L))
-	xbmc.sleep(3000)
-	check()
 
 if mode == "RemItem":
-	id=info["id"]
 	try:L=eval(__settings__.getSetting("W_list"))
 	except: L=[]
 	L.remove(id)
 	__settings__.setSetting("W_list", repr(L))
+	xbmc.executebuiltin("Container.Refresh()")
 
-if mode == "OpenTorrent":
-	url = urllib.unquote_plus(get_params()["url"])
-	try:img=info["cover"]
-	except: img=icon
-	engine = __settings__.getSetting("Engine")
-	#print "engine = "+str(engine)
-	if engine==0 or engine=='0':
-		info['namef']=urllib.unquote_plus(get_params()["title"])
-		play_url(url,img,info)
-	elif engine=="2":
-		t2http_list(url,info)
-	else:
-		DownloadDirectory = __settings__.getSetting("DownloadDirectory")[:-1]#.replace("\\\\","\\")
-		if DownloadDirectory=="":DownloadDirectory=LstDir
-		playTorrent(url, DownloadDirectory)
+if mode == "Wish_list":
+	try:L=eval(__settings__.getSetting("W_list"))
+	except: L=[]
+	for id in L:
+		info=get_info(str(id))
+		rus=info["title"]
+		AddItem(rus, 'Wish', id)
+	xbmcplugin.endOfDirectory(handle)
 
-elif mode == 'alter':
-	alter(urllib.unquote_plus(get_params()["title"])[1:])
+if mode == "Wish":
+	Torrents(id)
+	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
+	xbmcplugin.endOfDirectory(handle)
 
-elif mode == 'play_url2':
-	play_url2(get_params())
+if mode == "PlayTrailer":
+	info=get_info(str(id))
+	cover=info['cover']
+	title=info['title']
+	trailer=get_trailer(id)
+	listitem = xbmcgui.ListItem("trailer", path=trailer,iconImage=cover, thumbnailImage=cover)
+	listitem.setInfo(type = "Video", infoLabels = get_labels(info))
 
-elif mode == 'save_strm':
-	save_strm(get_params())
-		
-elif mode == 'save_all':
-	try:url = urllib.unquote_plus(get_params()["url"])
-	except:url = info['url']
-	save_all(url,"",info)
-		
+	Xplayer=xbmc.Player().play(trailer, listitem)
 
-elif mode == 't2http_play':
-	try:url = urllib.unquote_plus(get_params()["url"])
-	except:url = info['url']
-	tthp.play(url, handle, ind, __settings__.getSetting("DownloadDirectory"))
+if mode == "Save_strm":
+	if __settings__.getSetting("NFO2")=='true': save_film_nfo(id)
+	save_strm (url, 0, id)
 
+if mode == "check":
+	check()
 
 c.close()
