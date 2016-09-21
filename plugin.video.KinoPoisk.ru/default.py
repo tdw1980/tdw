@@ -30,7 +30,7 @@ def fs(s):return s.decode('windows-1251').encode('utf-8')
 def ru(x):return unicode(x,'utf8', 'ignore')
 def xt(x):return xbmc.translatePath(x)
 def rt(x):
-	L=[('&#34;','&'), ('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y'), ('&laquo;','"'), ('&raquo;','"')]
+	L=[('&#133;','…'),('&#34;','&'), ('&#39;','’'), ('&#145;','‘'), ('&#146;','’'), ('&#147;','“'), ('&#148;','”'), ('&#149;','•'), ('&#150;','–'), ('&#151;','—'), ('&#152;','?'), ('&#153;','™'), ('&#154;','s'), ('&#155;','›'), ('&#156;','?'), ('&#157;',''), ('&#158;','z'), ('&#159;','Y'), ('&#160;',''), ('&#161;','?'), ('&#162;','?'), ('&#163;','?'), ('&#164;','¤'), ('&#165;','?'), ('&#166;','¦'), ('&#167;','§'), ('&#168;','?'), ('&#169;','©'), ('&#170;','?'), ('&#171;','«'), ('&#172;','¬'), ('&#173;',''), ('&#174;','®'), ('&#175;','?'), ('&#176;','°'), ('&#177;','±'), ('&#178;','?'), ('&#179;','?'), ('&#180;','?'), ('&#181;','µ'), ('&#182;','¶'), ('&#183;','·'), ('&#184;','?'), ('&#185;','?'), ('&#186;','?'), ('&#187;','»'), ('&#188;','?'), ('&#189;','?'), ('&#190;','?'), ('&#191;','?'), ('&#192;','A'), ('&#193;','A'), ('&#194;','A'), ('&#195;','A'), ('&#196;','A'), ('&#197;','A'), ('&#198;','?'), ('&#199;','C'), ('&#200;','E'), ('&#201;','E'), ('&#202;','E'), ('&#203;','E'), ('&#204;','I'), ('&#205;','I'), ('&#206;','I'), ('&#207;','I'), ('&#208;','?'), ('&#209;','N'), ('&#210;','O'), ('&#211;','O'), ('&#212;','O'), ('&#213;','O'), ('&#214;','O'), ('&#215;','?'), ('&#216;','O'), ('&#217;','U'), ('&#218;','U'), ('&#219;','U'), ('&#220;','U'), ('&#221;','Y'), ('&#222;','?'), ('&#223;','?'), ('&#224;','a'), ('&#225;','a'), ('&#226;','a'), ('&#227;','a'), ('&#228;','a'), ('&#229;','a'), ('&#230;','?'), ('&#231;','c'), ('&#232;','e'), ('&#233;','e'), ('&#234;','e'), ('&#235;','e'), ('&#236;','i'), ('&#237;','i'), ('&#238;','i'), ('&#239;','i'), ('&#240;','?'), ('&#241;','n'), ('&#242;','o'), ('&#243;','o'), ('&#244;','o'), ('&#245;','o'), ('&#246;','o'), ('&#247;','?'), ('&#248;','o'), ('&#249;','u'), ('&#250;','u'), ('&#251;','u'), ('&#252;','u'), ('&#253;','y'), ('&#254;','?'), ('&#255;','y'), ('&laquo;','"'), ('&raquo;','"'), ('&nbsp;',' ')]
 	for i in L:
 		x=x.replace(i[0], i[1])
 	return x
@@ -491,13 +491,15 @@ def AddItem(Title = "", mode = "", id='0', url='', total=100):
 				info={}
 			listitem = xbmcgui.ListItem(Title, iconImage=cover, thumbnailImage=cover)
 			listitem.setInfo(type = "Video", infoLabels = get_labels(info))
+			try: listitem.setArt({ 'poster': cover, 'fanart' : fanart})
+			except: pass
 			listitem.setProperty('fanart_image', fanart)
 			
 			purl = sys.argv[0] + '?mode='+mode+'&id='+id
 			if url !="": purl = purl +'&url='+urllib.quote_plus(url)
 			
 			if mode=="Torrents":
-				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Трейлер[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=PlayTrailer&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&id='+id+'")')])
+				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Трейлер[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=PlayTrailer&id='+id+'")'), ('[B]Рецензии[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Review&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&id='+id+'")')])
 			if mode=="PlayTorrent":
 				listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_strm&id='+id+'&url='+urllib.quote_plus(url)+'")'),])
 			if mode=="OpenTorrent":
@@ -667,7 +669,7 @@ def SrcNavi(md="Navigator"):
 	L2=[]
 	for i in L:
 		if i not in L2 and i<>"": L2.append(i)
-	for i in L2[:-1]:
+	for i in L2:#[:-1]
 		id = i[len(ss):]
 		info = get_info(id)
 		rating_kp = info['rating']
@@ -888,7 +890,6 @@ def Root():
 	AddItem("Персоны", "PersonList")
 	if len(L)>0: AddItem("Буду смотреть", "Wish_list")
 	#AddItem("check", "check")
-	
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.endOfDirectory(handle)
 
@@ -1066,6 +1067,61 @@ def autoplay_off(id):
 		for i in L:
 			if fnd(i): play(i['url'],0,id)
 
+def review(id):
+	url='https://m.kinopoisk.ru/reviews/'+id
+	http=GET(url)
+	ss='<span class="bold">'
+	es='&raquo;</a></p>'
+	L=mfindal(http,ss,es)
+	#debug(L[0])
+	Lt=[]
+	Lu=[]
+	for i in L:
+		if "hand_good.gif" in i: rating = FC('+', 'FF33FF33')
+		elif "hand_bad.gif" in i: rating = FC(' - ', 'FFFF3333')
+		else: rating = FC(' - ', '01003333')
+		ss='<i>'
+		es='&nbsp;'
+		if rating == FC(' - ', '01003333'): es='</i></span>'
+		date=mfindal(i,ss,es)[0][3:]
+		
+		ss='<p class="head">'
+		es='</p>'
+		head=mfindal(i,ss,es)[0][len(ss):]
+		
+		ss='review/'
+		es='/">'
+		url='https://m.kinopoisk.ru/review/'+mfindal(i,ss,es)[0][len(ss):]
+		
+		Lt.append('['+rating+'] '+ date+" - "+rt(fs(head)))
+		Lu.append(url)
+	sel = xbmcgui.Dialog()
+	r = sel.select("Рецензии:", Lt)
+	if r >=0:
+		http2=GET(Lu[r])
+		#debug (http2)
+		n=http2.find('</p><br>')
+		k=http2.find('<div id="bottom">')
+		text=http2[n:k].replace('<b>','').replace('</b>','').replace('<i>','').replace('</i>','').replace('<p>','').replace('</p>','').replace('<br>','').replace('<br />','').replace('</div>','')
+		text=rt(fs(text))
+		heading=Lt[r]
+		showText(heading, text)
+
+def showText(heading, text):
+	id = 10147
+	xbmc.executebuiltin('ActivateWindow(%d)' % id)
+	xbmc.sleep(500)
+	win = xbmcgui.Window(id)
+	retry = 50
+	while (retry > 0):
+		try:
+			xbmc.sleep(10)
+			retry -= 1
+			win.getControl(1).setLabel(heading)
+			win.getControl(5).setText(text)
+			return
+		except:
+			pass
 
 def fnd(D):
 	BL=['Трейлер', "Тизер"]
@@ -1291,14 +1347,15 @@ if mode == "Wish":
 	xbmcplugin.endOfDirectory(handle)
 
 if mode == "PlayTrailer":
-	info=get_info(str(id))
-	cover=info['cover']
-	title=info['title']
 	trailer=get_trailer(id)
-	listitem = xbmcgui.ListItem("trailer", path=trailer,iconImage=cover, thumbnailImage=cover)
-	listitem.setInfo(type = "Video", infoLabels = get_labels(info))
-
-	Xplayer=xbmc.Player().play(trailer, listitem)
+	if trailer!='':
+		info=get_info(str(id))
+		cover=info['cover']
+		title=info['title']
+		listitem = xbmcgui.ListItem("trailer", path=trailer,iconImage=cover, thumbnailImage=cover)
+		listitem.setInfo(type = "Video", infoLabels = get_labels(info))
+		xbmc.Player().play(trailer, listitem)
+		xbmcplugin.endOfDirectory(handle, False, False)
 
 if mode == "Save_strm":
 	if __settings__.getSetting("NFO2")=='true': save_film_nfo(id)
@@ -1306,5 +1363,8 @@ if mode == "Save_strm":
 
 if mode == "check":
 	check()
+
+if mode == "Review":
+	review(id)
 
 c.close()
