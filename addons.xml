@@ -225,7 +225,7 @@
 </addon>
 
 <addon id="plugin.video.torrent.checker"
-version="0.5.7"
+version="0.6.0"
 name="Torrent Checker"
 provider-name="TDW1980">
 <requires>
