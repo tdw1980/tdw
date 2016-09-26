@@ -9,10 +9,10 @@
     <import addon="script.module.torrent.ts"/>
     <import addon="script.module.torrent2http"/>
   </requires>
-  <extension point="xbmc.python.module" library="lib"/>
   <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
   </extension>
+  <extension point="xbmc.python.module" library="lib"/>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">Torrent Checker</summary>
