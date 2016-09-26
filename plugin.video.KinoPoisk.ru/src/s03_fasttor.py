@@ -245,7 +245,7 @@ def OpenList(url, dict,title):
 
 
 
-		Sids = Li[4]
+		Sids = Li[4].replace("▲ ", "").strip()
 		Lich = Li[5]
 		SL=Sids+Lich
 		#if len(SL)==9:  SL=" "+Sids+"       "+Lich+" "

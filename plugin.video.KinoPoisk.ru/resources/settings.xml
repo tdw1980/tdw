@@ -6,11 +6,12 @@
         <setting id="label"         type="folder" label="Сериалы сохраняются через torrent checker! Настройки там." default=""/>
     </category>
     <category label="Предпочтения">
-        <setting id="CutSize"  type="bool"  label="Отбрасывать раздачи одинакового размера"  default="false"/>
-        <setting id="SortLst" type="bool"  label="Сортировать раздачи по предпочтениям"  default="true"/>
-        <setting id="F_Size1"  type="enum"  label="Размер мин."  default="0"     values="0|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ"/>
-        <setting id="F_Size2"  type="enum"  label="Размер макс." default="0" values="Любой|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ|10 ГБ|11 ГБ|12 ГБ"/>
-        <setting id="F_Qual"   type="enum"  label="Качество"    default="0" values="Любое|Выбор"/>
+        <setting id="Autoplay"  type="bool"  label="Автозапуск фильмов по предпочтениям"  default="false"/>
+        <setting id="CutSize"   type="bool"  label="Отбрасывать раздачи одинакового размера"  default="false"/>
+        <setting id="SortLst"   type="bool"  label="Сортировать раздачи по предпочтениям"  default="true"/>
+        <setting id="F_Size1"   type="enum"  label="Размер мин.:"  default="0"     values="0|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ"/>
+        <setting id="F_Size2"  type="enum"  label="Размер макс.:" default="0" values="Любой|1 ГБ|2 ГБ|3 ГБ|4 ГБ|5 ГБ|6 ГБ|7 ГБ|8 ГБ|9 ГБ|10 ГБ|11 ГБ|12 ГБ|13 ГБ|14 ГБ|15 ГБ|16 ГБ|17 ГБ|18 ГБ|19 ГБ|20 ГБ"/>
+        <setting id="F_Qual"   type="enum"  label="Качество:"    default="0" values="Любое|Выбор"/>
         <setting id="F_Qual1"  type="bool"  label="DVDrip"   visible="eq(-1,1)"  default="false"/>
         <setting id="F_Qual2"  type="bool"  label="WEBRip"   visible="eq(-2,1)"  default="false"/>
         <setting id="F_Qual3"  type="bool"  label="WEB-DL"   visible="eq(-3,1)"  default="false"/>

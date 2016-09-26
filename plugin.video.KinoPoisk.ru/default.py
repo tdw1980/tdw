@@ -53,6 +53,11 @@ def mid(s, n):
 	except: pass
 	return s
 
+def mids(s, n):
+	l="                                              "
+	s=l[:n-len(s)]+s+l[:n-len(s)]
+	return s
+
 def FC(s, color="FFFFFF00"):
 	s="[COLOR "+color+"]"+s+"[/COLOR]"
 	return s
@@ -499,7 +504,7 @@ def AddItem(Title = "", mode = "", id='0', url='', total=100):
 			if url !="": purl = purl +'&url='+urllib.quote_plus(url)
 			
 			if mode=="Torrents":
-				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Трейлер[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=PlayTrailer&id='+id+'")'), ('[B]Рецензии[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Review&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&id='+id+'")')])
+				listitem.addContextMenuItems([('[B]Hайти похожие[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Recomend&id='+id+'")'), ('[B]Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Person&id='+id+'")'), ('[B]Трейлер[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=PlayTrailer&id='+id+'")'), ('[B]Рецензии[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Review&id='+id+'")'), ('[B]Буду смотреть[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Add2List&id='+id+'")'), ('[B]Список раздач[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=Torrents2&id='+id+'")')])
 			if mode=="PlayTorrent":
 				listitem.addContextMenuItems([('[B]Сохранить фильм(STRM)[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=save_strm&id='+id+'&url='+urllib.quote_plus(url)+'")'),])
 			if mode=="OpenTorrent":
@@ -512,12 +517,15 @@ def AddItem(Title = "", mode = "", id='0', url='', total=100):
 				listitem.addContextMenuItems([('[B]Добавить в Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=AddPerson&info='+urllib.quote_plus(repr(info))+'")'), ('[B]Удалить из Персоны[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemovePerson&info='+urllib.quote_plus(repr(info))+'")')])
 			if mode=="Wish":
 				listitem.addContextMenuItems([('[B]Удалить задание[/B]', 'Container.Update("plugin://plugin.video.KinoPoisk.ru/?mode=RemItem&&id='+id+'")'),])
-			#if __settings__.getSetting("Autoplay") == 'true' and mode=="Torrents":
-			#	listitem.setProperty('IsPlayable', 'true')
-			#	purl = sys.argv[0] + '?mode=Autoplay&id='+id
-			#	xbmcplugin.addDirectoryItem(handle, purl, listitem, False, total)
-			#else:
-			xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
+			
+			try:type=info["type"]
+			except:type=''
+			if __settings__.getSetting("Autoplay") == 'true' and mode=="Torrents" and type=="":
+				listitem.setProperty('IsPlayable', 'true')
+				purl = sys.argv[0] + '?mode=Autoplay&id='+id
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, False, total)
+			else:
+				xbmcplugin.addDirectoryItem(handle, purl, listitem, True, total)
 
 def AddPerson(info):
 		try:PL=eval(__settings__.getSetting("PersonLst"))
@@ -948,7 +956,6 @@ def Torrents(id, additm=True):
 	Lz=[]
 	for i in ld:
 		if i[-3:]=='.py': 
-			#Lserv.append(i[:-3])
 			try:
 				exec ("import "+i[:-3]+"; skp="+i[:-3]+".Tracker()")
 				L = skp.Search(info)
@@ -970,17 +977,51 @@ def Torrents(id, additm=True):
 					size = size.replace('GB','').replace('MB','').strip()
 					if size not in Lz or __settings__.getSetting("CutSize") == 'false':
 						Lz.append(size)
-						title=xt(mid(D['size'], 10))+" | "+xt(D['title'])
-						
-						if additm: 
+						Z=D['size']
+						if 'GB' in Z and Z.find('.') == 2: Z=Z[:3]+Z[4:]
+						title=xt(mid(Z, 10))+" | "+xt(mids(D['sids'], 6))+" | "+xt(D['title'])
+						title=get_label(xt(D['title']))+" "+title
+						if additm:
 							if __settings__.getSetting("SortLst") == 'true' and info['type']=='':
 								pr=fnd(D)
+								#ratio=str(get_rang(D))+" "
 								if pr: title=FC(title, 'FEFFFFFF')
-								else:  title=FC(title, 'FF777777')
+								else:  title=FC(title.replace("[COLOR F", "[COLOR 7"), 'FF777777')
 							AddItem(title, "OpenTorrent", id, url)
 						L2.append(D)
 				#print D
 	return L2
+def get_label(text):
+	text=lower(text)#.lower()
+	#print text
+	if 'трейлер'  in text: return FC('[ Трейл.]',    'FF999999')
+	if ' кпк'     in text: return FC('[   КПК  ]',   'FFF8888F')
+	if 'telesyn'  in text: return FC('[    TS    ]', 'FFFF2222')
+	if 'telecin'  in text: return FC('[    TS    ]', 'FFFF2222')
+	if 'camrip'   in text: return FC('[    TS    ]', 'FFFF2222')
+	if ' ts'      in text: return FC('[    TS    ]', 'FFFF2222')
+	if 'dvdscr'   in text: return FC('[    Scr   ]', 'FFFF2222')
+	if ' 3d'      in text: return FC('[    3D    ]', 'FC45FF45')
+	if '720'      in text: return FC('[  720p  ]',   'FBFFFF55')
+	if '1080'     in text: return FC('[ 1080p ]',    'FAFF9535')
+	if 'blu-ray'  in text: return FC('[  BRay  ]',   'FF5555FF')
+	if 'bdremux'  in text: return FC('[    BD    ]', 'FF5555FF')
+	if ' 4k'      in text: return FC('[    4K    ]', 'FF5555FF')
+	if 'bdrip'    in text: return FC('[ BDRip ]',    'FE98FF98')
+	if 'drip'     in text: return FC('[ BDRip ]',    'FE98FF98')
+	if 'hdrip'    in text: return FC('[ HDRip ]',    'FE98FF98')
+	if 'webrip'   in text: return FC('[  WEB   ]',   'FEFF88FF')
+	if 'WEB'      in text: return FC('[  WEB   ]',   'FEFF88FF')
+	if 'web-dl'   in text: return FC('[  WEB   ]',   'FEFF88FF')
+	if 'hdtv'     in text: return FC('[ HDTV ]',     'FEFFFF88')
+	if 'tvrip'    in text: return FC('[    TV    ]', 'FEFFFF88')
+	if 'dvdrip'   in text: return FC('[DVDRip]',     'FE88FFFF')
+	if 'dvd5'     in text: return FC('[  DVD   ]',   'FE88FFFF')
+	if 'xdvd'     in text: return FC('[  DVD   ]',   'FE88FFFF')
+	if 'dvd-5'    in text: return FC('[  DVD   ]',   'FE88FFFF')
+	if 'dvd-9'    in text: return FC('[  DVD   ]',   'FE88FFFF')
+	if 'dvd9'     in text: return FC('[  DVD   ]',   'FE88FFFF')
+	return FC('[   ????  ]', 'FFFFFFFF')
 
 def OpenTorrent(url, id):
 	torrent_data = GETtorr(url)
@@ -1035,11 +1076,19 @@ def check():
 		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
 		if os.path.isfile(os.path.join(fs_enc(SaveDirectory),fs_enc(name+".strm")))==False:
 			L=Torrents(id, False)
+			url=''
+			rang=0
 			for i in L:
 				if fnd(i):
+					rang_i=get_rang(i)
+					if rang_i>rang:
+						rang=rang_i
+						url=i['url']
+			
+			if url != "":
 					if __settings__.getSetting("NFO2")=='true': save_film_nfo(id)
 					save_strm (i['url'], 0, id)
-					break
+
 
 def alter(id, url=''):
 		SaveDirectory = __settings__.getSetting("SaveDirectory")
@@ -1059,13 +1108,17 @@ def alter(id, url=''):
 					save_strm (i['url'], 0, id)
 				return i['url']
 
-def autoplay_off(id):
-		info=get_info(id)
-		year=info["year"]
-		name = info['originaltitle'].replace("/"," ").replace("\\"," ").replace("?","").replace(":","").replace('"',"").replace('*',"").replace('|',"")+" ("+str(info['year'])+")"
+def autoplay(id):
 		L=Torrents(id, False)
+		url=''
 		for i in L:
-			if fnd(i): play(i['url'],0,id)
+			if fnd(i): 
+				url=i['url']
+				break
+		if url !='': play(url,0,id)
+		else: 
+			if len(L)== 0: showMessage("Кинопоиск", "Фильм не найден")
+			else: showMessage("Кинопоиск", "Нет нужного качества")
 
 def review(id):
 	url='https://m.kinopoisk.ru/reviews/'+id
@@ -1125,7 +1178,7 @@ def showText(heading, text):
 
 def fnd(D):
 	BL=['Трейлер', "Тизер"]
-	
+	if __settings__.getSetting("F_Qual") != "0":BL.extend([' TS','TeleSyn','TeleCin','TELECIN',' CAM',' CamRip','screen','Screen'])
 	WL=[]
 	if __settings__.getSetting("F_Qual1") == 'true': WL.append("dvdrip")
 	if __settings__.getSetting("F_Qual2") == 'true': WL.append("webrip")
@@ -1179,6 +1232,59 @@ def fnd(D):
 	else: 
 		return False
 
+def get_rang(D):
+	Title = D['title']
+	try:Title=Title+' '+D['quality']
+	except:pass
+	try:Title=Title.encode('utf-8')
+	except: Title=xt(Title)
+	Title=Title.lower()
+	ratio=0
+	WL=[]
+	if __settings__.getSetting("F_Qual1") == 'true' and "dvdrip"  in Title:   ratio+=40
+	if __settings__.getSetting("F_Qual2") == 'true' and "webrip"  in Title:   ratio+=30
+	if __settings__.getSetting("F_Qual3") == 'true' and "web-dl"  in Title:   ratio+=30
+	if __settings__.getSetting("F_Qual4") == 'true' and "bdrip"   in Title:   ratio+=80
+	if __settings__.getSetting("F_Qual5") == 'true' and "hdrip"   in Title:   ratio+=80
+	if __settings__.getSetting("F_Qual6") == 'true' and "tvrip"   in Title:   ratio+=20
+	if __settings__.getSetting("F_Qual7") == 'true' and "hdtv"    in Title:   ratio+=70
+	if __settings__.getSetting("F_Qual8") == 'true' and "blu-ray" in Title:   ratio+=20
+	
+	if __settings__.getSetting("F_Qual9") == 'true' and '720p'    in Title:   ratio+=1000
+	if __settings__.getSetting("F_Qual10")== 'true' and "1080p"   in Title:   ratio+=2000
+	
+	size1 = int(__settings__.getSetting("F_Size1"))
+	size2 = int(__settings__.getSetting("F_Size2"))
+	if size2 == 0: size2 = 10
+	size=(size2-size1)/2+size1
+	
+	if 'ГБ' in xt(D['size']) or 'GB' in xt(D['size']):
+			szs=xt(D['size']).replace('ГБ','').replace('GB','').replace('|','').strip()
+			sz=float(szs)
+			print size
+			print sz
+			print abs(sz-size)
+			print '----'
+			if   abs(sz-size)<1 : ratio+=900
+			elif abs(sz-size)<2 : ratio+=800
+			elif abs(sz-size)<3 : ratio+=700
+			elif abs(sz-size)<4 : ratio+=600
+			elif abs(sz-size)<5 : ratio+=500
+			elif abs(sz-size)<6 : ratio+=400
+			elif abs(sz-size)<7 : ratio+=300
+			elif abs(sz-size)<8 : ratio+=200
+			elif abs(sz-size)<9 : ratio+=100
+	
+	sids=D['sids']
+	if len(sids)==1: ratio+=11
+	if len(sids)==2: ratio+=44
+	if len(sids)==3: ratio+=66
+	if len(sids)==4: ratio+=88
+	if len(sids)==5: ratio+=99
+	if sids =='0': ratio-=500
+	if sids =='1': ratio-=100
+	if sids =='2': ratio-=50
+	return ratio
 
 
 try:    mode = urllib.unquote_plus(get_params()["mode"])
@@ -1299,7 +1405,7 @@ if mode == "SelRating":
 	r = sel.select("Десятилетие:", Rating)
 	__settings__.setSetting(id="RatingList", value=Rating[r])
 
-if mode == "Torrents":
+if mode == "Torrents" or mode == "Torrents2":
 	Torrents(id)
 	xbmcplugin.setPluginCategory(handle, PLUGIN_NAME)
 	xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
@@ -1366,5 +1472,8 @@ if mode == "check":
 
 if mode == "Review":
 	review(id)
+
+if mode == "Autoplay":
+	autoplay(id)
 
 c.close()

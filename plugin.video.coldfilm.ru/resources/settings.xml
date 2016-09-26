@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<settings>
-    <setting id="Qual" type="enum" label="Качество" default="1" values="Скрыть SD|Любое"/>
-    <setting id="Engine" type="enum" label="Engine" default="0" values="ACE engine|T2Http|YATP"/>
-    <setting id="DownloadDirectory" type="folder" label="Кэш T2Http" default=""/>
-    <setting_off id="SaveDirectory" type="folder" label="Путь сохранения STRM" default=""/>
-</settings>
