@@ -1015,6 +1015,8 @@ def get_label(text):
 	if 'web-dl'   in text: return FC('[  WEB   ]',   'FEFF88FF')
 	if 'hdtv'     in text: return FC('[ HDTV ]',     'FEFFFF88')
 	if 'tvrip'    in text: return FC('[    TV    ]', 'FEFFFF88')
+	if 'satrip'   in text: return FC('[    TV    ]', 'FEFFFF88')
+	if 'dvb '     in text: return FC('[    TV    ]', 'FEFFFF88')
 	if 'dvdrip'   in text: return FC('[DVDRip]',     'FE88FFFF')
 	if 'dvd5'     in text: return FC('[  DVD   ]',   'FE88FFFF')
 	if 'xdvd'     in text: return FC('[  DVD   ]',   'FE88FFFF')
