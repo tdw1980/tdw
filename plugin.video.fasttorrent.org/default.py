@@ -33,6 +33,20 @@ from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 import socket
 socket.setdefaulttimeout(50)
 
+def mid2(s, n):
+	try:s=s.decode('utf-8')
+	except: pass
+	try:s=s.decode('windows-1251')
+	except: pass
+	s=s.center(n)
+	try:s=s.encode('utf-8')
+	except: pass
+	return s
+	
+def mid(s, n):
+	l="                                              "
+	s="  "+s+l[:n-len(s)]#l[:n-len(s)]+
+	return s
 
 def stft(text):
 	import krasfs
@@ -203,7 +217,7 @@ def rutor(text, info={}):
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(Title)\
 						+ '&info=' + urllib.quote_plus(repr(info))
-					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),('[B]Отслеживать сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=add&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+'")')])
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 				else:
 					print "YATP"
@@ -246,7 +260,7 @@ def rutoris(text, info={}):
 						+ '&url=' + urllib.quote_plus(row_url)\
 						+ '&title=' + urllib.quote_plus(Title)\
 						+ '&info=' + urllib.quote_plus(repr(info))
-					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),])
+					listitem.addContextMenuItems([('[B]Сохранить сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=save_episodes_api&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+ '&info=' + urllib.quote_plus(repr(dict))+'")'),('[B]Отслеживать сериал[/B]', 'Container.Update("plugin://plugin.video.torrent.checker/?mode=add&url='+urllib.quote_plus(row_url)+'&name='+urllib.quote_plus(info['title'])+'")')])
 					xbmcplugin.addDirectoryItem(handle, purl, listitem, True, len(RL))
 				else:
 					print "YATP"
@@ -2732,12 +2746,58 @@ def format2(L):
 
 
 def gettorlist_n(http):
-	pass
-	
-	
-	
+	http=http.replace(chr(13)+chr(10),chr(10))
+	http=http.replace(chr(10)+chr(13),chr(10))
+	http=http.replace(chr(10),"")
+	http=http.replace("\t","")
+	http=http.replace("&nbsp;"," ")
+	L3=[]
+	ss="<div class='c1'>"
+	es="video_votes="
+	L=mfindal(http, ss, es)
+	for i in L:
+		i=i.replace("</div>","</div>\n")
+		L2=i.splitlines()
+		qa=""
+		sez =''
+		lng1 =''
+		lng2 =''
+		sz  ='0'
+		dt  = '0'
+		dl  = '0'
+		tor = ''
+		sl  = '--/--'
+		for j in L2:
+			if "qa-icon"    in j: qa  = j[j.find("title='")+7:j.find(" :: ")]
+			if "class='c9'" in j: sez = j[j.find("'>")+2:j.find("</div>")].replace('</b>','').replace('<b>','')+" / "
+			if "class='c10" in j: lng1 =j[j.find("<b>")+3:j.find("</b>")]
+			if "class='c10" in j: lng2 =j[j.find('blank">')+7:j.find("</a>")]
+			if "class='c3'" in j: sz  = j[j.find("'>")+2:j.find("</div>")]
+			if "class='c4'" in j: dt  = j[j.find("'>")+2:j.find("</div>")]
+			if "class='c5'" in j: dl  = j[j.find("'>")+2:j.find("</div>")]
+			if "class='c7'" in j: tor = j[j.find("'>")+2:j.find('" class=')]
+			if "class='c6'" in j: sl  = j[j.find("'>")+2:j.find("</div>")]
+			if "class='c2" in j: lng1 =j[j.find("<b>")+3:j.find("</b>")]
+			if "class='c2" in j and 'blank">' in j : lng2 =j[j.find('blank">')+7:j.find("</a>")]
+		if '--/--' in sl:
+			sid= '  --  '
+			lich= '  --  '
+		else:
+			try:
+				sid_lich=mfindal(sl, "'>",'</font')
+				sid=sid_lich[0][2:]
+				lich=sid_lich[1][2:]
+			except:
+				sid= '--'
+				lich= '--'
+		if 'Субтитры' in lng1: 
+			lng1 = '- - - - - - -   Субтитры   - - - - - - -'
+			lng2 = ''
+		if sz !='0': L3.append([sez+lng1+" "+lng2,sz,dt,dl,sid,lich,tor,qa])
+	return L3
+
 def gettorlist(str):
-	#gettorlist_n(str)
+	return gettorlist_n(str)
 	str=str.replace(chr(13)+chr(10),chr(10))
 	str=str.replace(chr(10)+chr(13),chr(10))
 	str=str.replace(chr(10),"")
@@ -2814,32 +2874,14 @@ def normlen(st, max):
 		
 def OpenList(url, name, dict,title):
 	hp = GET('http://www.fast-torrent.ru'+url.replace(".html", "/torrents.html"), httpSiteUrl, None)
-	#print url
+	print url
 	L=gettorlist(hp)
-	try:#------------------- ищем ссылку online----------------
-		
-		ss='http://www.tvcok.ru/film'
-		es='">Смотреть онлайн'
-		L2=mfindal(hp, ss, es)
-		#print L2
-		url3=L2[0]
-		#print("onl: "+url3)
-		Title="Online VK"
-		row_url2=online(url3)
-		#print row_url
-		cover=""
-		listitem = xbmcgui.ListItem("Online VK", thumbnailImage=cover, iconImage=cover )
-		purl = sys.argv[0] + '?mode=Online'\
-			+ '&url=' + urllib.quote_plus(row_url2)\
-			+ '&title=' + urllib.quote_plus(Title)
-		xbmcplugin.addDirectoryItem(handle, purl, listitem, True)
-	except: pass
-		
+	
 	if 1==1: # Шапка таблицы
 		
 		Qual="Качество"
 		Size="  Размер  "
-		Lang="              Перевод              "
+		Lang="                           Перевод                              "
 		SL="  Разд. / Кач.  "
 		Down=" Скачан "
 		Data="Дата релиза"
@@ -2851,8 +2893,6 @@ def OpenList(url, name, dict,title):
 		elif n==3: row_name = chr(1)+"[COLOR FFFFFF00]"+Lang+"|"+Qual+"|"+Size+"|"+SL+"|"+Down+"| "+Data+"[/COLOR]"
 		elif n==4: row_name = chr(1)+"[COLOR FFFFFF00]"+SL+  "|"+Qual+"|"+Size+"|"+Lang+"|"+Down+"| "+Data+"[/COLOR]"
 		elif n==0: row_name = chr(1)+"[COLOR FFFFFF00]"+Down+"|"+Qual+"|"+Size+"|"+Lang+"|"+SL+"| "+Data+"[/COLOR]"
-
-
 		
 		cover=""
 		listitem = xbmcgui.ListItem(ru(row_name), thumbnailImage=cover, iconImage=cover )
@@ -2894,7 +2934,8 @@ def OpenList(url, name, dict,title):
 		Lang=Lang.replace('закадровый',"закадр.")
 		Lang=Lang.replace('полное',"полн.")
 		nl=str(len(Lang))
-		Lang=Lang[:40]
+		#Lang=Lang[:80]
+		Lang = mid (Lang, 68)[:68]
 		if len(Lang)==3:    Lang="                   "+Lang+"                   "
 		#elif len(Lang)==4:  Lang="                  "+Lang+"                   "
 		#elif len(Lang)==5:  Lang="                  "+Lang+"                  "
@@ -2985,7 +3026,7 @@ def OpenList(url, name, dict,title):
 		#Qual=str(len(Li[8].strip()))+Qual
 		#row_name = Qual+"|"+Size+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
 		if Title=="": row_name = Qual+"|"+Size+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
-		else: row_name = Qual+"|"+Size+"|"+Title+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
+		else:         row_name = Qual+"|"+Size+"|"+Title+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
 			
 		if n==1: row_name =   Qual+"|"+Size+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
 		elif n==2: row_name = Size+"|"+Qual+"|"+Lang+"|"+SL+"|"+Down+"| "+Data
