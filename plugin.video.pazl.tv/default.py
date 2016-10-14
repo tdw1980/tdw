@@ -929,18 +929,24 @@ def play_archive(urls, name ,cover, ref=True):
 		xbmcplugin.endOfDirectory(handle)
 
 
+
+Lmrk=[]
+for i in range (0,100):
+		Lmrk.append(str(i))
+Lmrk.reverse()
+
 def unmark(nm):
-	for i in range (0,20):
+	for i in Lmrk:
 		nm=nm.replace(" #"+str(i),"")
 	return nm
 
 def uni_mark(nm):
-	for i in range (0,20):
+	for i in Lmrk:
 		nm=lower(nm.replace(" #"+str(i),""))
 	return nm
 
 def colormark(nm):
-	for i in range (0,20):
+	for i in Lmrk:
 		nm=nm.replace(" #"+str(i),"[COLOR 40FFFFFF] #"+str(i)+"[/COLOR]")
 	return nm
 
@@ -1993,7 +1999,9 @@ def start_linux():
                 subprocess.Popen('acestreamengine-client-console')
             except: 
                 try:
-                    xbmc.executebuiltin('XBMC.StartAndroidActivity("org.acestream.engine")')
+                    xbmc.executebuiltin('XBMC.StartAndroidActivity("org.acestream.media")')
+                    xbmc.sleep(2000)
+                    xbmc.executebuiltin('XBMC.StartAndroidActivity("org.xbmc.kodi")')
                 except:
                     return False
         return True
