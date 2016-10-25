@@ -688,6 +688,10 @@ def SrcNavi(md="Navigator"):
 		if info['type'] !="": type = " ("+info['type']+")"
 		else: type = ''
 		
+		if md=="Future":
+			try:rkp=info['premiered']
+			except: rkp= "__-__-____"
+		
 		try: AddItem("[ "+rkp+" ] "+nru+type, "Torrents", id, total=len(L2)-2)
 		except: pass
 
@@ -831,7 +835,22 @@ def get_info(ID):
 				e='.jpg"/></div>'
 				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
 				except:fanart=""
-				
+				# ---------------- премьера  ------
+				s='):</b> '
+				e=' ('
+				nc=fs(Info).find(s)
+				if nc>0:
+					tmp=fs(Info)[nc : nc+90]
+					if e not in tmp: e='<br>'
+					nc2=tmp.find(e)
+					try:
+						premiered=mont2num(tmp[len(s):nc2])
+						if premiered[1]=="-": premiered="0"+premiered
+					except: 
+						premiered="__-__-____"
+				else:
+						premiered="__-__-____"
+				#--------------
 				try:
 					F1=mfindal(Info, s, e)
 					fanarts=[]
@@ -872,6 +891,7 @@ def get_info(ID):
 						"fanarts":fanarts,
 						"plot":fs(plot),
 						"type":type,
+						"premiered":premiered,
 						"id":ID
 						}
 				if rating_kp>0: rkp=str(rating_kp)[:3]
@@ -885,6 +905,13 @@ def get_info(ID):
 					print "ERR: " + ID
 					#print repr(info)
 				return info
+
+def mont2num(dt):
+	L1=[' января ',' февраля ',' марта ',' апреля ',' мая ',' июня ',' июля ',' августа ',' сентября ',' октября ',' ноября ',' декабря ']
+	L2=['-01-','-02-','-03-','-04-','-05-','-06-','-07-','-08-','-09-','-10-','-11-','-12-']
+	for i in range (0,12):
+		dt=dt.replace(L1[i], L2[i])
+	return dt
 
 #==============  Menu  ====================
 def Root():
@@ -1026,6 +1053,7 @@ def get_label(text):
 	return FC('[   ????  ]', 'FFFFFFFF')
 
 def OpenTorrent(url, id):
+	#print url
 	torrent_data = GETtorr(url)
 	if torrent_data != None:
 		import bencode
@@ -1035,7 +1063,7 @@ def OpenTorrent(url, id):
 			L = torrent['info']['files']
 			ind=0
 			for i in L:
-				name=i['path'][-1]
+				name=ru(i['path'][-1])
 				#size=i['length']
 				listitem = xbmcgui.ListItem(name, iconImage=cover, thumbnailImage=cover)
 				listitem.setProperty('IsPlayable', 'true')
@@ -1263,10 +1291,10 @@ def get_rang(D):
 	if 'ГБ' in xt(D['size']) or 'GB' in xt(D['size']):
 			szs=xt(D['size']).replace('ГБ','').replace('GB','').replace('|','').strip()
 			sz=float(szs)
-			print size
-			print sz
-			print abs(sz-size)
-			print '----'
+			#print size
+			#print sz
+			#print abs(sz-size)
+			#print '----'
 			if   abs(sz-size)<1 : ratio+=900
 			elif abs(sz-size)<2 : ratio+=800
 			elif abs(sz-size)<3 : ratio+=700
