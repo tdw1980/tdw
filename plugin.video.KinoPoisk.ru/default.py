@@ -689,8 +689,8 @@ def SrcNavi(md="Navigator"):
 		else: type = ''
 		
 		if md=="Future":
-			try:rkp=info['premiered']
-			except: rkp= "__-__-____"
+			try:rkp=info['premiered'][:-5]
+			except: rkp= " __.__ "
 		
 		try: AddItem("[ "+rkp+" ] "+nru+type, "Torrents", id, total=len(L2)-2)
 		except: pass
@@ -726,7 +726,7 @@ def get_info(ID):
 				e='</b>'
 				nru=mfindal(nbl, s, e)[0][len(s):]
 				
-				# ---------------- en year time -------------------
+				# ------------- en year time ------------
 				s='<span>'
 				e='</span>'
 				nen=mfindal(nbl, s, e)[0][len(s):]
@@ -748,6 +748,28 @@ def get_info(ID):
 				if n2>1: nen=nen[:n2-2]
 				else: nen=nru
 				
+				# --------------- rus eng ----------
+				rus = fs(nru)
+				eng = fs(nen).replace(' (сериал)', '').replace(' (мини-сериал)', '').replace(' (ТВ)', '').replace(' (видео)', '')
+				
+				# ------------------ тип ----------
+				type = ''
+				if ' (сериал)' in rus: 
+					type='сериал'
+					rus = rus.replace(' (сериал)', '')
+				
+				if ' (мини-сериал)' in rus: 
+					type='мини-сериал'
+					rus = rus.replace(' (мини-сериал)', '')
+				
+				if ' (ТВ)' in rus:
+					type='ТВ'
+					rus = rus.replace(' (ТВ)', '')
+				
+				if ' (видео)' in rus:
+					type='видео'
+					rus = rus.replace(' (видео)', '')
+
 				# ---------------- жанр  страна ----------
 				s='<div class="block film">'
 				e='<span class="clear"'
@@ -835,6 +857,13 @@ def get_info(ID):
 				e='.jpg"/></div>'
 				try:fanart='http:'+mfindal(Info, s, e)[0].replace('sm_','')+'.jpg'
 				except:fanart=""
+				try:
+					F1=mfindal(Info, s, e)
+					fanarts=[]
+					for fnr in F1:
+						fanarts.append('http:'+fnr.replace('sm_','')+'.jpg')
+				except:fanarts=[]
+				
 				# ---------------- премьера  ------
 				s='):</b> '
 				e=' ('
@@ -845,39 +874,15 @@ def get_info(ID):
 					nc2=tmp.find(e)
 					try:
 						premiered=mont2num(tmp[len(s):nc2])
-						if premiered[1]=="-": premiered="0"+premiered
+						if premiered[1]==".": premiered="0"+premiered
 					except: 
-						premiered="__-__-____"
+						premiered=" __.__.____ "
 				else:
-						premiered="__-__-____"
+						premiered=" __.__.____ "
 				#--------------
-				try:
-					F1=mfindal(Info, s, e)
-					fanarts=[]
-					for fnr in F1:
-						fanarts.append('http:'+fnr.replace('sm_','')+'.jpg')
-				except:fanarts=[]
-				
-				rus = fs(nru)
-				type = ''
-				if ' (сериал)' in rus: 
-					type='сериал'
-					rus = rus.replace(' (сериал)', '')
-				
-				if ' (мини-сериал)' in rus: 
-					type='мини-сериал'
-					rus = rus.replace(' (мини-сериал)', '')
-				
-				if ' (ТВ)' in rus:
-					type='ТВ'
-					rus = rus.replace(' (ТВ)', '')
-				
-				if ' (видео)' in rus:
-					type='видео'
-					rus = rus.replace(' (видео)', '')
 				
 				info = {"title": rus, 
-						"originaltitle":fs(nen),
+						"originaltitle":eng,
 						"year":year, 
 						"duration":duration[:-5],
 						"genre":fs(genre),
@@ -908,7 +913,7 @@ def get_info(ID):
 
 def mont2num(dt):
 	L1=[' января ',' февраля ',' марта ',' апреля ',' мая ',' июня ',' июля ',' августа ',' сентября ',' октября ',' ноября ',' декабря ']
-	L2=['-01-','-02-','-03-','-04-','-05-','-06-','-07-','-08-','-09-','-10-','-11-','-12-']
+	L2=['.01.','.02.','.03.','.04.','.05.','.06.','.07.','.08.','.09.','.10.','.11.','.12.']
 	for i in range (0,12):
 		dt=dt.replace(L1[i], L2[i])
 	return dt
