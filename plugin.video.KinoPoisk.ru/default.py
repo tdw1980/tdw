@@ -287,14 +287,17 @@ def play(url, ind=0, id='0'):
 	if engine=="2": play_yatp(url, ind)
 
 def play_ace(torr_link, ind=0):
-	title=get_item_name(torr_link, ind)
-	from TSCore import TSengine as tsengine
-	TSplayer=tsengine()
-	out=TSplayer.load_torrent(torr_link,'TORRENT')
-	#print out
-	if out=='Ok': TSplayer.play_url_ind(int(ind),title, icon, icon, True)
-	TSplayer.end()
-	return out
+	try:
+		title=get_item_name(torr_link, ind)
+		from TSCore import TSengine as tsengine
+		TSplayer=tsengine()
+		out=TSplayer.load_torrent(torr_link,'TORRENT')
+		#print out
+		if out=='Ok': TSplayer.play_url_ind(int(ind),title, icon, icon, True)
+		TSplayer.end()
+		return out
+	except: 
+		return '0'
 
 def play_t2h(uri, file_id=0, DDir=""):
 	try:
