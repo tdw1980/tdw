@@ -188,7 +188,7 @@
 
 <addon id="plugin.video.LostFilm2"
        name="LostFilm-2.0"
-       version="2.0.4"
+       version="2.0.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
