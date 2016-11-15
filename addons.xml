@@ -36,6 +36,24 @@
   </extension>
 </addon>
 
+<addon id="plugin.audio.myzuka.fm"
+       name="Myzuka.fm"
+       version="0.1.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>myzuka.fm — музыкальный портал, на котором вы можете бесплатно слушать песни и скачать музыку в формате mp3.</summary>
+    <description>myzuka.fm — музыкальный портал, на котором вы можете бесплатно слушать песни и скачать музыку в формате mp3.</description>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.radiopotok.ru"
        name="RadioPotok.ru"
        version="1.1.0"
