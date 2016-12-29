@@ -245,7 +245,7 @@
 
 <addon id="plugin.video.pazl.tv"
        name="Пазл ТВ"
-       version="1.5.5"
+       version="1.5.6"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -283,7 +283,7 @@
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.8.0"
+    version="0.8.1"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
