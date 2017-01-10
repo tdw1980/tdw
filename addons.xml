@@ -147,7 +147,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.2.2"
+       version="2.2.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
