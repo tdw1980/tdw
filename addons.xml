@@ -245,7 +245,7 @@
 
 <addon id="plugin.video.pazl.tv"
        name="Пазл ТВ"
-       version="1.5.8"
+       version="1.6.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
