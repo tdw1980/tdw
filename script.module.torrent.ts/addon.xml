@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<addon id='script.module.torrent.ts' version='0.7.3.2' name='AceStream client' provider-name='1orgar'>
+<addon id='script.module.torrent.ts' version='0.7.3.5' name='AceStream client' provider-name='1orgar'>
   <requires>
     <import addon='xbmc.python' version='2.7.8'/>
   </requires>
