@@ -226,7 +226,7 @@
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.0.3"
+       version="3.0.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -303,7 +303,7 @@
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.8.4"
+    version="0.8.5"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
