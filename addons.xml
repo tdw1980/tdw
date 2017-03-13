@@ -128,7 +128,7 @@
 
 <addon id="plugin.video.fasttorrent.org"
        name="fast-torrent.org"
-       version="1.5.4"
+       version="1.6.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -226,7 +226,7 @@
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.0.5"
+       version="3.1.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -246,7 +246,7 @@
 
 <addon id="plugin.video.newstudio.tv"
        name="NewStudio.tv"
-       version="0.5.2"
+       version="0.6.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
