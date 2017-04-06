@@ -246,7 +246,7 @@
 
 <addon id="plugin.video.newstudio.tv"
        name="NewStudio.tv"
-       version="0.7.0"
+       version="0.7.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
