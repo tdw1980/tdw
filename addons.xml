@@ -90,6 +90,25 @@
   </extension>
 </addon>
 
+<addon id="plugin.program.pazl.epg"
+       name="Пазл Телегид"
+       version="0.1.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.addon.metadata">
+    <summary>Пазл Телепрограмма</summary>
+    <description>Просмотр телепрограммы</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.program.retrogames" name="RetroGames" version="0.6.3" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -278,6 +297,24 @@
   <extension point="xbmc.addon.metadata">
     <summary>Пазл ТВ (Телевидение)</summary>
     <description>Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере. Очень гибко настраивается под пользователя.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.pazl2.tv"
+       name="Пазл ТВ 2.0"
+       version="2.0.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="main.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Пазл ТВ (Телевидение)</summary>
+    <description>Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
     <platform>all</platform>
   </extension>
 </addon>
