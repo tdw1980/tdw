@@ -38,7 +38,7 @@
 
 <addon id="plugin.audio.myzuka.fm"
        name="Myzuka.fm"
-       version="0.6.0"
+       version="0.7.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
