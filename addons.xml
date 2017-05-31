@@ -282,6 +282,24 @@
   </extension>
 </addon>
 
+<addon id="plugin.video.pazl.arhive"
+       name="Пазл АРХИВ"
+       version="0.0.1"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Пазл Архив (Телевидение)</summary>
+    <description>Архив телепередач.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.pazl.tv"
        name="Пазл ТВ"
        version="1.9.6"
@@ -303,7 +321,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.0.2"
+       version="2.0.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
