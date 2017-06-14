@@ -111,7 +111,7 @@
 
 <addon id="plugin.program.pazl.server"
        name="Пазл Сервер"
-       version="0.0.1"
+       version="0.2.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -121,6 +121,7 @@
         <provides>video</provides>
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.service" library="watchdog.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>Пазл Сервер</summary>
     <description>Сервер рестриммер</description>
