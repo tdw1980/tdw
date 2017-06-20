@@ -304,7 +304,7 @@
 
 <addon id="plugin.video.pazl.arhive"
        name="Пазл АРХИВ"
-       version="0.1.0"
+       version="0.2.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
