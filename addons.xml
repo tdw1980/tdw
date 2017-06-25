@@ -322,7 +322,7 @@
 
 <addon id="plugin.video.pazl.tv"
        name="Пазл ТВ"
-       version="1.9.6"
+       version="1.9.7"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -341,7 +341,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.0.6"
+       version="2.0.7"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
