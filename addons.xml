@@ -167,7 +167,7 @@
 
 <addon id="plugin.video.fasttorrent.org"
        name="fast-torrent.org"
-       version="1.6.2"
+       version="1.6.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
