@@ -129,7 +129,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.program.retrogames" name="RetroGames" version="0.6.3" provider-name="TDW">
+<addon id="plugin.program.retrogames" name="RetroGames" version="0.6.4" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
