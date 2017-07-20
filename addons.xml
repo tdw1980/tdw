@@ -111,7 +111,7 @@
 
 <addon id="plugin.program.pazl.server"
        name="Пазл Сервер"
-       version="0.4.0"
+       version="0.4.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
