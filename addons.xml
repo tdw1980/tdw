@@ -282,7 +282,7 @@
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.2.2"
+       version="3.3.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -435,7 +435,7 @@
 
 <addon id="plugin.video.tvfeed"
        name="TVFeed"
-       version="0.2.0"
+       version="0.3.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
