@@ -146,7 +146,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.3.1" provider-name="TDW">
+<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.3.2" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -184,7 +184,7 @@
 
 <addon id="plugin.video.fasttorrent.org"
        name="fast-torrent.org"
-       version="1.6.4"
+       version="1.6.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -376,7 +376,7 @@
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.6.2"
+       version="2.7.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -429,6 +429,24 @@
   <extension point="xbmc.addon.metadata">
     <summary>Torrentino</summary>
     <description>Торрент трекер</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.tvfeed"
+       name="TVFeed"
+       version="0.2.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>TVFeed</summary>
+    <description>Сериалы по технологии ACE Stream</description>
     <platform>all</platform>
   </extension>
 </addon>
