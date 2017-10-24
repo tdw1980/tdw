@@ -262,7 +262,7 @@
 
 <addon id="plugin.video.LostFilm2"
        name="LostFilm-2.0"
-       version="2.1.1"
+       version="2.1.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -282,7 +282,7 @@
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.3.0"
+       version="3.3.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -358,7 +358,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.2.1"
+       version="2.2.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -435,7 +435,7 @@
 
 <addon id="plugin.video.tvfeed"
        name="TVFeed"
-       version="0.3.0"
+       version="0.4.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
