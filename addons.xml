@@ -453,7 +453,7 @@
 
 <addon id="plugin.video.world-art.ru"
        name="World-Art.ru"
-       version="0.2.2"
+       version="0.2.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
