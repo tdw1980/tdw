@@ -13,7 +13,7 @@
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
-    <summary>KinoPoisk.ru</summary>
+    <summary>KinoPoisk.ru </summary>
     <description>Поиск фильмов и сериалов</description>
     <platform>all</platform>
   </extension>
