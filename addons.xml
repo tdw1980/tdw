@@ -221,7 +221,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.8.6"
+       version="2.8.7"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -233,7 +233,7 @@
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
-    <summary>KinoPoisk.ru </summary>
+    <summary>KinoPoisk.ru</summary>
     <description>Поиск фильмов и сериалов</description>
     <platform>all</platform>
   </extension>
