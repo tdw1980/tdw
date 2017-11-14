@@ -6,6 +6,7 @@
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.torrent.ts"/>
+    <import addon="script.module.torrent2http"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
             library="default.py">
