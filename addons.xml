@@ -36,6 +36,24 @@
   </extension>
 </addon>
 
+<addon id="plugin.audio.music.mail.ru"
+       name="Музыка"
+       version="0.1.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Музыка от пользователей Mail.ru</summary>
+    <description>Музыка от пользователей Mail.ru</description>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.myzuka.fm"
        name="Myzuka"
        version="0.8.0"
@@ -340,7 +358,7 @@
 
 <addon id="plugin.video.pazl.arhive"
        name="Пазл АРХИВ"
-       version="0.3.0"
+       version="0.3.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
