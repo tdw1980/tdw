@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-	<setting id="FP" type="enum" label="Первая страница" default="0" values="Главная|Избранное"/>
-	<setting id="CL" type="enum" label="Стиль отображения" default="1" values="files|songs|artists|albums|movies|tvshows|episodes|musicvideos"/>
-</settings>
