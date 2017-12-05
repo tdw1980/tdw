@@ -129,7 +129,7 @@
 
 <addon id="plugin.program.pazl.server"
        name="Пазл Сервер"
-       version="0.4.1"
+       version="0.4.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -239,7 +239,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.9.4"
+       version="2.9.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -395,7 +395,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.2.5"
+       version="2.2.6"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
