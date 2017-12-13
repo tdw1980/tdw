@@ -1,23 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <addons>
-<addon id="plugin.audio.kibergrad.com"
-       name="Kibergrad.fm"
-       version="0.7.1"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>audio</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary>kibergrad.com</summary>
-    <description>kibergrad.com</description>
-  </extension>
-</addon>
-
 <addon id="plugin.audio.mds-fm.ru"
        name="MDS-FM.ru"
        version="0.3.0"
@@ -239,7 +221,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.9.6"
+       version="2.9.7"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -273,26 +255,6 @@
   <extension point="xbmc.addon.metadata">
     <summary>krasfs.ru</summary>
     <description>krasfs.ru for TorrentStreem</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.LostFilm"
-       name="LostFilm"
-       version="0.7.4"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.torrent.ts"/>
-    <import addon="script.module.torrent2http"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>LostFilm</summary>
-    <description>LostFilm for AceStreem, YATP or Libtorrent</description>
     <platform>all</platform>
   </extension>
 </addon>
