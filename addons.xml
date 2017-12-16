@@ -221,7 +221,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.9.7"
+       version="2.9.8"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -415,7 +415,7 @@
 
 <addon id="plugin.video.torrentino.me"
        name="Torrentino"
-       version="0.5.0"
+       version="0.5.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
