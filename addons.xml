@@ -56,7 +56,7 @@
 
 <addon id="plugin.audio.radiopotok.ru"
        name="RadioPotok.ru"
-       version="1.2.0"
+       version="1.2.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -68,6 +68,24 @@
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary>Radiopotok - Онлайн радио</summary>
+    <description>Слушайте радио онлайн!</description>
+  </extension>
+</addon>
+
+<addon id="plugin.audio.top-radio.ru"
+       name="Top-Radio.ru"
+       version="0.2.0"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Vse.fm - Онлайн радио</summary>
     <description>Слушайте радио онлайн!</description>
   </extension>
 </addon>
@@ -394,7 +412,7 @@
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.9.3"
+    version="0.9.5"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
