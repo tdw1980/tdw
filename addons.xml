@@ -20,7 +20,7 @@
 
 <addon id="plugin.audio.music.mail.ru"
        name="Музыка"
-       version="0.2.0"
+       version="0.3.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -239,7 +239,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.9.9"
+       version="2.9.12"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -375,7 +375,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.3.1"
+       version="2.4.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
