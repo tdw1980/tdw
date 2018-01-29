@@ -451,7 +451,7 @@
 
 <addon id="plugin.video.torrentino.me"
        name="Torrentino"
-       version="0.6.3"
+       version="0.6.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
