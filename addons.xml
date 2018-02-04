@@ -257,7 +257,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.10.3"
+       version="2.10.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -430,7 +430,7 @@
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.9.8"
+    version="0.9.9"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -451,7 +451,7 @@
 
 <addon id="plugin.video.torrentino.me"
        name="Torrentino"
-       version="0.6.4"
+       version="0.7.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
