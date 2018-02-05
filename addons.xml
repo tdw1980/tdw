@@ -393,7 +393,7 @@
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.4.3"
+       version="2.4.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -404,7 +404,9 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>Пазл ТВ (Телевидение)</summary>
-    <description>Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
+    <description>
+Donate: http://paypal.me/tdw1980
+Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
     <platform>all</platform>
   </extension>
 </addon>
