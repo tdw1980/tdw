@@ -257,7 +257,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.10.4"
+       version="2.10.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -413,7 +413,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="2.7.0"
+       version="2.7.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -453,7 +453,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.torrentino.me"
        name="Torrentino"
-       version="0.7.1"
+       version="0.7.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
