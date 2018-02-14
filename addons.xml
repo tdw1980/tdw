@@ -38,7 +38,7 @@
 
 <addon id="plugin.audio.music.mail.ru"
        name="Музыка"
-       version="0.4.0"
+       version="0.5.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -453,7 +453,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.torrentino.me"
        name="Torrentino"
-       version="0.7.3"
+       version="0.7.4"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -466,7 +466,7 @@ Donate: http://paypal.me/tdw1980
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>Torrentino</summary>
-    <description>Торрент трекер</description>
+    <description>Торрент трекер. Donate: http://paypal.me/tdw1980</description>
     <platform>all</platform>
   </extension>
 </addon>
