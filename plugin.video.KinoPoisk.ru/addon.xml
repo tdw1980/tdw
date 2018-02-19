@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.10.8"
+       version="2.11.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -15,7 +15,9 @@
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>KinoPoisk.ru</summary>
-    <description>Поиск фильмов и сериалов. Donate: http://paypal.me/tdw1980</description>
+    <description>Поиск фильмов и сериалов.  
+Donate: http://paypal.me/tdw1980
+    </description>
     <platform>all</platform>
   </extension>
 </addon>
