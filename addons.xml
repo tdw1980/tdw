@@ -257,7 +257,7 @@
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.12.2"
+       version="2.12.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -395,7 +395,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.4.7"
+       version="2.5.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
