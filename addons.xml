@@ -128,7 +128,7 @@
 
 <addon id="plugin.program.pazl.epg"
        name="Пазл Телегид"
-       version="0.4.0"
+       version="0.4.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -182,7 +182,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.4.0" provider-name="TDW">
+<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.4.1" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -395,7 +395,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.5.0"
+       version="2.5.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
