@@ -237,8 +237,8 @@
 </addon>
 
 <addon id="plugin.video.fasttorrent.org"
-       name="fast-torrent.org"
-       version="1.6.5"
+       name="Fast-Torrent.org"
+       version="1.7.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -339,7 +339,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.newstudio.tv"
        name="NewStudio.tv"
-       version="0.7.1"
+       version="0.8.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
