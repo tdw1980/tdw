@@ -92,7 +92,7 @@
 
 <addon id="plugin.audio.top-radio.ru"
        name="Top-Radio.ru"
-       version="0.2.1"
+       version="0.2.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
