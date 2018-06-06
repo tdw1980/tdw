@@ -358,7 +358,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl.arhive"
        name="Пазл АРХИВ"
-       version="0.3.2"
+       version="0.4.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
