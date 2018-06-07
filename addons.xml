@@ -1,23 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <addons>
-<addon id="plugin.audio.hqradio.ru"
-       name="HQRadio"
-       version="0.2.1"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>audio</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary>HQRadio.ru - Онлайн радио</summary>
-    <description>Слушайте радио онлайн!</description>
-  </extension>
-</addon>
-
 <addon id="plugin.audio.mds-fm.ru"
        name="MDS-FM.ru"
        version="0.3.0"
@@ -358,7 +340,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl.arhive"
        name="Пазл АРХИВ"
-       version="0.4.0"
+       version="0.4.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -475,7 +457,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvfeed"
        name="TVFeed"
-       version="0.5.4"
+       version="0.5.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
