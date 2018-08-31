@@ -456,7 +456,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.9.9"
+    version="0.9.10"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
