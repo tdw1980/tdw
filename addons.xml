@@ -201,7 +201,7 @@
 
 <addon id="plugin.video.animedia.tv"
        name="Animedia.TV"
-       version="0.2.0"
+       version="0.3.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -456,7 +456,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
-    version="0.9.10"
+    version="0.9.12"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
