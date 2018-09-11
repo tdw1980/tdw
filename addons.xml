@@ -454,6 +454,25 @@ Donate: http://paypal.me/tdw1980
   </extension>
 </addon>
 
+<addon id="plugin.video.tam"
+    name="TAM"
+    version="0.0.3"
+    provider-name="TDW1980">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.torrent.ts"/>
+    <import addon="script.module.torrent2http"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">TAM</summary>
+    <description lang="en">TAM</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.torrent.checker"
     name="Torrent Checker"
     version="0.9.12"
