@@ -300,7 +300,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="2.15.7"
+       version="2.16.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -641,6 +641,29 @@ Donate: http://paypal.me/tdw1980
         <description lang="ru">Обеспечивает последовательную (sequential) загрузку торрентов для потокового онлайн просмотра через HTTP. Основан на библиотеке LibTorrent.</description>
         <description lang="en">Provides sequential torrent downloading for online streaming video and other media over HTTP.</description>
         <email>anteo@academ.org</email>
+    </extension>
+</addon>
+
+<addon id="script.module.torrserver" name="torrserver torrent streamer" version="0.0.4" provider-name="-=Vd=-">
+    <requires>
+        <import addon="xbmc.python" version="2.14.0"/>
+		    <import addon="script.module.requests" optional="false"/>
+        <import addon="script.module.vsdbg" optional="true"/>
+    </requires>
+
+    <extension point="xbmc.python.module" library="lib"/>
+
+    <extension point="xbmc.python.pluginsource" library="lib/torrserve_stream/settings.py">
+      <provides>executable</provides>
+    </extension>
+
+  <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <language>en</language>
+        <summary lang="en">Downloads torrents and share it over HTTP</summary>
+        <summary lang="ru">Загружает торренты и раздает их по HTTP</summary>
+        <description lang="ru">Обеспечивает последовательную (sequential) загрузку торрентов для потокового онлайн просмотра через HTTP.</description>
+        <description lang="en">Provides sequential torrent downloading for online streaming video and other media over HTTP.</description>
     </extension>
 </addon>
 </addons>
