@@ -362,7 +362,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.4.1"
+       version="3.4.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
