@@ -300,7 +300,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="3.0.9"
+       version="3.0.10"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
