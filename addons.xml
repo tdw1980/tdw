@@ -284,7 +284,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.fasttorrent.org"
        name="Fast-Torrent.org"
-       version="1.9.2"
+       version="1.9.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
