@@ -128,7 +128,7 @@
 
 <addon id="plugin.program.pazl.epg"
        name="Пазл Телегид"
-       version="0.6.5"
+       version="0.7.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
