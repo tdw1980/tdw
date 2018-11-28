@@ -128,7 +128,7 @@
 
 <addon id="plugin.program.pazl.epg"
        name="Пазл Телегид"
-       version="0.7.1"
+       version="0.7.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -439,7 +439,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.7.5"
+       version="2.7.6"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
