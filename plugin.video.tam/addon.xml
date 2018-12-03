@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tam"
     name="TAM"
-    version="0.6.1"
+    version="0.6.2"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -14,7 +14,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</summary>
-    <description lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента</description>
+    <description lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</description>
     <platform>all</platform>
   </extension>
 </addon>
