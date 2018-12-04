@@ -478,7 +478,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="0.6.2"
+    version="0.6.3"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -489,6 +489,7 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</summary>
     <description lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</description>
