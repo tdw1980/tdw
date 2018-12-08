@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.pazl2.tv"
        name="Пазл ТВ 2.0"
-       version="2.8.3"
+       version="2.9.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -10,7 +10,6 @@
             library="main.py">
         <provides>video</provides>
   </extension>
-  <extension point="xbmc.service" library="updater.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>Пазл ТВ (Телевидение)</summary>
     <description>
