@@ -478,7 +478,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="0.6.5"
+    version="0.6.6"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
