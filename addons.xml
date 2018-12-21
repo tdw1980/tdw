@@ -203,7 +203,7 @@
 
 <addon id="plugin.video.anilibria.tv"
        name="Anilibria.TV"
-       version="0.2.0"
+       version="0.2.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -302,7 +302,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="3.2.0"
+       version="3.2.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -478,7 +478,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="0.6.6"
+    version="0.7.2"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
