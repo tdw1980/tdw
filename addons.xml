@@ -187,10 +187,10 @@
     </requires>
 
     <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>game</provides>
+        <provides>executable</provides>
     </extension>
     <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>executable</provides>
+        <provides>game</provides>
     </extension>
 
     <extension point="xbmc.addon.metadata">
