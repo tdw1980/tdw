@@ -476,7 +476,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="3.3.2"
+       version="3.3.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -489,7 +489,7 @@ Donate: http://paypal.me/tdw1980
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>RuTor</summary>
-    <description>RuTor for AceStreem</description>
+    <description>RuTor - популярный торрент трекер.</description>
     <platform>all</platform>
   </extension>
 </addon>
