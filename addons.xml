@@ -318,6 +318,27 @@ Donate: http://paypal.me/tdw1980
   </extension>
 </addon>
 
+<addon id="plugin.video.filmpotok"
+       name="Filmpotok"
+       version="0.1.1"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="plugin.video.tam"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>filmpotok</summary>
+    <description>filmpotok
+Donate: http://paypal.me/tdw1980
+    </description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
        version="3.3.2"
