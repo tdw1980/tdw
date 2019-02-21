@@ -320,7 +320,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="0.1.1"
+       version="0.2.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -401,7 +401,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.5.0"
+       version="3.5.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
