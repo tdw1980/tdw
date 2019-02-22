@@ -320,7 +320,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="0.2.0"
+       version="0.3.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
