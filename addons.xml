@@ -36,24 +36,6 @@
   </extension>
 </addon>
 
-<addon id="plugin.audio.music.mail.ru"
-       name="Музыка"
-       version="0.6.1"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>audio</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary>Музыка от пользователей Mail.ru</summary>
-    <description>Музыка от пользователей Mail.ru</description>
-  </extension>
-</addon>
-
 <addon id="plugin.audio.myzcloud"
        name="Myzcloud"
        version="0.3.0"
@@ -69,24 +51,6 @@
     <platform>all</platform>
     <summary>myzcloud</summary>
     <description>myzcloud</description>
-  </extension>
-</addon>
-
-<addon id="plugin.audio.myzuka.fm"
-       name="Myzuka"
-       version="0.8.1"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>audio</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary>myzuka.me — музыкальный портал, на котором вы можете бесплатно слушать песни и скачать музыку в формате mp3.</summary>
-    <description>myzuka.me — музыкальный портал, на котором вы можете бесплатно слушать песни и скачать музыку в формате mp3.</description>
   </extension>
 </addon>
 
@@ -401,7 +365,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.LostFilm3"
        name="LostFilm-3.0"
-       version="3.7.2"
+       version="3.7.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -557,26 +521,6 @@ Donate: http://paypal.me/tdw1980
   </extension>
 </addon>
 
-<addon id="plugin.video.torrentino.me"
-       name="Torrentino"
-       version="0.7.8"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.torrent.ts"/>
-    <import addon="script.module.torrent2http"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Torrentino</summary>
-    <description>Торрент трекер. Donate: http://paypal.me/tdw1980</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
 <addon id="plugin.video.tvfeed"
        name="TVFeed"
        version="0.6.0"
@@ -609,25 +553,6 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.addon.metadata">
     <summary>TVFeed</summary>
     <description>Фильмы по технологии ACE Stream</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.world-art.ru"
-       name="World-Art.ru"
-       version="0.3.0"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.torrent.ts"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>World-Art.ru</summary>
-    <description>Поиск фильмов и сериалов</description>
     <platform>all</platform>
   </extension>
 </addon>
