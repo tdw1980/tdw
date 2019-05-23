@@ -459,6 +459,27 @@ Donate: http://paypal.me/tdw1980
   </extension>
 </addon>
 
+<addon id="plugin.video.pazl3.tv"
+       name="Пазл ТВ 3.0"
+       version="3.0.1"
+       provider-name="TDW">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.script"
+            library="main.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Клиент для Пазл ТВ 3</summary>
+    <description>
+Donate: http://paypal.me/tdw1980
+Внимание: Для работы требуется ПАЗЛ Сервер 3
+Клиентская часть телевизионного агрегатора объединяющего в себе телеканалы нескольких сайтов (~1500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.RuTor"
        name="RuTor"
        version="3.4.2"
@@ -559,7 +580,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="ptv3"
        name="Пазл Сервер 3.0"
-       version="3.5.3"
+       version="3.6.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
