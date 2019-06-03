@@ -461,7 +461,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl3.tv"
        name="Пазл ТВ 3.0"
-       version="3.0.1"
+       version="3.0.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -580,7 +580,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="ptv3"
        name="Пазл Сервер 3.0"
-       version="3.6.5"
+       version="3.7.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
