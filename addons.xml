@@ -92,7 +92,7 @@
 
 <addon id="plugin.audio.zaycev.net"
        name="zaycev.net"
-       version="0.5.3"
+       version="0.6.0"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
