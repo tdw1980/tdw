@@ -598,7 +598,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="ptv3"
        name="Пазл Сервер 3.0"
-       version="3.14.9"
+       version="3.15.8"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
