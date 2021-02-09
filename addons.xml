@@ -108,44 +108,6 @@
   </extension>
 </addon>
 
-<addon id="plugin.program.pazl.epg"
-       name="Пазл Телегид"
-       version="0.7.2"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
-  <extension point="xbmc.addon.metadata">
-    <summary>Пазл Телепрограмма</summary>
-    <description>Просмотр телепрограммы</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.program.pazl.server"
-       name="Пазл Сервер"
-       version="0.6.2"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
-  <extension point="xbmc.addon.metadata">
-    <summary>Пазл Сервер</summary>
-    <description>Сервер рестриммер</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
 <addon id="plugin.program.retrogames" name="RetroGames" version="0.7.0" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -305,7 +267,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="3.6.0"
+       version="3.6.1"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -339,26 +301,6 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.addon.metadata">
     <summary>krasfs.ru</summary>
     <description>krasfs.ru for TorrentStreem</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.LostFilm2"
-       name="LostFilm-2.0"
-       version="2.1.2"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.torrent.ts"/>
-    <import addon="script.module.torrent2http"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>LostFilm</summary>
-    <description>LostFilm.tv - лучшие сериалы</description>
     <platform>all</platform>
   </extension>
 </addon>
@@ -398,63 +340,6 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.addon.metadata">
     <summary>NewStudio.tv</summary>
     <description>NewStudio.tv for AceStreem, YATP, T2Http</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.pazl.arhive"
-       name="Пазл АРХИВ"
-       version="0.6.0"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Пазл Архив (Телевидение)</summary>
-    <description>Архив телепередач.</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.pazl.tv"
-       name="Пазл ТВ"
-       version="1.9.9"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
-  <extension point="xbmc.addon.metadata">
-    <summary>Пазл ТВ (Телевидение)</summary>
-    <description>Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере. Очень гибко настраивается под пользователя.</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.pazl2.tv"
-       name="Пазл ТВ 2.0"
-       version="2.9.8"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.script"
-            library="main.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Пазл ТВ (Телевидение)</summary>
-    <description>
-Donate: http://paypal.me/tdw1980
-Телевизионный агрегатор объединяющий в себе телеканалы нескольких сайтов (~1500 каналов). Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
     <platform>all</platform>
   </extension>
 </addon>
@@ -502,7 +387,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="1.4.0"
+    version="1.4.2"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -556,24 +441,6 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.addon.metadata">
     <summary>TVFeed</summary>
     <description>Сериалы по технологии ACE Stream</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.tvfeed.mov"
-       name="TVFeed [movie]"
-       version="0.0.1"
-       provider-name="TDW">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>TVFeed</summary>
-    <description>Фильмы по технологии ACE Stream</description>
     <platform>all</platform>
   </extension>
 </addon>
