@@ -267,7 +267,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="3.6.4"
+       version="3.6.5"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -367,7 +367,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="3.4.2"
+       version="3.4.3"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -387,7 +387,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="1.4.4"
+    version="1.4.5"
     provider-name="TDW1980">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
