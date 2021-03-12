@@ -387,10 +387,9 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="1.5.1"
+    version="2.0.1"
     provider-name="TDW1980">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.torrent.ts"  optional="true"/>
     <import addon="script.module.torrent2http"  optional="true"/>
     <import addon="script.module.torrserver" optional="true"/>
