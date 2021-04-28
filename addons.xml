@@ -387,7 +387,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.0.5"
+    version="2.1.0"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
@@ -402,6 +402,9 @@ Donate: http://paypal.me/tdw1980
     <summary lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</summary>
     <description lang="en">TAM - менеджер торрент движков. Позволяет просматривать локальные торрент файлы. Или может выступать посредником между движками и плагинами контента.</description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
@@ -428,10 +431,9 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvfeed"
        name="TVFeed"
-       version="1.2.3"
+       version="2.0.2"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
             library="default.py">
@@ -441,12 +443,15 @@ Donate: http://paypal.me/tdw1980
     <summary>TVFeed</summary>
     <description>Сериалы по технологии ACE Stream</description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="0.7.1"
+       version="0.7.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
