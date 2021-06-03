@@ -267,13 +267,11 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="3.6.6"
+       version="4.0.3"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.tam"/>  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
+  <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
@@ -283,6 +281,9 @@ Donate: http://paypal.me/tdw1980
 Donate: http://paypal.me/tdw1980
     </description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
