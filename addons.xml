@@ -168,23 +168,22 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.animedia.tv"
        name="Animedia.TV"
-       version="0.6.3"
+       version="1.0.0"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.torrent.ts"/>
-    <import addon="script.module.torrent2http"/>
+    <import addon="plugin.video.tam"/>
   </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
+  <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>Animedia.TV</summary>
     <description>Animedia.TV трекер аниме сериалов.
-Donate: http://paypal.me/tdw1980
     </description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
@@ -246,10 +245,9 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="0.3.1"
+       version="1.0.3"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
     <import addon="plugin.video.tam"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
@@ -262,6 +260,9 @@ Donate: http://paypal.me/tdw1980
 Donate: http://paypal.me/tdw1980
     </description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
