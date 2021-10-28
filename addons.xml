@@ -245,7 +245,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="1.0.3"
+       version="1.0.6"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
