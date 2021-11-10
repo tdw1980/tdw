@@ -389,7 +389,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.3.0"
+    version="2.3.1"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
