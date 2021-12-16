@@ -108,6 +108,18 @@
   </extension>
 </addon>
 
+<addon id="plugin.game.startime" name="Звездный час" version="0.1.1" provider-name="TDW">
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>game executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary>Game</summary>
+        <description>Games</description>
+        <disclaimer>Games</disclaimer>
+    </extension>
+</addon>
+
 <addon id="plugin.program.retrogames" name="RetroGames" version="0.7.0" provider-name="TDW">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -129,14 +141,9 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
-
     <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>executable</provides>
+        <provides>executable game</provides>
     </extension>
-    <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>game</provides>
-    </extension>
-
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary>RetroGames</summary>
@@ -453,10 +460,10 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="0.7.4"
+       version="1.9.3"
        provider-name="TDW">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="plugin.video.tam"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
             library="default.py">
@@ -466,6 +473,9 @@ Donate: http://paypal.me/tdw1980
     <summary>TVShow</summary>
     <description>Сериалы</description>
     <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
 
