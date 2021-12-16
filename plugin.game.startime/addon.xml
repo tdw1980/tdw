@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.game.startime" name="Звездный час" version="0.1.1" provider-name="TDW">
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>game executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary>Game</summary>
+        <description>Games</description>
+        <disclaimer>Games</disclaimer>
+    </extension>
+</addon>
