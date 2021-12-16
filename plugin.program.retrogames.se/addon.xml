@@ -3,14 +3,9 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
-    
     <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>executable</provides>
+        <provides>executable game</provides>
     </extension>
-    <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>game</provides>
-    </extension>
-
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary>RetroGames</summary>
