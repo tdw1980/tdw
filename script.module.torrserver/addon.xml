@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.torrserver" name="torrserver torrent streamer" version="0.2.3" provider-name="-=Vd=-">
+<addon id="script.module.torrserver" name="torrserver torrent streamer" version="0.4.1" provider-name="-=Vd=-">
     <requires>
-        <import addon="xbmc.python" version="2.14.0"/>
-		    <import addon="script.module.requests" optional="false"/>
-        <import addon="script.module.vsdbg" optional="true"/>
+    <import addon="xbmc.python" version="2.14.0"/>
+    <import addon="script.module.requests" optional="false"/>
+    <import addon="script.module.vsdbg" optional="true"/>
     </requires>
-  
+
     <extension point="xbmc.python.module" library="lib"/>
 
     <extension point="xbmc.python.pluginsource" library="lib/torrserve_stream/settings.py">
-      <provides>executable</provides>
+    <provides>executable</provides>
     </extension>
 
-  <extension point="xbmc.addon.metadata">
+    <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <language>en</language>
         <summary lang="en">Downloads torrents and share it over HTTP</summary>
         <summary lang="ru">Загружает торренты и раздает их по HTTP</summary>
         <description lang="ru">Обеспечивает последовательную (sequential) загрузку торрентов для потокового онлайн просмотра через HTTP.</description>
         <description lang="en">Provides sequential torrent downloading for online streaming video and other media over HTTP.</description>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
     </extension>
 </addon>
