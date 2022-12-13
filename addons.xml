@@ -396,8 +396,13 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.3.7"
+    version="2.3.8"
     provider-name="TDW1980">
+  <requires>
+    <import addon="script.module.torrent.ts"  optional="true"/>
+    <import addon="script.module.torrent2http"  optional="true"/>
+    <import addon="script.module.torrserver" optional="true"/>
+  </requires>
   <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
   </extension>
@@ -514,7 +519,7 @@ Donate: http://paypal.me/tdw1980
        version="2.9.1"
        provider-name="kennethreitz, beenje">
   <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="xbmc.python" version="2.1.0  optional="true""/>
   </requires>
   <extension point="xbmc.python.module"
              library="lib" />
@@ -532,6 +537,9 @@ Donate: http://paypal.me/tdw1980
 </addon>
 
 <addon id='script.module.torrent.ts' version='0.7.3.5' name='AceStream client' provider-name='1orgar'>
+    <requires>
+      <import addon="xbmc.python" version="2.1.0  optional="true""/>
+    </requires>
     <extension point="xbmc.python.script" library="default.py">
     	<provides>executable</provides>
     </extension>
@@ -560,7 +568,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="script.module.torrserver" name="torrserver torrent streamer" version="0.4.1" provider-name="-=Vd=-">
     <requires>
-    <import addon="xbmc.python" version="2.14.0"/>
+    <import addon="xbmc.python" version="2.14.0" optional="true"/>
     <import addon="script.module.requests" optional="false"/>
     <import addon="script.module.vsdbg" optional="true"/>
     </requires>
