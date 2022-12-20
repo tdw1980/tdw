@@ -396,7 +396,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.4.5"
+    version="2.4.6"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
@@ -460,7 +460,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="1.11.1"
+       version="1.11.2"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
