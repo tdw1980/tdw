@@ -376,7 +376,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="4.0.7"
+       version="4.0.8"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
