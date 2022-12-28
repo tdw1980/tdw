@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.audio.hitmo"
+       name="Hitmo"
+       version="0.0.4"
+       provider-name="TDW">
+  <requires>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>mp3 Hitmo</summary>
+    <description>mp3 Hitmo</description>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
