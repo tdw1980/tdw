@@ -272,7 +272,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="1.0.7"
+       version="1.0.8"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
@@ -283,9 +283,7 @@ Donate: http://paypal.me/tdw1980
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>filmpotok</summary>
-    <description>filmpotok
-Donate: http://paypal.me/tdw1980
-    </description>
+    <description>filmpotok</description>
     <platform>all</platform>
     <assets>
         <icon>icon.png</icon>
@@ -416,7 +414,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.4.9"
+    version="2.5.0"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
