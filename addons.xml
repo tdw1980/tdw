@@ -371,6 +371,25 @@ Donate: http://paypal.me/tdw1980
   </extension>
 </addon>
 
+<addon id="plugin.video.pazl.lt"
+       name="Пазл ТВ Light"
+       version="0.0.10"
+       provider-name="TDW">
+  <extension point="xbmc.python.script"
+            library="main.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.addon.metadata">
+    <summary>ТВ легко и просто</summary>
+    <description>Включи и смотри. Сервер не требуется.</description>
+    <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+
 <addon id="plugin.video.pazl3.tv"
        name="Пазл ТВ 3.0"
        version="3.2.5"
