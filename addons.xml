@@ -373,7 +373,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.pazl.lt"
        name="Пазл ТВ Light"
-       version="0.2.5"
+       version="0.2.6"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
