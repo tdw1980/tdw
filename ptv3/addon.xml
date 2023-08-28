@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="ptv3"
        name="Пазл Сервер 3.0"
-       version="3.15.9"
+       version="3.22.2"
        provider-name="TDW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
-  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.python.script" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>Пазл Сервер 3</summary>
     <description>ТВ Сервер http://127.0.0.1:8185</description>
