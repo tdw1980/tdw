@@ -497,7 +497,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="1.12.0"
+       version="2.0.0"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
@@ -506,6 +506,7 @@ Donate: http://paypal.me/tdw1980
             library="default.py">
         <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>TVShow</summary>
     <description>Сериалы</description>
