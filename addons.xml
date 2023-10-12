@@ -497,7 +497,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.1.8"
+       version="2.1.9"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
