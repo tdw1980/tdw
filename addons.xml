@@ -56,6 +56,26 @@
   </extension>
 </addon>
 
+<addon id="plugin.audio.mp3bob"
+       name="Mp3bob"
+       version="0.0.4"
+       provider-name="TDW">
+  <requires>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>mp3bob</summary>
+    <description>mp3bob</description>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.myzcloud"
        name="Myzcloud"
        version="0.4.0"
