@@ -76,6 +76,26 @@
   </extension>
 </addon>
 
+<addon id="plugin.audio.muzofond.fm"
+       name="Muzofond.fm"
+       version="0.0.1"
+       provider-name="TDW">
+  <requires>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>muzofond.fm</summary>
+    <description>muzofond.fm</description>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+
 <addon id="plugin.audio.myzcloud"
        name="Myzcloud"
        version="0.4.0"
