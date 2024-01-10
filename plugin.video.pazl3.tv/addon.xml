@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.pazl3.tv"
        name="Пазл ТВ 3.0"
-       version="4.4.2"
+       version="4.4.3"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
