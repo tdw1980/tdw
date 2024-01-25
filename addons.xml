@@ -604,7 +604,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.5.8"
+    version="2.5.9"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
