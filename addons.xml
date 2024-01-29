@@ -465,7 +465,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.2.2"
+       version="4.2.3"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>  </requires>
@@ -668,7 +668,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.2.0"
+       version="2.2.1"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
