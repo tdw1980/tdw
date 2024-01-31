@@ -465,7 +465,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.2.3"
+       version="4.2.4"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>  </requires>
@@ -584,11 +584,12 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="4.0.8"
+       version="4.0.9"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
   </requires>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
   </extension>
