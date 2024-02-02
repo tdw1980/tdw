@@ -589,10 +589,10 @@ Donate: https://goo.su/iQCJl6h
   <requires>
     <import addon="plugin.video.tam"/>
   </requires>
-  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>RuTor</summary>
     <description>RuTor - популярный торрент трекер.</description>
@@ -605,7 +605,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.6.0"
+    version="2.6.2"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent.ts"  optional="true"/>
