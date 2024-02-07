@@ -465,7 +465,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.2.5"
+       version="4.2.6"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>  </requires>
@@ -476,6 +476,7 @@ Donate: http://paypal.me/tdw1980
   <extension point="xbmc.addon.metadata">
     <summary>KinoPoisk.ru</summary>
     <description>Поиск фильмов и сериалов.
+Forum: https://kodi.moy.su
 Donate: https://goo.su/iQCJl6h
     </description>
     <platform>all</platform>
