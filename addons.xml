@@ -670,7 +670,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.2.2"
+       version="2.2.3"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
@@ -682,7 +682,7 @@ Donate: https://goo.su/iQCJl6h
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
     <summary>TVShow</summary>
-    <description>Сериалы</description>
+    <description>Сериалы forum: http://kodi.moy.su</description>
     <platform>all</platform>
     <assets>
         <icon>icon.png</icon>
