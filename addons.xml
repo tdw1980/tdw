@@ -670,7 +670,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.2.3"
+       version="2.2.4"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
