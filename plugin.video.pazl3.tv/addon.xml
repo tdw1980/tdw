@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.pazl3.tv"
        name="Пазл ТВ 3.0"
-       version="4.4.3"
+       version="4.4.4"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
@@ -11,6 +11,7 @@
     <summary>Клиент для Пазл ТВ 3</summary>
     <description>
 Внимание: Для работы требуется ПАЗЛ Сервер 3
+https://kodi.moy.su/forum/2-33-1
 Клиентская часть телевизионного агрегатора телеканалов. Позволяет сортировать каналы по группам. Объединять одинаковые каналы. Поддерживает телепрограмму и переключение каналов в плеере.</description>
     <platform>all</platform>
     <assets>
