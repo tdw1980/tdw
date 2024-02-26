@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.2" provider-name="TDW">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-    </requires>
+<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.4" provider-name="TDW">    
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>executable game</provides>
     </extension>
+
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary>RetroGames</summary>
         <description>RetroGames</description>
         <disclaimer>RetroGames</disclaimer>
     </extension>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
 </addon>
