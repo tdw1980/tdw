@@ -611,7 +611,6 @@ https://kodi.moy.su/forum/2-33-1
     version="2.6.5"
     provider-name="TDW1980">
   <requires>
-    <import addon="script.module.torrent.ts"  optional="true"/>
     <import addon="script.module.torrent2http"  optional="true"/>
     <import addon="script.module.torrserver" optional="true"/>
   </requires>
