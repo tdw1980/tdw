@@ -671,10 +671,10 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.2.7"
+       version="2.3.2"
        provider-name="TDW">
   <requires>
-    <import addon="plugin.video.tam"/>
+    <import addon="plugin.video.tam"  optional="true"/>
   </requires>
   <extension point="xbmc.python.pluginsource"
             library="default.py">
