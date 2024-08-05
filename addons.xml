@@ -608,7 +608,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.6.5"
+    version="2.6.6"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent2http"  optional="true"/>
@@ -671,7 +671,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.3.2"
+       version="2.3.4"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
