@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.4.0"
+       version="4.5.0"
        provider-name="TDW">
   <requires>
-    <import addon="plugin.video.tam"/>  </requires>
+    <import addon="plugin.video.tam" optional="true"/>  
+  </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
   </extension>
