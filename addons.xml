@@ -826,7 +826,7 @@ v1.20.0
   </extension>
 </addon>
 
-<addon id="script.module.torrent2http" name="torrent2http" version="1.4.0+matrix" provider-name="anteo,DiMartino,-=Vd=-">
+<addon id="script.module.torrent2http" name="torrent2http" version="1.4.0" provider-name="anteo,DiMartino,-=Vd=-">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
 	    <import addon="script.module.requests" optional="false"/>
