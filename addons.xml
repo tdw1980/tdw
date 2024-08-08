@@ -466,7 +466,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.5.0"
+       version="4.5.1"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>
@@ -826,11 +826,16 @@ v1.20.0
   </extension>
 </addon>
 
-<addon id="script.module.torrent2http" name="torrent2http" version="0.1.3" provider-name="anteo">
+<addon id="script.module.torrent2http" name="torrent2http" version="1.4.0+matrix" provider-name="anteo,DiMartino,-=Vd=-">
     <requires>
-        <import addon="xbmc.python" version="2.14.0"/>
+        <import addon="xbmc.python" version="3.0.0"/>
+	    <import addon="script.module.requests" optional="false"/>
     </requires>
     <extension point="xbmc.python.module" library="lib"/>
+	<extension point="xbmc.python.script" library="main.py">
+		<provides>executable</provides>
+	</extension>
+	<extension point="xbmc.service" library="lib/service.py" start="startup" />
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <language>en</language>
@@ -838,7 +843,9 @@ v1.20.0
         <summary lang="ru">Загружает торренты и раздает их по HTTP</summary>
         <description lang="ru">Обеспечивает последовательную (sequential) загрузку торрентов для потокового онлайн просмотра через HTTP. Основан на библиотеке LibTorrent.</description>
         <description lang="en">Provides sequential torrent downloading for online streaming video and other media over HTTP.</description>
-        <email>anteo@academ.org</email>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
     </extension>
 </addon>
 
