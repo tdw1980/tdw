@@ -300,15 +300,15 @@ v2.0.0 (2023-01-01)
   </extension>
 </addon>
 
-<addon id="plugin.game.startime" name="Звездный час" version="0.1.1" provider-name="TDW">
+<addon id="plugin.game.startime" name="Звездный час" version="0.2.1" provider-name="TDW">
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>game executable</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary>Game</summary>
-        <description>Games</description>
-        <disclaimer>Games</disclaimer>
+        <summary>Генератор случайных слов для игр</summary>
+        <description>Генератор случайных слов для игр</description>
+        <disclaimer>Генератор случайных слов для игр</disclaimer>
     </extension>
 </addon>
 
