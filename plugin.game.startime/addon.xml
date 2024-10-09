@@ -8,5 +8,8 @@
         <summary>Генератор случайных слов для игр</summary>
         <description>Генератор случайных слов для игр</description>
         <disclaimer>Генератор случайных слов для игр</disclaimer>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
     </extension>
 </addon>
