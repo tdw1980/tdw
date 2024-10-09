@@ -309,6 +309,9 @@ v2.0.0 (2023-01-01)
         <summary>Генератор случайных слов для игр</summary>
         <description>Генератор случайных слов для игр</description>
         <disclaimer>Генератор случайных слов для игр</disclaimer>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
     </extension>
 </addon>
 
@@ -329,20 +332,19 @@ v2.0.0 (2023-01-01)
     </extension>
 </addon>
 
-<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.4" provider-name="TDW">
+<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.5" provider-name="TDW">
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>executable game</provides>
     </extension>
-
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary>RetroGames</summary>
         <description>RetroGames</description>
         <disclaimer>RetroGames</disclaimer>
-    </extension>
     <assets>
         <icon>icon.png</icon>
     </assets>
+    </extension>
 </addon>
 
 <addon id="plugin.video.anilibria.tv"
