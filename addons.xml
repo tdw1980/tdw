@@ -447,7 +447,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.filmpotok"
        name="Filmpotok"
-       version="1.1.4"
+       version="1.2.0"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
@@ -468,7 +468,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.6.0"
+       version="4.7.0"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>
@@ -611,7 +611,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.6.7"
+    version="2.7.0"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent2http"  optional="true"/>
@@ -674,7 +674,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.3.8"
+       version="2.4.0"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
