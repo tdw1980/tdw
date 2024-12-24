@@ -611,7 +611,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.7.0"
+    version="2.7.1"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent2http"  optional="true"/>
