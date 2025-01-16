@@ -332,7 +332,7 @@ v2.0.0 (2023-01-01)
     </extension>
 </addon>
 
-<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.5" provider-name="TDW">
+<addon id="plugin.program.retrogames.se" name="RetroGames" version="2.6.7" provider-name="TDW">
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>executable game</provides>
     </extension>
