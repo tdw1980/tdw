@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<addon id="skin.confluence-extended-s21" version="4.7.5.192a21" name="Confluence Extended Shortcuts 21" provider-name="Jezz_X, Team Kodi, YLLOW_DRAGON, plood">
+<addon id="skin.confluence-extended-s21" version="4.7.5.192a22" name="Confluence Extended Shortcuts 21" provider-name="Jezz_X, Team Kodi, YLLOW_DRAGON, plood">
 	<requires>
 		<import addon="xbmc.gui" version="5.17.0"/>
 		<import addon="script.skinshortcuts" version="1.1.2" optional="true"/>
