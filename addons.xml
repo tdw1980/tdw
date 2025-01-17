@@ -347,6 +347,23 @@ v2.0.0 (2023-01-01)
     </extension>
 </addon>
 
+<addon id="plugin.tdw.shortcuts"
+    name="Shortcuts"
+    version="0.0.1"
+    provider-name="TDW1980">
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Shortcuts for skins. http://kodi.moy.su</summary>
+    <description lang="en">Shortcuts for skins. http://kodi.moy.su</description>
+    <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+
 <addon id="plugin.video.anilibria.tv"
        name="Anilibria.TV"
        version="0.5.2"
@@ -814,6 +831,23 @@ v1.20.0
   </extension>
 </addon>
 
+<addon id="script.module.simpleeval" name="Simple Eval" version="0.9.10" provider-name="Daniel Fairhead">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.module" library="lib" />
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Simple Eval</summary>
+        <description lang="en_GB">A library for easily adding evaluatable expressions into python projects</description>
+        <platform>all</platform>
+        <license>MIT</license>
+        <source>https://github.com/mikesilvo164/script.module.simpleeval</source>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
+</addon>
+
 <addon id='script.module.torrent.ts' version='0.7.3.5' name='AceStream client' provider-name='1orgar'>
     <requires>
       <import addon="xbmc.python" version="2.1.0"  optional="true"/>
@@ -875,6 +909,24 @@ v1.20.0
             <icon>icon.png</icon>
         </assets>
     </extension>
+</addon>
+
+<addon id="script.module.unidecode" name="Unidecode" version="1.3.6" provider-name="Tomaz Solc">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.module" library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">ASCII transliterations of Unicode text</summary>
+    <description lang="en_GB">Unidecode, lossy ASCII transliterations of Unicode text</description>
+    <license>GPL-2.0-or-later</license>
+    <platform>all</platform>
+    <website>https://pypi.org/project/Unidecode</website>
+    <source>https://pypi.org/project/Unidecode</source>
+    <assets>
+      <icon>resources/icon.png</icon>
+    </assets>
+  </extension>
 </addon>
 
 	<addon id="script.skin.helper.backgrounds" name="Skin Helper Service Backgrounds" version="1.0.36" provider-name="marcelveldt and others">
@@ -1142,6 +1194,35 @@ Version 1.0.37
 			<fanart>fanart.jpg</fanart>
 			<screenshot>screenshot-01.jpg</screenshot>
 		</assets>
+	</extension>
+</addon>
+
+<addon id="skin.confluence-extended-s21" version="4.7.5.192a22" name="Confluence Extended Shortcuts 21" provider-name="Jezz_X, Team Kodi, YLLOW_DRAGON, plood">
+	<requires>
+		<import addon="xbmc.gui" version="5.17.0"/>
+		<import addon="script.skinshortcuts" version="1.1.2" optional="true"/>
+	</requires>
+	<extension point="xbmc.gui.skin" defaultthemename="Textures.xbt" debugging="false" effectslowdown="1.0">
+		<res width="1280" height="720" aspect="16:9" default="true" folder="720p" />
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en_GB">Confluence Extended Shortcuts skin by Jezz_X, Team XBMC, YLLOW_DRAGON, plood.</summary>
+		<summary lang="ru_RU">Обложка Confluence Extended Shortcuts. Авторы: Jezz_X, Team XBMC, YLLOW_DRAGON, plood.</summary>
+		<description lang="en_GB">Confluence Extended Shortcuts is the modernized skin for KODI. It is a combination of concepts from many popular skins, and attempts to embrace and integrate their good ideas into a skin that should be easy for first time Kodi users to understand and use.</description>
+		<description lang="ru_RU">Confluence Extended Shortcuts — это модернизированная обложка KODI. Она представляет собой сочетание концепций, взятых из многих популярных обложек, в попытке интегрировать их удачные идеи в обложке, которая была простой для использования и понимания новыми пользователями KODI.</description>
+		<platform>all</platform>
+		<license>GNU General Public License version 2</license>
+		<forum>http://forum.kodi.tv/forumdisplay.php?fid=125</forum>
+		<website></website>
+		<email>nkvoronov@gmail.com</email>
+		<source>https://github.com/nkvoronov/skin.confluence-extended.git</source>
+		<assets>
+			<icon>resources/icon.png</icon>
+			<fanart>resources/fanart.jpg</fanart>
+			<screenshot>resources/screenshot-01.jpg</screenshot>
+			<screenshot>resources/screenshot-02.jpg</screenshot>
+		</assets>
+		<news>Added support for new episode spoilers feature.</news>
 	</extension>
 </addon>
 </addons>
