@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.tdw.shortcuts"
+    name="Shortcuts"
+    version="0.0.1"
+    provider-name="TDW1980">
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Shortcuts for skins. http://kodi.moy.su</summary>
+    <description lang="en">Shortcuts for skins. http://kodi.moy.su</description>
+    <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
