@@ -691,7 +691,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.4.3"
+       version="2.4.4"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
