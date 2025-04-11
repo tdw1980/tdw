@@ -485,7 +485,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.8.8"
+       version="4.8.9"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>
@@ -628,7 +628,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.7.1"
+    version="2.7.2"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent2http"  optional="true"/>
