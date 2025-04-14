@@ -210,7 +210,7 @@ v2.0.0 (2023-01-01)
 
 <addon id="plugin.audio.muzofond.fm"
        name="Muzofond.fm"
-       version="0.1.0"
+       version="0.1.2"
        provider-name="TDW">
   <requires>
   </requires>
