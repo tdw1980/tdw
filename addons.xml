@@ -586,7 +586,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.pazl3.tv"
        name="Пазл ТВ 3.0"
-       version="4.5.0"
+       version="4.5.1"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
