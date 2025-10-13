@@ -567,7 +567,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.pazl.lt"
        name="Пазл ТВ Light"
-       version="0.4.7"
+       version="0.4.8"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
