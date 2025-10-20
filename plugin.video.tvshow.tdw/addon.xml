@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.4.6"
+       version="2.4.8"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
