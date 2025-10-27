@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.9.1"
+       version="4.9.3"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>  
