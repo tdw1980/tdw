@@ -485,7 +485,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.9.1"
+       version="4.9.3"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>
