@@ -607,7 +607,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.RuTor"
        name="RuTor"
-       version="4.2.1"
+       version="4.3.0"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"/>
