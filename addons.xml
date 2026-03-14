@@ -485,7 +485,7 @@ Donate: http://paypal.me/tdw1980
 
 <addon id="plugin.video.KinoPoisk.ru"
        name="KinoPoisk"
-       version="4.9.4"
+       version="4.9.5"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam" optional="true"/>
@@ -567,7 +567,7 @@ Donate: https://goo.su/iQCJl6h
 
 <addon id="plugin.video.pazl.lt"
        name="Пазл ТВ Light"
-       version="0.4.8"
+       version="0.5.0"
        provider-name="TDW">
   <extension point="xbmc.python.script"
             library="main.py">
@@ -691,7 +691,7 @@ https://kodi.moy.su/forum/2-33-1
 
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.6.4"
+       version="2.5.3"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
