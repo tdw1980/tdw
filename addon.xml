@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.tvshow.tdw"
+       name="TVShow"
+       version="2.7.4"
+       provider-name="TDW">
+  <requires>
+    <import addon="plugin.video.tam"  optional="true"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
+  <extension point="xbmc.addon.metadata">
+    <summary>TVShow</summary>
+    <description>Сериалы forum: http://kodi.moy.su</description>
+    <platform>all</platform>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
