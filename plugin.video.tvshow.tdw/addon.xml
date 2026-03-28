@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tvshow.tdw"
        name="TVShow"
-       version="2.7.4"
+       version="2.7.6"
        provider-name="TDW">
   <requires>
     <import addon="plugin.video.tam"  optional="true"/>
@@ -9,6 +9,14 @@
   <extension point="xbmc.python.pluginsource"
             library="default.py">
         <provides>video</provides>
+  </extension>
+  <extension point="kodi.context.item">
+    <menu id="kodi.core.main">
+      <item library="contextitem.py">
+        <label>Найти в TVShow</label>
+        <visible>Container.Content(Episodes)</visible>
+      </item>
+    </menu>
   </extension>
   <extension point="xbmc.service" library="server.py" start="[login|startup]"/>
   <extension point="xbmc.addon.metadata">
