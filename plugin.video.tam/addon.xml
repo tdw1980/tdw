@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tam"
     name="TAM"
-    version="2.7.8"
+    version="2.8.1"
     provider-name="TDW1980">
   <requires>
     <import addon="script.module.torrent2http"  optional="true"/>
